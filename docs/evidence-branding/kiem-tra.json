@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-26",
+  "data": "Mô phỏng, không phải thời tiết thực tế",
+  "viewports": [
+    1440,
+    390,
+    320
+  ],
+  "sameLogo": true,
+  "imagesLoaded": true,
+  "weatherStates": 6,
+  "errors": []
+}

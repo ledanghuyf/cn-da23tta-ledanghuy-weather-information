@@ -1,0 +1,141 @@
+/* Nhịp khoảng cách và cỡ chữ dùng chung trên toàn ứng dụng. */
+body{font-size:14px;-webkit-text-size-adjust:100%}
+.main-content{max-width:1560px;width:100%;margin:0 auto}
+.location-drawer{min-width:0}.location-drawer>summary{display:none}
+.day-navigation{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:6px;align-items:stretch}
+.header-meta{width:390px;max-width:100%}.date-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.date-toolbar .date-picker-label{margin:0;font-size:13px}
+#date-now{border:0;background:transparent;color:var(--ink);font-size:12px;padding:5px 7px;min-height:30px;border-radius:7px}#date-now:disabled{color:#829097}
+.day-navigation>button{border:1px solid var(--line);background:white;color:var(--ink);font-size:27px;border-radius:12px}.day-navigation>button:disabled{color:#bbc7cc;background:#f4f6f8}
+.day-navigation .date-badge{width:100%;padding:12px 10px;min-width:0;border-radius:12px;gap:7px}.day-navigation #weather-date{min-width:0;width:100%;font-size:13px}
+.page-header{gap:24px}.page-header h1{font-size:32px}.overview-heading{margin-bottom:14px}.weather-tabs a{min-height:44px;display:flex;align-items:center}
+.weather-group,.advice-section,.comparison-section{border-radius:22px}.section-heading h3,.group-header h3{font-weight:650}.feature-title .feature-illustration{width:48px;height:48px;flex-basis:48px;border-radius:13px}
+.dashboard-caption,.advice-location,.comparison-intro,.forecast-note,.dashboard-footnote,.air-note{font-size:13px;color:#506872}
+.hour-modes{flex-wrap:wrap}.hour-modes button,.view-switch button{min-height:42px;font-size:12px}
+.hour-time,.hour-main-value{font-variant-numeric:tabular-nums}.hour-date,.hour-unit{font-size:12px}.hour-detail-metrics dt{font-size:12px}.hour-detail-metrics dd{font-size:16px}
+.forecast-day h4{font-size:14px}.forecast-condition,.forecast-date,.rain-chance{font-size:12px}.forecast-temperature{font-size:28px}.forecast-temperature .low{font-size:17px}.day-open{min-height:40px;font-size:12px}
+.metric-note{font-size:12px;line-height:1.55}.current-bottom{font-size:12px}.current-bottom .data-source{display:block!important}.weather-age{padding:12px 15px;border-radius:12px;background:#fff5df;border:1px solid #edd3a1;color:#704d15;font-size:13px;margin-bottom:14px}
+.compare-place-name{font-size:21px}.comparison-note{font-size:12px}.activity-planner select{font-variant-numeric:tabular-nums}
+.weather-content,.weather-group,#advice-section,#comparison-section{scroll-margin-top:85px}
+@media(max-width:1199px){.header-meta{width:100%}.page-header{align-items:flex-start}.page-header h1{font-size:29px}}
+@media(max-width:760px){
+ .sidebar{padding:18px 16px}.brand.brand-weather{font-size:27px}.brand-weather .brand-logo{width:34px;height:34px;flex-basis:34px}
+ .location-drawer{margin-top:14px}.location-drawer>summary{display:flex;align-items:center;gap:10px;min-height:46px;padding:11px 14px;border:1px solid #ffffff30;border-radius:12px;background:#ffffff08;color:white;font-size:14px;cursor:pointer;list-style:none}.location-drawer>summary::-webkit-details-marker{display:none}.drawer-chevron{margin-left:auto;font-size:20px}.location-drawer[open] .drawer-chevron{transform:rotate(180deg)}
+ .location-drawer .search-panel{margin-top:18px}.location-drawer .personal-section{margin-bottom:3px}
+ .main-content{padding:21px 16px}.page-header{gap:10px;margin-bottom:12px}.page-header h1{font-size:27px}.date-toolbar{margin-bottom:6px}.day-navigation{grid-template-columns:38px minmax(0,1fr) 38px}.day-navigation .date-badge{padding:11px 7px;min-height:48px}.day-navigation #weather-date{font-size:14px}.day-navigation .icon{width:16px;flex-shrink:0}
+ .weather-tabs{padding-top:7px;padding-bottom:9px}.weather-tabs a{min-height:44px;font-size:12px!important;padding:8px 9px!important;justify-content:center;flex:1}.overview-heading{gap:10px}.overview-actions{width:auto}.overview-actions .refresh-button{min-height:42px;font-size:11px}.section-label{font-size:12px}
+ #weather-view>#current-panel{min-height:300px;padding:22px 20px 18px}.current-main{min-height:190px;padding-top:16px}.location-heading h2{font-size:28px}.temperature{font-size:76px}.weather-art{flex-basis:38%}.current-bottom{font-size:11px}.current-panel .place-line{font-size:12px}.current-panel .condition{font-size:15px}.metric-label{font-size:13px}.metric-note{font-size:12px}
+ .weather-group,.advice-section,.comparison-section{padding:20px 16px;border-radius:20px}.group-header h3,.section-heading h3{font-size:21px}.feature-title .feature-illustration{width:40px;height:40px;flex-basis:40px}.hour-modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));width:100%;gap:2px}.hour-modes button{font-size:11px;padding:8px 4px}
+ .hour-detail-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.hour-detail-metrics dd{font-size:16px}.forecast-condition,.rain-chance,.forecast-date{font-size:12px}.forecast-temperature{font-size:27px}.forecast-temperature .low{font-size:16px}.forecast-note{font-size:12px}.activity-controls.activity-planner{grid-template-columns:1fr;gap:12px}.activity-planner .activity-choice{grid-column:auto}.activity-planner #activity-date,.activity-planner #activity-hour,.activity-planner #activity-select{font-size:16px}.activity-planner label{font-size:13px}
+}
+@media(min-width:480px) and (max-width:760px){.activity-controls.activity-planner{grid-template-columns:1fr 1fr}.activity-planner .activity-choice{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){.drawer-chevron{transition:none}}
+@media(max-width:760px){
+ .location-drawer>summary{padding:13px 15px;background:#ffffff0c;border-color:#ffffff30;gap:18px}
+ .drawer-label{font-size:15px;font-weight:600;line-height:1.45}.drawer-hint{display:block;font-size:12px;font-weight:400;color:#bfd0d7;margin-top:3px}
+ .drawer-chevron{width:10px;height:10px;flex:0 0 10px;margin-right:5px;border-right:2px solid #c5d5dc;border-bottom:2px solid #c5d5dc;transform:rotate(45deg)}
+ .location-drawer[open] .drawer-chevron{transform:rotate(225deg)}
+ .location-drawer[open]>summary{background:#ffffff14;border-color:#ffffff50}
+}
+
+.group-pane .hourly-chart {
+  margin: 0 0 14px;
+  overflow: hidden;
+}
+.group-pane .hourly-chart > svg { min-width: 0; }
+.group-pane .hour-axis { font-size: 12px; fill: #506872; }
+#chart-graphic svg { min-width: 0; max-height: none; }
+.chart-legend .legend-high { background: #a4591d; }
+.chart-legend .legend-low { background: #3c707a; }
+.weather-details-layout + .dashboard-footnote { margin: 14px 0 0; }
+.comparison-intro { margin-top: 0; }
+.compare-region, .current-panel .place-line, #daily-region, #air-status {
+  overflow-wrap: anywhere;
+}
+.metric-top { flex-wrap: wrap; }
+.metric-value { font-variant-numeric: tabular-nums; }
+.day-navigation button:disabled { cursor: default; }
+.sidebar .location-tool-buttons { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.sidebar .location-tool-buttons button { white-space: normal; text-align: center; }
+
+.advice-section .advice-location { margin: 0 0 16px; font-size: 13px; }
+.activity-controls.activity-planner { margin: 0; gap: 12px; }
+.activity-planner label { font-weight: 600; }
+.advice-section #activity-status {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  background: #f5f8f9;
+  border-radius: 10px;
+}
+.advice-section .activity-hour-detail { color: var(--ink); }
+.activity-result-heading { display: flex; align-items: start; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.activity-result-heading h4 { margin: 0; font-size: 18px; font-weight: 650; }
+.activity-result-heading .slot-level { margin: 0; font-size: 12px; }
+.activity-hour-detail .activity-condition { margin: 6px 0 14px; color: #506872; }
+.activity-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 14px;
+}
+.activity-metrics > div { padding: 10px; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+.activity-metrics dt { color: #506872; font-size: 12px; font-weight: 500; }
+.activity-metrics dd { margin: 3px 0 0; font-size: 15px; font-weight: 650; overflow-wrap: anywhere; }
+.activity-hour-detail .hour-notes { margin: 6px 0 0; }
+.activity-hour-detail .activity-result-note { color: #506872; margin: 12px 0 0; font-size: 12px; }
+.activity-comparison { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--line); }
+.activity-comparison h5 { margin: 0 0 8px; font-size: 14px; }
+.activity-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; list-style: none; margin: 0; padding: 0; }
+.activity-levels li { min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+.activity-levels li[data-selected="true"] { border-color: var(--weather-accent); }
+.activity-levels strong { display: block; margin-bottom: 5px; font-size: 13px; }
+.activity-levels .slot-level { display: inline-block; max-width: 100%; margin: 0; }
+.activity-levels [data-level="favorable"] .slot-level { background: #e3eee7; color: #315d4a; }
+.activity-levels [data-level="caution"] .slot-level { background: #f3e7cd; color: #725014; }
+.activity-levels [data-level="blocked"] .slot-level { background: #f7e2df; color: #8c362d; }
+.advice-section .planner-current, .advice-section .advice-method { margin-top: 12px; padding-top: 10px; }
+@media (max-width: 760px) {
+  .activity-controls.activity-planner { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 12px; }
+  .activity-planner .activity-choice { grid-column: 1 / -1; }
+  .activity-planner #activity-date, .activity-planner #activity-hour { padding-inline: 8px; }
+  .activity-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  #forecast-list { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  #forecast-list .forecast-day,
+  #forecast-list .forecast-day:last-child {
+    display: grid;
+    grid-template-columns: 55px 44px minmax(0, 1fr) auto;
+    grid-template-areas: "day icon condition temp" "date icon rain action";
+    column-gap: 6px;
+    row-gap: 2px;
+    padding: 9px 10px;
+    text-align: left;
+  }
+  #forecast-list .forecast-day > * { margin: 0; }
+  #forecast-list .forecast-day h4 { grid-area: day; font-size: 13px; white-space: nowrap; }
+  #forecast-list .forecast-date { grid-area: date; }
+  #forecast-list .forecast-icon { grid-area: icon; width: 44px; height: 44px; }
+  #forecast-list .forecast-condition { grid-area: condition; min-height: 0; overflow-wrap: anywhere; }
+  #forecast-list .forecast-temperature { grid-area: temp; justify-self: end; font-size: 21px; }
+  #forecast-list .forecast-temperature .low { font-size: 14px; }
+  #forecast-list .rain-chance { grid-area: rain; min-height: 0; text-align: left; }
+  #forecast-list .range-track { display: none; }
+  #forecast-list .day-open { grid-area: action; border: 0; min-height: 44px; padding: 0; }
+  .hourly-list { scroll-snap-type: x proximity; }
+  .hour-tile { scroll-snap-align: start; }
+  .hour-modes button { min-height: 44px; }
+}
+
+@media (max-width: 365px) {
+  .activity-controls.activity-planner { grid-template-columns: minmax(0, 1fr); }
+  .activity-levels { grid-template-columns: minmax(0, 1fr); }
+  .activity-levels li { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .activity-levels strong { margin-bottom: 0; }
+  .day-navigation .date-badge .icon { display: none; }
+  .weather-tabs a { padding-inline: 6px !important; }
+  #forecast-list .forecast-day,
+  #forecast-list .forecast-day:last-child { grid-template-columns: 54px 36px minmax(0, 1fr) auto; }
+  #forecast-list .forecast-day h4 { font-size: 12px; }
+  #forecast-list .forecast-icon { width: 36px; height: 36px; }
+}

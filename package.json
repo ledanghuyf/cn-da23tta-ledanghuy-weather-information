@@ -1,0 +1,18 @@
+{
+  "name": "thoi-tiet-le-dang-huy",
+  "version": "2.1.1",
+  "private": true,
+  "description": "Ứng dụng tra cứu thời tiết và bộ kiểm thử trình duyệt",
+  "scripts": {
+    "test": "node --test tests/recommendations.test.cjs tests/live-data.test.cjs tests/launch.test.cjs && node tests/browser.cjs && node tests/live-browser.cjs",
+    "test:logic": "node --test tests/recommendations.test.cjs tests/live-data.test.cjs",
+    "test:browser": "node tests/browser.cjs",
+    "start": "node scripts/serve.cjs",
+    "test:live": "node --test tests/live-data.test.cjs && node tests/live-browser.cjs",
+    "test:launch": "node --test tests/launch.test.cjs",
+    "test:mobile": "node scripts/verify-mobile.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

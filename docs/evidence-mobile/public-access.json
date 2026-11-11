@@ -1,0 +1,12 @@
+{
+  "date": "2026-11-03T09:19:38.415Z",
+  "url": "https://thoi-tiet-le-dang-huy.mtan120805.chatgpt.site",
+  "status": "PASS",
+  "anonymous": true,
+  "httpStatus": 200,
+  "checks": [
+    "HTML truy cập không cookie hay đăng nhập",
+    "Không chuyển hướng đến đăng nhập",
+    "JavaScript online khớp bản cục bộ"
+  ]
+}

@@ -1,0 +1,17 @@
+#page-title-text{color:var(--ink)}
+.page-header .header-meta{display:block;min-width:0;max-width:100%}.date-picker-label{display:block;font-size:11px;color:#526970;margin-bottom:6px}
+.header-meta .date-badge{padding:8px 10px;max-width:100%;gap:7px}.header-meta .location-time-note{display:block}
+#weather-date{min-width:0;max-width:100%;border:0;background:transparent;color:var(--ink);font:inherit;font-size:12px;cursor:pointer;padding:4px 2px;min-height:32px}
+.daily-view{margin-bottom:28px}.daily-hero{background:linear-gradient(115deg,var(--sky-start),var(--sky-end));color:var(--sky-ink);border-radius:20px;padding:25px 29px 18px}
+.daily-topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:11px}.daily-topline>span:first-child{font-weight:650;letter-spacing:1.2px}.daily-topline>span:last-child{border:1px solid #ffffff66;border-radius:20px;padding:4px 10px;background:#ffffff44}
+.daily-main{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px 0}.daily-main>div:first-child{min-width:0;flex:1}
+#daily-place{font-size:29px;margin:0;overflow-wrap:anywhere}#daily-region{font-size:12px;margin:5px 0;color:inherit;opacity:.85}
+.daily-range{display:flex;gap:17px;align-items:baseline;flex-wrap:wrap;margin:18px 0 0}.daily-range strong{font-weight:500;font-size:54px;letter-spacing:-2px;line-height:1.2}.daily-range span{font-size:31px;opacity:.8}
+.daily-range-label{font-size:12px;margin:6px 0 13px}#daily-condition{font-size:16px;font-weight:600;margin:0}
+.daily-icon{width:190px;max-width:36%;flex-shrink:0}.daily-icon svg{width:100%;height:auto;display:block}
+.daily-source{font-size:10px;margin:0;padding-top:13px;border-top:1px solid #213c431a;overflow-wrap:anywhere}
+.daily-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:15px}.daily-metric{background:#fff;border:1px solid var(--line);border-radius:14px;padding:17px;min-width:0}
+.daily-metric h3{font-size:12px;font-weight:500;margin:0;color:#526970}.daily-value{font-size:23px;font-weight:600;margin:13px 0 5px;overflow-wrap:anywhere}.daily-metric span{font-size:11px;color:#61767b}.daily-note{font-size:11px;color:#61767b;margin:13px 0 0}
+body[data-view="daily"] .activity-heading{margin-top:0;padding-top:0;border-top:0}
+@media(max-width:1199px){.page-header{flex-wrap:wrap}.page-header .header-meta{text-align:left}.daily-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.page-header{gap:14px}.page-header .header-meta{width:100%}.header-meta .date-badge{width:100%}#weather-date{width:100%;font-size:16px}.daily-hero{padding:18px 17px;border-radius:17px}.daily-main{gap:8px;padding:20px 0}.daily-range{gap:8px}.daily-range strong{font-size:37px}.daily-range span{font-size:22px}.daily-range-label{font-size:11px}.daily-icon{max-width:30%}#daily-place{font-size:25px}.daily-value{font-size:21px}.daily-metric{padding:14px}.daily-topline{font-size:10px}}

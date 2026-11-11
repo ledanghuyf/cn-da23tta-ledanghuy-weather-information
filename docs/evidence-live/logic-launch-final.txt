@@ -1,0 +1,190 @@
+TAP version 13
+# Subtest: Chạy khi cổng bị chiếm, chạy liên tiếp không EADDRINUSE, đúng thư mục dù cwd khác
+ok 1 - Chạy khi cổng bị chiếm, chạy liên tiếp không EADDRINUSE, đúng thư mục dù cwd khác
+  ---
+  duration_ms: 232.9269
+  type: 'test'
+  ...
+# Subtest: PORT không hợp lệ có phương án phục hồi
+ok 2 - PORT không hợp lệ có phương án phục hồi
+  ---
+  duration_ms: 81.4549
+  type: 'test'
+  ...
+# Subtest: Độ mới dùng offset API, không dùng múi giờ máy
+ok 3 - Độ mới dùng offset API, không dùng múi giờ máy
+  ---
+  duration_ms: 2.1581
+  type: 'test'
+  ...
+# Subtest: Thời gian thiếu, ngày lỗi, offset thiếu không đoán độ mới
+ok 4 - Thời gian thiếu, ngày lỗi, offset thiếu không đoán độ mới
+  ---
+  duration_ms: 0.1707
+  type: 'test'
+  ...
+# Subtest: AQI/null/sai đơn vị không thành số 0
+ok 5 - AQI/null/sai đơn vị không thành số 0
+  ---
+  duration_ms: 0.1934
+  type: 'test'
+  ...
+# Subtest: Phân loại US AQI đúng ranh giới và giá trị trên 500
+ok 6 - Phân loại US AQI đúng ranh giới và giá trị trên 500
+  ---
+  duration_ms: 0.2999
+  type: 'test'
+  ...
+# Subtest: Liên kết kiểm tra tọa độ, chấp nhận 0, giới hạn tên
+ok 7 - Liên kết kiểm tra tọa độ, chấp nhận 0, giới hạn tên
+  ---
+  duration_ms: 1.0161
+  type: 'test'
+  ...
+# Subtest: Bảng giờ: 24 giờ tới, qua ngày theo địa phương, chọn ngày cuối đúng 24 mốc
+ok 8 - Bảng giờ: 24 giờ tới, qua ngày theo địa phương, chọn ngày cuối đúng 24 mốc
+  ---
+  duration_ms: 5.3502
+  type: 'test'
+  ...
+# Subtest: Bảng giờ không biến null/sai đơn vị/mảng lệch thành số liệu
+ok 9 - Bảng giờ không biến null/sai đơn vị/mảng lệch thành số liệu
+  ---
+  duration_ms: 3.0814
+  type: 'test'
+  ...
+# Subtest: Mặt trời lấy ngày/giờ API, hỗ trợ đêm cực và dữ liệu thiếu
+ok 10 - Mặt trời lấy ngày/giờ API, hỗ trợ đêm cực và dữ liệu thiếu
+  ---
+  duration_ms: 0.5014
+  type: 'test'
+  ...
+# Subtest: Chỉ số bổ sung đúng miền và hướng gió khớp góc
+ok 11 - Chỉ số bổ sung đúng miền và hướng gió khớp góc
+  ---
+  duration_ms: 0.7425
+  type: 'test'
+  ...
+# Subtest: Chọn ngày khác lấy đúng ngày ngoài 24h và hỗ trợ ngày cuối dự báo
+ok 12 - Chọn ngày khác lấy đúng ngày ngoài 24h và hỗ trợ ngày cuối dự báo
+  ---
+  duration_ms: 7.0999
+  type: 'test'
+  ...
+# Subtest: Chọn hôm nay bỏ giờ đã qua; ngày lỗi hoặc quá khứ không sinh gợi ý
+ok 13 - Chọn hôm nay bỏ giờ đã qua; ngày lỗi hoặc quá khứ không sinh gợi ý
+  ---
+  duration_ms: 2.4958
+  type: 'test'
+  ...
+# Subtest: Lý do không chọn giờ bám dữ liệu ban ngày, không quy mưa đêm sang ban ngày
+ok 14 - Lý do không chọn giờ bám dữ liệu ban ngày, không quy mưa đêm sang ban ngày
+  ---
+  duration_ms: 17.2105
+  type: 'test'
+  ...
+# Subtest: Không có ban ngày hoặc thiếu dữ liệu được giải thích riêng, không đổ lỗi thời tiết
+ok 15 - Không có ban ngày hoặc thiếu dữ liệu được giải thích riêng, không đổ lỗi thời tiết
+  ---
+  duration_ms: 1.3888
+  type: 'test'
+  ...
+# Subtest: Nóng/lạnh dựa trên nhiệt độ cảm nhận, ngưỡng bao gồm biên
+ok 16 - Nóng/lạnh dựa trên nhiệt độ cảm nhận, ngưỡng bao gồm biên
+  ---
+  duration_ms: 0.9854
+  type: 'test'
+  ...
+# Subtest: Mưa, xác suất cao, giông 95/96/97/99, gió và UV
+ok 17 - Mưa, xác suất cao, giông 95/96/97/99, gió và UV
+  ---
+  duration_ms: 1.4881
+  type: 'test'
+  ...
+# Subtest: Thiếu dữ liệu/đơn vị sai không sinh số liệu hoặc gợi ý vô căn cứ
+ok 18 - Thiếu dữ liệu/đơn vị sai không sinh số liệu hoặc gợi ý vô căn cứ
+  ---
+  duration_ms: 0.9848
+  type: 'test'
+  ...
+# Subtest: Tối đa 3 khung một giờ, trong 24h, ban ngày ở cả hai đầu, không lấy giờ đã qua
+ok 19 - Tối đa 3 khung một giờ, trong 24h, ban ngày ở cả hai đầu, không lấy giờ đã qua
+  ---
+  duration_ms: 1.3293
+  type: 'test'
+  ...
+# Subtest: Loại toàn bộ giờ giông, mưa lớn, gió mạnh, mã lạ, sương mù và tuyết
+ok 20 - Loại toàn bộ giờ giông, mưa lớn, gió mạnh, mã lạ, sương mù và tuyết
+  ---
+  duration_ms: 14.5302
+  type: 'test'
+  ...
+# Subtest: Kiểm tra cả cuối giờ để không đề xuất khung bắt đầu tốt nhưng kết thúc giông
+ok 21 - Kiểm tra cả cuối giờ để không đề xuất khung bắt đầu tốt nhưng kết thúc giông
+  ---
+  duration_ms: 1.3227
+  type: 'test'
+  ...
+# Subtest: Mức ưu tiên riêng từng hoạt động; vượt mức thoải mái được ghi cần cân nhắc
+ok 22 - Mức ưu tiên riêng từng hoạt động; vượt mức thoải mái được ghi cần cân nhắc
+  ---
+  duration_ms: 9.6445
+  type: 'test'
+  ...
+# Subtest: Nóng và mưa nhẹ/vừa vẫn xem được giờ nhưng không gắn nhãn thuận lợi
+ok 23 - Nóng và mưa nhẹ/vừa vẫn xem được giờ nhưng không gắn nhãn thuận lợi
+  ---
+  duration_ms: 1.854
+  type: 'test'
+  ...
+# Subtest: Giới hạn loại trừ kiểm tra cả hai đầu; giờ bị loại vẫn có dữ liệu và lý do để xem
+ok 24 - Giới hạn loại trừ kiểm tra cả hai đầu; giờ bị loại vẫn có dữ liệu và lý do để xem
+  ---
+  duration_ms: 10.3975
+  type: 'test'
+  ...
+# Subtest: Ưu tiên giờ thuận lợi trước giờ cần cân nhắc dù điểm số cao hơn
+ok 25 - Ưu tiên giờ thuận lợi trước giờ cần cân nhắc dù điểm số cao hơn
+  ---
+  duration_ms: 1.5425
+  type: 'test'
+  ...
+# Subtest: Không có dữ liệu giờ, mảng lệch, sai đơn vị, null không được hiểu là 0
+ok 26 - Không có dữ liệu giờ, mảng lệch, sai đơn vị, null không được hiểu là 0
+  ---
+  duration_ms: 4.1022
+  type: 'test'
+  ...
+# Subtest: UV thiếu vẫn minh bạch và không che bỏ UV cao ở đầu còn lại
+ok 27 - UV thiếu vẫn minh bạch và không che bỏ UV cao ở đầu còn lại
+  ---
+  duration_ms: 3.3095
+  type: 'test'
+  ...
+# Subtest: Không suy đoán ban ngày bằng giờ thiết bị; đêm cực hoặc thiếu is_day không có khung
+ok 28 - Không suy đoán ban ngày bằng giờ thiết bị; đêm cực hoặc thiếu is_day không có khung
+  ---
+  duration_ms: 2.169
+  type: 'test'
+  ...
+# Subtest: Thời gian lỗi, trùng hoặc thiếu giờ không ghép sai khung
+ok 29 - Thời gian lỗi, trùng hoặc thiếu giờ không ghép sai khung
+  ---
+  duration_ms: 1.1416
+  type: 'test'
+  ...
+# Subtest: Ngày/đêm tách khỏi mưa/mây/giông; mã không biết có giao diện mặc định
+ok 30 - Ngày/đêm tách khỏi mưa/mây/giông; mã không biết có giao diện mặc định
+  ---
+  duration_ms: 0.3394
+  type: 'test'
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 391.0679

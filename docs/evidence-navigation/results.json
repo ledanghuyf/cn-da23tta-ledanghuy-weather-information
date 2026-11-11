@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-05T13:23:53.315Z",
+  "status": "PASS",
+  "checks": [
+    "Direct comparison link 390",
+    "All navigation clicks 390",
+    "Manual scroll and page bottom 390",
+    "Drawer opens and closes 390",
+    "Direct comparison link 630",
+    "All navigation clicks 630",
+    "Manual scroll and page bottom 630",
+    "Drawer opens and closes 630",
+    "Direct comparison link 1440",
+    "All navigation clicks 1440",
+    "Manual scroll and page bottom 1440"
+  ],
+  "errors": []
+}
