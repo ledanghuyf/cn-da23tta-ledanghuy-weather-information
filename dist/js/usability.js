@@ -8,6 +8,25 @@
   drawer.addEventListener('keydown', event => {
     if (event.key === 'Escape' && small.matches) { drawer.open = false; drawer.querySelector('summary').focus(); }
   });
+  // Máy tính: kết quả tìm và "Địa điểm của bạn" là bảng thả xuống trên thanh trên cùng.
+  // Đóng khi bấm/chuyển focus ra ngoài hoặc Esc để không che nội dung. Không dựa vào :focus-within
+  // vì danh sách được vẽ lại sẽ tạm mất focus và ẩn bảng trước khi JS kịp trả focus.
+  const saved = document.querySelector('.personal-section');
+  const panels = [document.querySelector('.search-panel'), document.querySelector('.location-tools')];
+  const closeOutside = target => {
+    if (small.matches) return;
+    for (const panel of panels) if (!panel.contains(target)) panel.dataset.dismissed = '';
+    if (saved.open && !saved.contains(target)) saved.open = false;
+  };
+  document.addEventListener('pointerdown', event => closeOutside(event.target));
+  document.addEventListener('focusin', event => closeOutside(event.target));
+  for (const panel of panels) {
+    panel.addEventListener('focusin', () => delete panel.dataset.dismissed);
+    panel.addEventListener('keydown', event => { if (event.key === 'Escape' && !small.matches) panel.dataset.dismissed = ''; });
+  }
+  saved.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && saved.open && !small.matches) { event.stopPropagation(); saved.open = false; saved.querySelector('summary').focus(); }
+  });
   const date = document.getElementById('weather-date');
   const prev = document.getElementById('date-prev'), next = document.getElementById('date-next'), now = document.getElementById('date-now');
   function updateDays() {

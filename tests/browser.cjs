@@ -38,6 +38,10 @@ async function ready(){await page.waitForFunction(()=>document.getElementById('w
 async function statusHas(text){await page.waitForFunction(t=>document.getElementById('weather-status').textContent.includes(t),text);}
 async function openDrawer(p=page){
   if(!await p.locator('#location-drawer').evaluate(el=>el.open))await p.locator('#location-drawer>summary').click();
+}
+// "Địa điểm của bạn" là menu thả xuống (đóng khi bấm ra ngoài): mở ngay trước khi thao tác như người dùng thật.
+async function openSaved(p=page){
+  await openDrawer(p);
   if(!await p.locator('.personal-section').evaluate(el=>el.open))await p.locator('.personal-section>summary').click();
 }
 async function reset(){
@@ -189,12 +193,12 @@ async function main(){
     assert.equal(saved.favorites[0].name,'Vĩnh Long');assert.equal(saved.history.length,1);
     assert.equal(JSON.stringify(saved).includes('temperature'),false);
     await page.locator('.quick-button').nth(1).click();await ready();
-    await page.locator('#favorite-list .personal-place').click();await ready();
+    await openSaved();await page.locator('#favorite-list .personal-place').click();await ready();
     assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');
-    await page.locator('#favorite-list .remove-place').click();assert.equal(await page.locator('#favorite-list .personal-place').count(),0);
+    await openSaved();await page.locator('#favorite-list .remove-place').click();assert.equal(await page.locator('#favorite-list .personal-place').count(),0);
   });
   await test('26 Lịch sử không trùng, không ghi lần tải lỗi, xóa độc lập yêu thích',async()=>{
-    await page.locator('#save-location').click();await page.locator('#clear-history').click();
+    await page.locator('#save-location').click();await openSaved();await page.locator('#clear-history').click();
     assert.equal(await page.locator('#history-list .personal-place').count(),0);
     assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
     forecast=r=>json(r,{},500);await page.locator('.quick-button').nth(2).click();await ready();
@@ -267,7 +271,7 @@ async function main(){
   await test('33 Dữ liệu lưu hỏng, giới hạn danh sách và chống chèn HTML',async()=>{
     await page.evaluate(()=>localStorage.setItem('may.locations.v1','{broken'));await reset();assert.equal(await page.locator('#favorite-list .personal-place').count(),0);
     await page.evaluate(()=>localStorage.setItem('may.locations.v1',JSON.stringify({version:1,favorites:[null,{name:'x',latitude:999,longitude:0},{name:'<img src=x onerror=alert(1)>',country:'<b>VN</b>',latitude:1,longitude:2}],history:[]})));
-    await reset();assert.equal(await page.locator('#favorite-list img,#favorite-list b').count(),0);assert.match(await page.locator('#favorite-list').innerText(),/<img/);
+    await reset();await openSaved();assert.equal(await page.locator('#favorite-list img,#favorite-list b').count(),0);assert.match(await page.locator('#favorite-list').innerText(),/<img/);
     await page.evaluate(()=>localStorage.setItem('may.locations.v1',JSON.stringify({version:1,favorites:Array.from({length:6},(_,i)=>({name:'Nơi '+i,latitude:i,longitude:i})),history:Array.from({length:20},(_,i)=>({name:'Nơi '+i,latitude:i,longitude:i}))})));
     await reset();await page.locator('#save-location').click();assert.match(await page.locator('#saved-status').innerText(),/Đã đủ 6/);
     assert.equal(await page.locator('#favorite-list .personal-place').count(),6);assert.equal(await page.locator('#history-list .personal-place').count(),8);
@@ -384,7 +388,7 @@ async function main(){
     await livePage.locator('#comparison-section').screenshot({path:path.join(evidence,'so-sanh-api-that.png')});
     await livePage.screenshot({path:path.join(evidence,'toan-trang-moi.png'),fullPage:true});
     await livePage.reload();await livePage.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');
-    await openDrawer(livePage);
+    await openSaved(livePage);
     assert.equal(await livePage.locator('#favorite-list .personal-place').count(),1);
     await livePage.locator('#favorite-list .personal-place').click();
     await livePage.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');

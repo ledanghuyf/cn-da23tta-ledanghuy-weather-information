@@ -234,6 +234,5 @@ globalThis.MayDashboardData = (() => {
     if (source && hourlyChart.clientWidth && hourlyChart.clientWidth !== chartWidth) renderChart(chartRows);
   }).observe(hourlyChart);
   window.MayDashboard = { render, onLoading };
-  document.querySelector(".personal-section").open = !window.matchMedia("(max-width: 760px)").matches;
   if (state.weather) render(state.weather, $("weather-date").value);
 })();
