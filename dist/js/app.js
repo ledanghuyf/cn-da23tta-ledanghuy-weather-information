@@ -443,20 +443,21 @@ function renderTemperatureChart(daily) {
   };
   for (let i = 0; i <= 3; i++) {
     const value = min + (max - min) * i / 3;
-    svg.append(svgElement("line", { x1: left, x2: width - right, y1: y(value), y2: y(value), stroke: "#e1e9ea", "stroke-dasharray": "4 5" }));
-    text(formatNumber(value, true), { x: left - 6, y: y(value) + 4, "text-anchor": "end", fill: "#506872", "font-size": 10 });
+    svg.append(svgElement("line", { x1: left, x2: width - right, y1: y(value), y2: y(value), class: "chart-gridline" }));
+    text(formatNumber(value, true), { x: left - 6, y: y(value) + 4, "text-anchor": "end", class: "chart-axis", "font-size": 10 });
   }
-  for (const [series, color, labelOffset] of [[highs, "#a4591d", -13], [lows, "#3c707a", 22]]) {
-    svg.append(svgElement("polyline", { points: series.map((value, i) => `${x(i)},${y(value)}`).join(" "), fill: "none", stroke: color, "stroke-width": 2.5, "stroke-linejoin": "round", "stroke-linecap": "round" }));
+  // Màu do CSS quyết định (.chart-high/.chart-low) để khớp giao diện.
+  for (const [series, tone, labelOffset] of [[highs, "chart-high", -13], [lows, "chart-low", 22]]) {
+    svg.append(svgElement("polyline", { points: series.map((value, i) => `${x(i)},${y(value)}`).join(" "), class: `chart-line ${tone}` }));
     series.forEach((value, i) => {
-      svg.append(svgElement("circle", { cx: x(i), cy: y(value), r: 4, fill: "white", stroke: color, "stroke-width": 2 }));
-      text(`${formatNumber(value)}°`, { x: x(i), y: y(value) + labelOffset, fill: color, "text-anchor": "middle", "font-weight": 600 });
+      svg.append(svgElement("circle", { cx: x(i), cy: y(value), r: 4, class: `chart-dot ${tone}` }));
+      text(`${formatNumber(value)}°`, { x: x(i), y: y(value) + labelOffset, class: `chart-label ${tone}`, "text-anchor": "middle", "font-weight": 600 });
     });
   }
   const tbody = document.createElement("tbody");
   daily.time.slice(0, 7).forEach((date, i) => {
     const short = `${date.slice(8, 10)}/${date.slice(5, 7)}`;
-    text(i || compact ? short : "Hôm nay", { x: x(i), y: 229, fill: "#506872", "text-anchor": "middle" });
+    text(i || compact ? short : "Hôm nay", { x: x(i), y: 229, class: "chart-axis", "text-anchor": "middle" });
     const row = document.createElement("tr");
     [short, formatNumber(highs[i]), formatNumber(lows[i])].forEach((value, index) => {
       const cell = document.createElement(index ? "td" : "th");

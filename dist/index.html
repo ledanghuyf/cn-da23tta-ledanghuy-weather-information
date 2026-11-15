@@ -147,12 +147,6 @@
             <div class="current-bottom"><p id="data-time"></p><span class="data-source">Nguồn: Open-Meteo</span></div>
           </section>
 
-          <section id="current-metrics" class="metrics" aria-label="Chi tiết thời tiết hiện tại">
-            <article class="metric"><div class="metric-top"><span class="metric-label">Độ ẩm</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-drop"/></svg></span></div><p class="metric-value"><strong id="humidity">—</strong><span class="metric-unit">%</span></p><div class="humidity-track" aria-hidden="true"><span id="humidity-fill"></span></div><span class="metric-note">Độ ẩm tương đối</span></article>
-            <article class="metric"><div class="metric-top"><span class="metric-label">Tốc độ gió</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-wind"/></svg></span></div><p class="metric-value"><strong id="wind">—</strong><span class="metric-unit">km/h</span></p><span class="metric-note">Ở độ cao 10 m</span></article>
-            <article class="metric"><div class="metric-top"><span class="metric-label">Cảm nhận</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-temp"/></svg></span></div><p class="metric-value"><strong id="feels-like">—</strong><span class="metric-unit">°C</span></p><span class="metric-note">Nhiệt độ cảm nhận ngoài trời</span></article>
-            <article class="metric"><div class="metric-top"><span class="metric-label">Giáng thủy</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-rain"/></svg></span></div><p class="metric-value"><strong id="precipitation">—</strong><span class="metric-unit">mm</span></p><span class="metric-note">Trong khoảng dữ liệu hiện tại</span></article>
-          </section>
 
           <section id="daily-view" class="daily-view" hidden aria-labelledby="daily-place">
             <div class="daily-hero">
@@ -183,6 +177,13 @@
                 <div id="forecast-chart" class="forecast-chart" hidden><div class="chart-header"><span>Nhiệt độ trong 7 ngày <small>°C</small></span><div class="chart-legend"><span><i class="legend-high"></i>Cao nhất</span><span><i class="legend-low"></i>Thấp nhất</span></div></div><div id="chart-graphic"></div><table id="chart-data" class="visually-hidden"><caption>Nhiệt độ cao nhất và thấp nhất từng ngày</caption><thead><tr><th scope="col">Ngày</th><th scope="col">Cao nhất °C</th><th scope="col">Thấp nhất °C</th></tr></thead><tbody></tbody></table></div>
               </section>
             </div>
+          </section>
+
+          <section id="current-metrics" class="metrics" aria-label="Chi tiết thời tiết hiện tại">
+            <article class="metric"><div class="metric-top"><span class="metric-label">Độ ẩm</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-drop"/></svg></span></div><p class="metric-value"><strong id="humidity">—</strong><span class="metric-unit">%</span></p><div class="humidity-track" aria-hidden="true"><span id="humidity-fill"></span></div><span class="metric-note">Độ ẩm tương đối</span></article>
+            <article class="metric"><div class="metric-top"><span class="metric-label">Tốc độ gió</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-wind"/></svg></span></div><p class="metric-value"><strong id="wind">—</strong><span class="metric-unit">km/h</span></p><span class="metric-note">Ở độ cao 10 m</span></article>
+            <article class="metric"><div class="metric-top"><span class="metric-label">Cảm nhận</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-temp"/></svg></span></div><p class="metric-value"><strong id="feels-like">—</strong><span class="metric-unit">°C</span></p><span class="metric-note">Nhiệt độ cảm nhận ngoài trời</span></article>
+            <article class="metric"><div class="metric-top"><span class="metric-label">Giáng thủy</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-rain"/></svg></span></div><p class="metric-value"><strong id="precipitation">—</strong><span class="metric-unit">mm</span></p><span class="metric-note">Trong khoảng dữ liệu hiện tại</span></article>
           </section>
 
           <section id="conditions-group" class="weather-group glass-card" aria-labelledby="conditions-group-title">
