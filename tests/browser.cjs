@@ -48,6 +48,8 @@ async function reset(){
   forecast = route=>json(route,fixture);
   geocoding = route=>json(route,{results:locations});
   await context.setOffline(false);
+  // Mỗi lần reset là một lượt mở mới: bỏ nơi vừa xem đã nhớ để trang mở nơi mặc định.
+  await page.evaluate(()=>localStorage.removeItem('may.last.v1')).catch(()=>{});
   await page.goto(base);
   await ready();
   await openDrawer();
@@ -72,7 +74,7 @@ async function main(){
     assert.equal(await page.locator('#temperature').innerText(),'30');assert.equal(await page.locator('#humidity').innerText(),'78');
     assert.equal(await page.locator('#wind').innerText(),'12,3');assert.equal(await page.locator('#condition').innerText(),'Mưa nhẹ');
     assert.equal(await page.locator('.forecast-day').count(),7);
-    assert.match(await page.locator('#data-time').innerText(),/14:15.*09\/10\/2026.*Asia\/Ho_Chi_Minh/);
+    assert.match(await page.locator('#data-time').innerText(),/14:15.*09\/10\/2026.*giờ địa phương/);
     assert.equal(await page.locator('.forecast-date').first().innerText(),'09/10');
   });
   await test('02 Tìm và đổi địa điểm bằng bàn phím, giữ focus',async()=>{
@@ -80,7 +82,14 @@ async function main(){
     await page.locator('.result-button').first().focus();await page.keyboard.press('Enter');await statusHas('Đã cập nhật thời tiết Hà Nội');
     assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
     assert.equal(await page.locator('.result-button').first().getAttribute('aria-pressed'),'true');
-    assert.equal(await page.evaluate(()=>document.activeElement.className),'result-button');
+    // Chọn xong: bảng kết quả đóng, focus tới tên nơi mới (không rơi về <body>).
+    await ready();assert.equal(await page.evaluate(()=>document.activeElement.id),'place-name');
+    assert.equal(await page.locator('.search-dropdown').isVisible(),false);
+  });
+  await test('02b Mở lại nơi vừa xem khi tải lại trang; dữ liệu nhớ hỏng thì về mặc định',async()=>{
+    await page.reload();await ready();assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
+    await page.evaluate(()=>localStorage.setItem('may.last.v1','{hỏng'));await page.reload();await ready();
+    assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');
   });
   await test('03 Từ chối tên trống và một ký tự',async()=>{for(const value of ['',' ','a']){await search(value);assert.match(await page.locator('#search-status').innerText(),/2 đến 120/);assert.equal(await page.locator('#location-input').getAttribute('aria-invalid'),'true');}});
   await test('04 Không tìm thấy địa điểm',async()=>{geocoding=r=>json(r,{});await search('khongtontai');assert.match(await page.locator('#search-status').innerText(),/Không tìm thấy/);});
@@ -165,7 +174,8 @@ async function main(){
     await page.locator('.quick-button').nth(3).click();await statusHas('Đã cập nhật thời tiết Đà Nẵng');
     assert.equal(await page.locator('#place-name').innerText(),'Đà Nẵng');
     assert.equal(await page.locator('.quick-button').nth(3).getAttribute('aria-pressed'),'true');
-    await page.locator('.quick-button').first().click();await statusHas('Đã cập nhật thời tiết Vĩnh Long');
+    // Điện thoại: chọn xong ngăn kéo tự đóng để thấy thời tiết; mở lại để chọn nơi khác.
+    await openDrawer();await page.locator('.quick-button').first().click();await statusHas('Đã cập nhật thời tiết Vĩnh Long');
   });
   await test('24 Biểu tượng và bối cảnh ngày, đêm, mưa đúng dữ liệu',async()=>{
     for(const [code,isDay,symbol,scene] of [[0,1,'clear','day'],[0,0,'moon','night'],[61,1,'rain','rain'],[95,1,'storm','storm']]){

@@ -28,7 +28,7 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
   await page.locator('[data-hour-mode="precipitation"]').click();
   const first=weather.data.hourly.time.findIndex(time=>time>=weather.data.current.time);
   assert.equal(await page.locator('.hour-main-value').first().innerText(),new Intl.NumberFormat('vi-VN',{maximumFractionDigits:1}).format(weather.data.hourly.precipitation[first]));
-  assert.match(await page.locator('#hourly-detail').innerText(),/Giáng thủy/);
+  assert.match(await page.locator('#hourly-detail').innerText(),/Lượng mưa/);
   await page.locator('[data-hour-mode="temperature_2m"]').click();
   await page.evaluate(()=>{window.originalNow=Date.now;Date.now=()=>WeatherDataTools.timestamp(state.weather)+7200000;window.dispatchEvent(new Event('focus'))});
   assert.equal(await page.locator('#weather-age').isVisible(),true);assert.match(await page.locator('#weather-age').innerText(),/120 phút/);

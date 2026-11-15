@@ -28,7 +28,7 @@ globalThis.MayAdvice = (() => {
       add("storm", "Ưu tiên ở trong nhà khi có giông", "Thông tin thời tiết hiện tại báo giông. Hoãn hoạt động ngoài trời trong điều kiện này.");
     }
     if (cfg.rainCodes.includes(current.weather_code) || cfg.stormCodes.includes(current.weather_code) || precipitation > 0) {
-      add("rain", "Chuẩn bị ô hoặc áo mưa", `Dữ liệu hiện tại ${cfg.rainCodes.includes(current.weather_code) || cfg.stormCodes.includes(current.weather_code) ? "báo mưa hoặc giông" : `ghi nhận giáng thủy ${fmt(precipitation)} mm trong khoảng dữ liệu`}.${cfg.stormCodes.includes(current.weather_code) ? " Khi có giông, ưu tiên trú trong nhà." : ""}`);
+      add("rain", "Chuẩn bị ô hoặc áo mưa", `Dữ liệu hiện tại ${cfg.rainCodes.includes(current.weather_code) || cfg.stormCodes.includes(current.weather_code) ? "báo mưa hoặc giông" : `vừa ghi nhận lượng mưa ${fmt(precipitation)} mm`}.${cfg.stormCodes.includes(current.weather_code) ? " Khi có giông, ưu tiên trú trong nhà." : ""}`);
     } else if (rain !== null && rain >= cfg.highRainProbability && rain <= 100) {
       add("rain-risk", "Mang theo ô hoặc áo mưa", `Xác suất giáng thủy tại mốc hiện tại là ${fmt(rain)}%, đạt ngưỡng tham khảo ${cfg.highRainProbability}%. Đây là xác suất, không khẳng định đang mưa.`);
     }
@@ -201,7 +201,11 @@ globalThis.MayAdvice = (() => {
     const daySelect = byId("activity-date");
     const today = data.current.time.slice(0, 10);
     const dates = (data.daily?.time || []).slice(0, 7).filter(date => date > today && Number.isFinite(localStamp(`${date}T00:00`)));
-    const selectedDate = dates.includes(daySelect.value) ? daySelect.value : "";
+    let selectedDate = dates.includes(daySelect.value) ? daySelect.value : "";
+    // Buổi tối hôm nay đã hết giờ ban ngày: tự xem ngày mai thay vì bắt người dùng tự đổi (trừ khi họ đã tự chọn ngày).
+    const autoNext = !selectedDate && !daySelect.dataset.userPicked && dates.length > 0 &&
+      !chooseSlots(data, activity, today).allSlots.length && chooseSlots(data, activity, dates[0]).allSlots.length > 0;
+    if (autoNext) selectedDate = dates[0];
     const option = (value, label) => { const item = element("option", "", label); item.value = value; return item; };
     daySelect.replaceChildren(option("", "Hôm nay"),
       ...dates.map(date => option(date, `${date.slice(8)}/${date.slice(5, 7)}`)));
@@ -227,11 +231,12 @@ globalThis.MayAdvice = (() => {
       detail.hidden = !hasAssessment;
       method.hidden = !hasAssessment;
       byId("activity-status").hidden = hasAssessment;
+      const autoNote = autoNext ? `Hôm nay đã hết giờ ban ngày nên đang xem ${period}. ` : "";
       byId("activity-status").textContent = !result.allSlots.length
         ? `Chưa có khung giờ ban ngày để đánh giá (${period}). Hãy chọn ngày khác.`
-        : !slot && !profile ? "Chọn giờ và hoạt động để xem dự báo cho kế hoạch của bạn."
+        : autoNote + (!slot && !profile ? "Chọn giờ và hoạt động để xem dự báo cho kế hoạch của bạn."
           : !slot ? "Chọn một khung giờ ban ngày để xem đánh giá."
-            : "Chọn hoạt động bạn muốn thực hiện vào giờ này.";
+            : "Chọn hoạt động bạn muốn thực hiện vào giờ này.");
       if (hasAssessment) renderAssessment(detail, slot, profile);
     };
     hourSelect.replaceChildren(option("", result.allSlots.length ? "Chọn giờ" : "Chưa có giờ"),

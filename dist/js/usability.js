@@ -27,6 +27,22 @@
   saved.addEventListener('keydown', event => {
     if (event.key === 'Escape' && saved.open && !small.matches) { event.stopPropagation(); saved.open = false; saved.querySelector('summary').focus(); }
   });
+  // Chọn một nơi xong (kết quả tìm, nơi phổ biến, nơi đã lưu): khi thời tiết tải xong thì đóng bảng thả xuống,
+  // cuộn lên đầu để thấy nơi mới và đưa focus tới tên nơi (trình đọc màn hình đọc ngay). Lỗi tải thì giữ nguyên để thử lại.
+  let picked = false;
+  document.addEventListener('click', event => {
+    if (event.target.closest('.result-button, .quick-button, .personal-place')) picked = true;
+  });
+  new MutationObserver(() => {
+    const content = document.getElementById('weather-content');
+    if (!picked || content.getAttribute('aria-busy') !== 'false') return;
+    picked = false;
+    if (document.getElementById('weather-status').dataset.kind !== 'success') return;
+    panels[0].dataset.dismissed = ''; saved.open = false;
+    if (small.matches) drawer.open = false;
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.getElementById('place-name').focus({ preventScroll: true });
+  }).observe(document.getElementById('weather-content'), { attributes: true, attributeFilter: ['aria-busy'] });
   const date = document.getElementById('weather-date');
   const prev = document.getElementById('date-prev'), next = document.getElementById('date-next'), now = document.getElementById('date-now');
   function updateDays() {

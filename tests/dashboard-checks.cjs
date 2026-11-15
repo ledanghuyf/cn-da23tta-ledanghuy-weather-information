@@ -20,6 +20,12 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     for(const mode of ['precipitation_probability','wind_speed_10m','temperature_2m']){await page.locator(`[data-hour-mode="${mode}"]`).click();assert.equal(await page.locator(`[data-hour-mode="${mode}"]`).getAttribute('aria-pressed'),'true');assert.equal(await page.locator('#hourly-chart svg').count(),1);}
     assert.match(await page.locator('#hourly-detail').innerText(),/17:00/);
   });
+  await test('48b Nút mũi tên cuộn dải giờ cho người dùng chuột; ở đầu dải thì ẩn nút lùi',async()=>{
+    await page.locator('#tab-hourly-section').click();await page.locator('#hourly-list').evaluate(el=>{el.scrollLeft=0;el.dispatchEvent(new Event('scroll'));});
+    assert.equal(await page.locator('[data-hour-scroll="-1"]').isDisabled(),true);
+    await page.locator('[data-hour-scroll="1"]').click();await page.waitForFunction(()=>document.getElementById('hourly-list').scrollLeft>0);
+    await page.waitForFunction(()=>!document.querySelector('[data-hour-scroll="-1"]').disabled);
+  });
   await test('49 Xem ngày từ thẻ 7 ngày; mặt trời và các chỉ số bổ sung đúng dữ liệu',async()=>{
     await page.locator('#tab-forecast-section').click();await page.locator('.day-open').nth(3).click();assert.equal(await page.locator('#weather-date').inputValue(),'2026-10-12');
     assert.equal(await page.locator('.hour-time').first().innerText(),'00:00');assert.match(await page.locator('#hourly-caption').innerText(),/12\/10/);

@@ -12,8 +12,8 @@ globalThis.WeatherDataTools = (() => {
     const stamp = timestamp(data);
     if (stamp === null) return {kind:"unknown", text:"Chưa xác định được độ mới của dữ liệu."};
     const minutes = Math.floor((now - stamp) / 60000);
-    if (minutes < -30) return {kind:"warning",text:"Mốc dữ liệu nằm sau giờ thiết bị. Hãy kiểm tra ngày giờ máy."};
-    return {kind:minutes > 90 ? "warning" : "recent", text:minutes > 90 ? `Mốc dữ liệu đã cách ${minutes} phút. Hãy cập nhật trước khi sử dụng.` : `Mốc dữ liệu cách khoảng ${Math.max(0,minutes)} phút.`};
+    if (minutes < -30) return {kind:"warning",text:"Giờ trên thiết bị có vẻ chưa đúng. Hãy kiểm tra ngày giờ máy."};
+    return {kind:minutes > 90 ? "warning" : "recent", text:minutes > 90 ? `Dữ liệu đã cũ ${minutes} phút. Hãy bấm Cập nhật trước khi dùng.` : `Cập nhật khoảng ${Math.max(0,minutes)} phút trước.`};
   }
   function airValue(data, key) {
     const expected = key === "us_aqi" ? "USAQI" : "μg/m³";
@@ -68,7 +68,7 @@ if (typeof document !== "undefined") (() => {
       for (const key of keys) text(`air-${key}`,tools.airValue(data,key)===null ? "Chưa có" : formatNumber(tools.airValue(data,key)));
       const [label,band] = tools.airBand(tools.airValue(data,"us_aqi"));
       text("air-band",label); $("air-score").dataset.band=band;
-      text("air-status",`${location.name} · ${data.current.time.replace("T"," · ")} · ${data.timezone}. ${tools.freshness(data).text}`);
+      text("air-status",`${location.name} · ${data.current.time.replace("T"," · ")} giờ địa phương. ${tools.freshness(data).text}`);
       $("air-values").hidden = false;
       airRecord = {source:"Open-Meteo / CAMS",requestedUrl:String(url),fetchedAt:new Date().toISOString(),location:{...location},response:data};
     } catch(error) {
@@ -80,7 +80,7 @@ if (typeof document !== "undefined") (() => {
   $("air-retry").onclick=()=>{if(record && !busy) void loadAir(record.location);};
   // Chỉ cập nhật nhãn thời gian của dữ liệu không khí đã nhận.
   function tick() {
-    if (airRecord) text("air-status",`${airRecord.location.name} · ${airRecord.response.current.time.replace("T"," · ")} · ${airRecord.response.timezone}. ${tools.freshness(airRecord.response).text}`);
+    if (airRecord) text("air-status",`${airRecord.location.name} · ${airRecord.response.current.time.replace("T"," · ")} giờ địa phương.${tools.freshness(airRecord.response).text}`);
   }
   setInterval(tick,60000); document.addEventListener("visibilitychange",tick);
   window.MayLive={onLoading,onLoaded,onError};

@@ -92,6 +92,18 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     await page.evaluate(data=>MayAdvice.render(data,{name:'Địa điểm mới'},'walk'),shorter);assert.equal(await page.locator('#activity-date').inputValue(),'');
     await show(d);await page.locator('#activity-select').selectOption('walk');
   });
+  await test('43b Buổi tối hôm nay hết giờ ban ngày: tự xem ngày mai; tự chọn Hôm nay thì giữ',async()=>{
+    // Lượt mở trang mới vào buổi tối (chưa từng tự chọn ngày).
+    const d=fixture(baseFixture);d.current.time='2026-10-09T19:30';setForecast(route=>json(route,d));
+    await page.reload();await ready();
+    assert.equal(await page.locator('#activity-date').inputValue(),'2026-10-10');
+    assert.match(await page.locator('#activity-status').innerText(),/hết giờ ban ngày.*10\/10/);
+    await page.locator('#activity-date').selectOption('');assert.equal(await page.locator('#activity-date').inputValue(),'');
+    assert.match(await page.locator('#activity-status').innerText(),/Chưa có khung giờ/);
+    // Trả lại trạng thái các bài sau dựa vào (dữ liệu chuẩn, hoạt động Đi bộ) vì đã tải lại trang.
+    setForecast(route=>json(route,fixture(baseFixture)));await page.locator('.quick-button').first().click();await ready();
+    await page.locator('#activity-select').selectOption('walk');
+  });
   await test('40 Đổi địa điểm cập nhật gợi ý/chủ đề; tải/lỗi về mặc định và ẩn gợi ý cũ',async()=>{
     let pending;setForecast(route=>{pending=route;});await page.locator('.quick-button').first().click();
     await page.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='true');

@@ -297,8 +297,10 @@ async function loadWeather(location) {
     const data = await fetchJSON(url, controller.signal);
     if (controller.signal.aborted) return null;
     validateWeather(data);
+    if (!isSameLocation(location, state.location)) delete $("activity-date").dataset.userPicked;
     state.location = location;
     state.weather = data;
+    rememberLocation(location);
     renderWeather(location, data);
     window.MayLive?.onLoaded(location, data, url);
     renderSearchResults();
@@ -350,7 +352,7 @@ function renderWeather(location, data) {
   const [date, time] = String(current.time || "").split("T");
   const [year, month, day] = (date || "").split("-");
   $("data-time").textContent = time && day
-    ? `Dữ liệu lúc ${time.slice(0, 5)} · ${day}/${month}/${year} · ${data.timezone || "Giờ địa phương"}`
+    ? `Cập nhật lúc ${time.slice(0, 5)} · ${day}/${month}/${year} · giờ địa phương`
     : "Theo giờ địa phương";
   $("page-date").textContent = new Date(`${date}T12:00:00Z`).toLocaleDateString("vi-VN", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" });
   updateQuickSelection(location);
@@ -494,6 +496,8 @@ $("refresh-button").addEventListener("click", () => loadWeather(state.location))
 $("cards-button").addEventListener("click", () => setForecastView("cards"));
 $("chart-button").addEventListener("click", () => setForecastView("chart"));
 for (const id of ["activity-select", "activity-date"]) $(id).addEventListener("change", () => {
+  // Người dùng đã tự chọn ngày thì không tự chuyển sang ngày mai nữa (xem MayAdvice.render).
+  if (id === "activity-date") $("activity-date").dataset.userPicked = "true";
   if (state.weather && !$("advice-results").hidden) MayAdvice.render(state.weather, state.location, $("activity-select").value, { keepHour: id === "activity-select" });
 });
 $("page-date").textContent = "Đang cập nhật";
@@ -526,6 +530,15 @@ if (document.modelContext?.registerTool) {
   try { Promise.resolve(document.modelContext.registerTool(tool, { signal: lifecycle.signal })).catch(() => {}); } catch { /* Trình duyệt chưa hỗ trợ đầy đủ: giao diện vẫn hoạt động. */ }
 }
 
+// Mở lại nơi xem gần nhất; dữ liệu lưu hỏng hoặc trình duyệt chặn lưu thì dùng nơi mặc định.
+const LAST_KEY = "may.last.v1";
+function lastViewed() {
+  try { const place = JSON.parse(localStorage.getItem(LAST_KEY)); return place && validateLocation(place); } catch { return null; }
+}
+function rememberLocation(location) {
+  try { localStorage.setItem(LAST_KEY, JSON.stringify({ name: location.name, admin1: location.admin1, country: location.country, latitude: location.latitude, longitude: location.longitude })); } catch { /* Không lưu được thì lần sau mở nơi mặc định. */ }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  void loadWeather(WeatherDataTools.sharedLocation(window.location.search) || DEFAULT_LOCATION);
+  void loadWeather(WeatherDataTools.sharedLocation(window.location.search) || lastViewed() || DEFAULT_LOCATION);
 }, { once: true });

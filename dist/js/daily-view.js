@@ -38,11 +38,11 @@
     $("daily-icon").replaceChildren(weatherGraphic(daily.weather_code[index], 1));
     // Đây là biểu trưng cả ngày, không khẳng định một giờ tương lai là ban ngày.
     MayTheme.apply({ weather_code: daily.weather_code[index], is_day: 1 });
-    $("daily-source").textContent = `Nguồn: Open-Meteo · ${data.timezone} · Mốc dữ liệu hiện tại: ${data.current.time.slice(11)} ${data.current.time.slice(8, 10)}/${data.current.time.slice(5, 7)}`;
+    $("daily-source").textContent = `Nguồn: Open-Meteo · cập nhật lúc ${data.current.time.slice(11)} ${data.current.time.slice(8, 10)}/${data.current.time.slice(5, 7)} · giờ địa phương`;
     const specs = [
       ["Xác suất mưa", "precipitation_probability_max", "%", "Cao nhất trong ngày", 100],
       ["Gió mạnh nhất", "wind_speed_10m_max", "km/h", "Ở độ cao 10 m"],
-      ["Giáng thủy", "precipitation_sum", "mm", "Tổng lượng trong ngày"],
+      ["Lượng mưa", "precipitation_sum", "mm", "Tổng lượng trong ngày"],
       ["UV cao nhất", "uv_index_max", "", "Chỉ số trong ngày"],
     ];
     $("daily-metrics").replaceChildren(...specs.map(([label, key, unit, note, max = Infinity]) => {

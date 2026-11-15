@@ -5,7 +5,7 @@ globalThis.MayDashboardData = (() => {
     temperature_2m: ["Nhiệt độ", "°C", -Infinity, Infinity],
     apparent_temperature: ["Cảm nhận", "°C", -Infinity, Infinity],
     precipitation_probability: ["Xác suất mưa", "%", 0, 100],
-    precipitation: ["Giáng thủy", "mm", 0, Infinity],
+    precipitation: ["Lượng mưa", "mm", 0, Infinity],
     relative_humidity_2m: ["Độ ẩm", "%", 0, 100],
     wind_speed_10m: ["Gió", "km/h", 0, Infinity],
     uv_index: ["UV", "", 0, Infinity],
@@ -74,7 +74,7 @@ globalThis.MayDashboardData = (() => {
     // Mã thời tiết hiện tại báo mưa/giông vẫn tính là đang mưa dù lượng đo được bằng 0.
     const code = data?.current?.weather_code, storm = MayWeatherConfig.stormCodes.includes(code);
     if (rainNow > 0 || storm || MayWeatherConfig.rainCodes.includes(code)) items.push({ icon: "i-rain", title: storm ? "Đang có giông" : "Đang có mưa",
-      text: rainNow > 0 ? `${num(rainNow)} mm trong khoảng dữ liệu hiện tại · nhớ mang ô` : storm ? "Ưu tiên ở trong nhà, tránh nơi trống trải" : "Theo dữ liệu hiện tại · nhớ mang ô" });
+      text: rainNow > 0 ? `Vừa ghi nhận ${num(rainNow)} mm · nhớ mang ô` : storm ? "Ưu tiên ở trong nhà, tránh nơi trống trải" : "Theo dữ liệu hiện tại · nhớ mang ô" });
     else if (rainHour) items.push({ icon: "i-rain", title: `Có thể mưa lúc ${rainHour.time.slice(11)}`, text: `Khả năng ${num(rainHour.precipitation_probability)}% · nên mang ô` });
     const temp = now("temperature_2m"), feels = now("apparent_temperature");
     const gap = feelsGap(temp, feels);
@@ -151,7 +151,7 @@ globalThis.MayDashboardData = (() => {
   function renderHours() {
     if (!source) return;
     const rows = dataTools.hours(source, selectedDate);
-    $("hourly-caption").textContent = `${state.location.name} · ${selectedDate ? `Ngày ${selectedDate.slice(8)}/${selectedDate.slice(5, 7)} (cả ngày)` : "24 giờ tới"} · ${source.timezone}`;
+    $("hourly-caption").textContent = `${state.location.name} · ${selectedDate ? `Ngày ${selectedDate.slice(8)}/${selectedDate.slice(5, 7)} (cả ngày)` : "24 giờ tới"} · giờ địa phương`;
     $("hourly-message").textContent = rows.length ? "" : "Chưa có dự báo theo giờ cho khoảng thời gian này. Hãy thử cập nhật lại.";
     chartRows = rows;
     renderChart(rows);
@@ -168,7 +168,19 @@ globalThis.MayDashboardData = (() => {
       return card;
     }));
     const row = rows.find(item => item.time === selectedHour) || rows[0]; selectedHour = row?.time || ""; renderHourDetail(row);
+    hourList.scrollLeft = 0; updateHourArrows();
   }
+  // Nút ‹ › cho người dùng chuột: dải 24 giờ chỉ hiện được một phần và lăn chuột dọc không cuộn ngang.
+  const hourList = $("hourly-list"), hourArrows = [...document.querySelectorAll("[data-hour-scroll]")];
+  function updateHourArrows() {
+    const max = hourList.scrollWidth - hourList.clientWidth;
+    hourArrows[0].disabled = hourList.scrollLeft <= 1;
+    hourArrows[1].disabled = hourList.scrollLeft >= max - 1;
+  }
+  hourArrows.forEach(button => button.addEventListener("click", () =>
+    hourList.scrollBy({ left: Number(button.dataset.hourScroll) * hourList.clientWidth * .8, behavior: "smooth" })));
+  hourList.addEventListener("scroll", updateHourArrows, { passive: true });
+  new ResizeObserver(updateHourArrows).observe(hourList);
   function renderDetails() {
     const date = selectedDate || source.current.time.slice(0, 10), sun = dataTools.sun(source, date);
     $("sunrise-time").textContent = sun.rise?.slice(11) || "Chưa có";
@@ -196,7 +208,8 @@ globalThis.MayDashboardData = (() => {
       card.dataset.selected = String(date === selectedDate);
       const button = node("button", "day-open", "Xem ngày"); button.type = "button";
       button.setAttribute("aria-label", `Xem thời tiết ngày ${date.slice(8)}/${date.slice(5, 7)}`);
-      button.onclick = () => { MayDaily.selectDate(date); $("weather-date").focus({ preventScroll: true }); $("weather-content").scrollIntoView({ behavior: "instant", block: "start" }); };
+      // Cuộn lên đầu trang để thấy cả bộ chọn ngày; cuộn tới #weather-content sẽ để thanh trên cùng che mất nó.
+      button.onclick = () => { MayDaily.selectDate(date); $("weather-date").focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: "instant" }); };
       card.querySelector(".day-open")?.remove(); card.append(button);
     });
   }
