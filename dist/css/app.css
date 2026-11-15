@@ -57,11 +57,49 @@ body[data-phase="night"][data-weather="rain"] .sky-stars, body[data-phase="night
 .cloud-b { top: 38%; left: -60%; animation-duration: 95s; animation-delay: -40s; }
 body[data-weather="cloudy"] .sky-cloud, body[data-weather="rain"] .sky-cloud { opacity: .22; }
 body[data-weather="storm"] .sky-cloud { opacity: .16; }
-.sky-rain { inset: -10% 0 0 0; opacity: 0; background: repeating-linear-gradient(105deg, transparent 0 22px, rgba(200, 225, 255, .22) 22px 23px, transparent 23px 46px); background-size: 100% 240px; animation: rainfall .9s linear infinite; }
-body[data-weather="rain"] .sky-rain { opacity: .55; }
-body[data-weather="storm"] .sky-rain { opacity: .75; }
+/* Mưa: hai lớp hạt (xa: nhỏ, chậm, mờ; gần: dài, nhanh, rõ) rơi nghiêng theo gió.
+   Mỗi hạt là một elip rất hẹp nên tự mờ ở hai đầu; vị trí lệch nhau trong ô lặp để không thành sọc đều. */
+.sky-rain { inset: -25%; opacity: 0; transform: rotate(10deg); transition: opacity .6s; }
+.sky-rain::before, .sky-rain::after { content: ""; position: absolute; inset: 0; }
+.sky-rain::before {
+  background-image:
+    radial-gradient(.8px 15px at 9% 12%, rgba(215, 232, 255, .55), transparent), radial-gradient(.8px 18px at 33% 58%, rgba(215, 232, 255, .5), transparent),
+    radial-gradient(.8px 13px at 52% 21%, rgba(215, 232, 255, .45), transparent), radial-gradient(.8px 16px at 71% 77%, rgba(215, 232, 255, .55), transparent),
+    radial-gradient(.8px 14px at 88% 40%, rgba(215, 232, 255, .5), transparent), radial-gradient(.8px 17px at 21% 91%, rgba(215, 232, 255, .45), transparent);
+  background-size: 130px 170px; opacity: .7; animation: rain-far .85s linear infinite;
+}
+.sky-rain::after {
+  background-image:
+    radial-gradient(1.3px 30px at 14% 22%, rgba(230, 240, 255, .7), transparent), radial-gradient(1.3px 36px at 46% 67%, rgba(230, 240, 255, .65), transparent),
+    radial-gradient(1.3px 26px at 63% 9%, rgba(230, 240, 255, .6), transparent), radial-gradient(1.3px 32px at 84% 52%, rgba(230, 240, 255, .7), transparent),
+    radial-gradient(1.3px 28px at 30% 88%, rgba(230, 240, 255, .6), transparent);
+  background-size: 230px 260px; animation: rain-near .48s linear infinite;
+}
+body[data-weather="rain"] .sky-rain { opacity: .6; }
+body[data-weather="storm"] .sky-rain { opacity: .85; }
+body[data-weather="storm"] .sky-rain::before { animation-duration: .6s; }
+body[data-weather="storm"] .sky-rain::after { animation-duration: .36s; }
+/* Giông: thỉnh thoảng chớp sáng nhẹ — tối đa 1 lần mỗi 9 giây (an toàn với người nhạy cảm ánh sáng nhấp nháy). */
+.sky::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 0%, rgba(225, 230, 255, .55), rgba(225, 230, 255, .12) 60%); opacity: 0; }
+body[data-weather="storm"] .sky::after { animation: lightning 9s linear infinite; }
+
+/* Nắng ban ngày: mặt trời có lõi sáng + quầng ấm nhiều lớp ở góc trên phải, tia nắng xoay rất chậm.
+   Lõi nằm sau thanh trên cùng (nền tối) nên không làm giảm độ tương phản của chữ. */
+/* Tâm tia nắng trùng tâm mặt trời: lấp ló ở góc trên phải (cách mép phải 2vmax, cao hơn mép trên 1vmax). */
+.sky-rays { top: -66vmax; right: -63vmax; width: 130vmax; height: 130vmax; opacity: 0; transition: opacity .6s;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 244, 210, .16) 0deg 2.5deg, transparent 2.5deg 11deg);
+  -webkit-mask-image: radial-gradient(circle, #000 4%, rgba(0, 0, 0, .5) 22%, transparent 48%); mask-image: radial-gradient(circle, #000 4%, rgba(0, 0, 0, .5) 22%, transparent 48%);
+  animation: sun-rays 160s linear infinite; }
+body[data-weather="sunny"]:not([data-phase="night"]) .sky-rays { opacity: .55; }
+body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow {
+  inset: -46vmax -43vmax auto auto; width: 90vmax; height: 90vmax;
+  background: radial-gradient(circle, rgba(255, 252, 235, .95) 0 2.6vmax, rgba(255, 238, 180, .6) 3.6vmax, rgba(255, 220, 140, .26) 9vmax, rgba(255, 205, 120, .1) 20vmax, transparent 44vmax);
+}
 @keyframes drift { to { transform: translateX(170vw); } }
-@keyframes rainfall { to { background-position: 0 240px; } }
+@keyframes rain-far { to { background-position: 0 170px; } }
+@keyframes rain-near { to { background-position: 0 260px; } }
+@keyframes sun-rays { to { transform: rotate(360deg); } }
+@keyframes lightning { 0%, 90%, 100% { opacity: 0; } 90.6% { opacity: .9; } 91.4% { opacity: .15; } 92% { opacity: .6; } 93.5% { opacity: 0; } }
 @keyframes float { 50% { transform: translateY(-8px); } }
 
 /* ---------- Khung trang ---------- */
@@ -143,7 +181,7 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
   .quick-locations { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); padding-right: 24px; }
   .quick-button { flex: none; width: auto; min-height: 40px; padding: 8px 12px; border-radius: 999px; white-space: nowrap; }
   .personal-section { position: relative; flex: none; margin: 0; padding: 0; border: 0; }
-  .personal-section > summary { min-height: 44px; padding: 8px 14px; list-style: none; white-space: nowrap; border: 1px solid rgba(255, 255, 255, .25); border-radius: 999px; background: rgba(255, 255, 255, .08); }
+  .personal-section > summary { min-height: 44px; padding: 8px 14px; list-style: none; white-space: nowrap; border: 1px solid rgba(255, 255, 255, .25); border-radius: 999px; background: rgba(6, 18, 36, .4); }
   .personal-section > summary::-webkit-details-marker { display: none; }
   .personal-section[open] > summary { border-color: var(--accent); }
   /* Bảng thả xuống: kết quả tìm, thông báo định vị, địa điểm đã lưu */
@@ -170,10 +208,10 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .header-meta { display: flex; align-items: center; gap: 8px; flex: 0 1 420px; min-width: 0; }
 .header-meta .day-navigation { flex: 1; min-width: 0; }
 .date-toolbar { order: 2; flex: none; font-size: 13px; }
-#date-now { min-height: 44px; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 12px; background: rgba(255, 255, 255, .12); font-weight: 600; }
+#date-now { min-height: 44px; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 12px; background: rgba(6, 18, 36, .34); font-weight: 600; }
 #date-now:disabled { display: none; }
 .day-navigation { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 6px; }
-.day-navigation > button { min-height: 44px; border: 1px solid rgba(255, 255, 255, .28); border-radius: 12px; background: rgba(255, 255, 255, .12); font-size: 24px; line-height: 1; }
+.day-navigation > button { min-height: 44px; border: 1px solid rgba(255, 255, 255, .28); border-radius: 12px; background: rgba(6, 18, 36, .34); font-size: 24px; line-height: 1; }
 .day-navigation > button:disabled { opacity: .45; }
 .date-badge { position: relative; display: flex; align-items: center; min-width: 0; }
 .date-badge > .icon { position: absolute; left: 12px; width: 16px; height: 16px; color: var(--ink-soft); pointer-events: none; }
@@ -186,8 +224,9 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 
 /* ---------- Trạng thái ---------- */
 .overview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-.glass-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 999px; background: rgba(255, 255, 255, .12); color: #fff; font-size: 14px; font-weight: 600; }
-.glass-button:hover:not(:disabled) { background: rgba(255, 255, 255, .22); }
+/* Nền kính tối: chữ trắng vẫn rõ khi nằm trên vùng tia nắng sáng. */
+.glass-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 999px; background: rgba(6, 18, 36, .34); color: #fff; font-size: 14px; font-weight: 600; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.glass-button:hover:not(:disabled) { background: rgba(6, 18, 36, .5); }
 .glass-button:disabled { opacity: .55; }
 .glass-button[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 160, 75, .28); }
 .weather-status, .notice { margin-bottom: 12px; padding: 10px 14px; border-radius: 14px; background: rgba(6, 18, 36, .4); border: 1px solid rgba(255, 255, 255, .14); color: #fff; font-size: 14px; }
