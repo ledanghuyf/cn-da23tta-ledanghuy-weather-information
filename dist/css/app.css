@@ -569,6 +569,26 @@ body[data-phase="night"]:not([data-weather="rain"]):not([data-weather="storm"]) 
 @keyframes shooting-star { 0%, 88% { opacity: 0; transform: translate(0, 0) rotate(-24deg); } 89% { opacity: 1; } 95% { opacity: 0; transform: translate(-260px, 116px) rotate(-24deg); } 100% { opacity: 0; } }
 body[data-phase="night"]:not([data-weather="rain"]):not([data-weather="storm"]) .sky-stars::after { animation: shooting-star 14s linear 3s infinite; }
 
+/* ---------- Chiều sâu 3D ----------
+   --mx/--my: vị trí chuột (-0.5..0.5), --sy: độ cuộn (0..1), do usability.js ghi. Lớp càng gần càng dịch nhiều (thị sai).
+   Dùng thuộc tính `translate` riêng nên không đè các hoạt ảnh `transform` sẵn có (mây trôi, tia nắng xoay, mặt trời thở). */
+.sky > i, .sky-rain::before, .sky-rain::after { transition: translate .4s ease-out; }
+.sky-glow, .sky-rays { translate: calc(var(--mx, 0) * -14px) calc(var(--my, 0) * -10px + var(--sy, 0) * -24px); }        /* rất xa */
+.sky-stars { translate: calc(var(--mx, 0) * -8px) calc(var(--my, 0) * -6px + var(--sy, 0) * -16px); }
+.cloud-a { translate: calc(var(--mx, 0) * -24px) calc(var(--my, 0) * -14px + var(--sy, 0) * -50px); scale: .8; }       /* mây xa: nhỏ hơn */
+.cloud-b { translate: calc(var(--mx, 0) * -60px) calc(var(--my, 0) * -32px + var(--sy, 0) * -130px); scale: 1.25; }    /* mây gần: to hơn, dịch nhiều */
+/* Mưa trong không gian: màn mưa nghiêng ra sau theo phối cảnh — hạt phía trên nhỏ và xa, phía dưới lớn và gần. */
+.sky-rain { perspective: 700px; perspective-origin: 50% 80%; }
+.sky-rain::before { transform: rotateX(30deg) scale(1.1); translate: calc(var(--mx, 0) * -22px) 0; }
+.sky-rain::after { transform: rotateX(22deg); translate: calc(var(--mx, 0) * -55px) 0; }
+/* Biểu tượng thời tiết nghiêng 3D theo chuột; bóng đổ dịch ngược chiều như có nguồn sáng cố định. */
+.weather-art, .daily-icon { transform: perspective(500px) rotateY(calc(var(--mx, 0) * 30deg)) rotateX(calc(var(--my, 0) * -24deg)); transition: transform .35s ease-out; }
+.weather-icon { filter: drop-shadow(calc(var(--mx, 0) * -16px) calc(10px + var(--my, 0) * -10px) 14px rgba(0, 0, 0, .25)); }
+/* Thẻ dữ liệu lật nhẹ từ phía sau lên khi tải xong (khối hiện tại chỉ trượt lên để giữ nguyên kích thước). */
+@keyframes rise-3d { from { opacity: 0; transform: perspective(900px) translateY(26px) rotateX(14deg); } }
+/* Xoay quanh mép dưới: thẻ chỉ ngả ra sau rồi dựng lên, không phần nào tiến lại gần nên không phình quá bề rộng màn hình. */
+.weather-content[aria-busy="false"] #weather-view > .glass-card, .weather-content[aria-busy="false"] #weather-view > .metrics { animation-name: rise-3d; transform-origin: 50% 100%; }
+
 /* ---------- Màn hình cảm ứng: vùng bấm tối thiểu 44 px ---------- */
 @media (pointer: coarse) {
   .weather-tabs a, .group-tabs button, .view-switch button, .hour-modes button, .compare-choice { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
