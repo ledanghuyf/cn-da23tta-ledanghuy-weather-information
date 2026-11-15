@@ -6,32 +6,32 @@
   <meta name="description" content="Tra cứu thời tiết hiện tại và dự báo 7 ngày tại nơi bạn quan tâm.">
   <meta name="theme-color" content="#162f38">
   <title>Thời tiết — Dự báo mỗi ngày</title>
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20261026">
-  <link rel="stylesheet" href="css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/features.css">
-  <link rel="stylesheet" href="css/weather-experience.css">
-  <link rel="stylesheet" href="css/daily-view.css">
-  <link rel="stylesheet" href="css/dashboard.css?v=brand-thoitiet">
-  <script src="js/weather-config.js?v=activity-levels" defer></script>
-  <script src="js/weather-theme.js" defer></script>
-  <script src="js/recommendations.js?v=activity-levels" defer></script>
-  <script src="js/app.js?v=responsive-forecast" defer></script>
-  <script src="js/features.js" defer></script>
-  <script src="js/daily-view.js?v=activity-panel" defer></script>
-  <script src="js/dashboard.js?v=responsive-forecast" defer></script>
-  <script src="js/location.js?v=today" defer></script>
-  <link rel="stylesheet" href="css/branding.css?v=20261026">
-  <link rel="stylesheet" href="css/live-data.css?v=map-only">
-  <script src="js/live-data.js?v=map-only" defer></script>
-  <script src="js/my-map.js?v=google-maps" defer></script>
-  <link rel="stylesheet" href="css/clean-layout.css?v=map-panel">
-  <script src="js/clean-layout.js?v=nav-fix-20261105" defer></script>
-  <link rel="stylesheet" href="css/polish.css?v=activity-levels">
-  <script src="js/usability.js?v=today" defer></script>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=2.1.2">
+  <link rel="stylesheet" href="css/bootstrap.min.css?v=2.1.2">
+  <link rel="stylesheet" href="css/style.css?v=2.1.2">
+  <link rel="stylesheet" href="css/features.css?v=2.1.2">
+  <link rel="stylesheet" href="css/weather-experience.css?v=2.1.2">
+  <link rel="stylesheet" href="css/daily-view.css?v=2.1.2">
+  <link rel="stylesheet" href="css/dashboard.css?v=2.1.2">
+  <script src="js/weather-config.js?v=2.1.2" defer></script>
+  <script src="js/weather-theme.js?v=2.1.2" defer></script>
+  <script src="js/recommendations.js?v=2.1.2" defer></script>
+  <script src="js/app.js?v=2.1.2" defer></script>
+  <script src="js/features.js?v=2.1.2" defer></script>
+  <script src="js/daily-view.js?v=2.1.2" defer></script>
+  <script src="js/dashboard.js?v=2.1.2" defer></script>
+  <script src="js/location.js?v=2.1.2" defer></script>
+  <link rel="stylesheet" href="css/branding.css?v=2.1.2">
+  <link rel="stylesheet" href="css/live-data.css?v=2.1.2">
+  <script src="js/live-data.js?v=2.1.2" defer></script>
+  <script src="js/my-map.js?v=2.1.2" defer></script>
+  <link rel="stylesheet" href="css/clean-layout.css?v=2.1.2">
+  <script src="js/clean-layout.js?v=2.1.2" defer></script>
+  <link rel="stylesheet" href="css/polish.css?v=2.1.2">
+  <script src="js/usability.js?v=2.1.2" defer></script>
 </head>
 <body data-weather="default" data-phase="unknown">
-  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true"><defs>
     <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
     <symbol id="i-pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
@@ -44,27 +44,43 @@
     <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h2m3 0h2"/></symbol>
     <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
     <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18M6 15l5-6 4 3 6-8"/></symbol>
+    <linearGradient id="w-cloud-fill" x1="0" y1="0" x2="0.7" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#dce9ef"/></linearGradient>
+    <linearGradient id="w-sun-fill" x1="0" y1="0" x2="0.8" y2="1"><stop stop-color="#ffd98a"/><stop offset="1" stop-color="#f4aa53"/></linearGradient>
+    <linearGradient id="w-moon-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffedba"/><stop offset="1" stop-color="#d8d5ee"/></linearGradient>
+    <filter id="w-shadow" x="-40%" y="-40%" width="180%" height="200%"><feDropShadow dx="0" dy="7" stdDeviation="5" flood-color="#264b62" flood-opacity=".12"/></filter>
+    <symbol id="clear" viewBox="0 0 160 160"><g stroke="#f3b45c" stroke-width="3" stroke-linecap="round"><path d="M80 20v9m0 102v9M20 80h9m102 0h9M38 38l7 7m70 70 7 7M38 122l7-7m70-70 7-7"/></g><circle cx="80" cy="80" r="39" fill="url(#w-sun-fill)"/><circle cx="69" cy="67" r="24" fill="#ffe5a8" opacity=".25"/></symbol>
+    <symbol id="moon" viewBox="0 0 160 160"><path d="M105 35a50 50 0 1 0 22 78c-36 8-62-25-53-54 5-13 14-20 31-24Z" fill="url(#w-moon-fill)"/><path d="m123 36 3 9 9 3-9 3-3 9-3-9-9-3 9-3Z" fill="#ffe9ad"/><circle cx="145" cy="75" r="3" fill="#f6e5ba"/></symbol>
+    <symbol id="partly-cloudy" viewBox="0 0 160 160"><g transform="translate(27,-20) scale(.72)"><g stroke="#f3b45c" stroke-width="3" stroke-linecap="round"><path d="M80 20v9m0 102v9M20 80h9m102 0h9M38 38l7 7m70 70 7 7M38 122l7-7m70-70 7-7"/></g><circle cx="80" cy="80" r="39" fill="url(#w-sun-fill)"/><circle cx="69" cy="67" r="24" fill="#ffe5a8" opacity=".25"/></g><g transform="translate(1,25) scale(.96)" filter="url(#w-shadow)"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/></g></symbol>
+    <symbol id="night-cloud" viewBox="0 0 160 160"><g transform="translate(38,-9) scale(.67)"><path d="M105 35a50 50 0 1 0 22 78c-36 8-62-25-53-54 5-13 14-20 31-24Z" fill="url(#w-moon-fill)"/><path d="m123 36 3 9 9 3-9 3-3 9-3-9-9-3 9-3Z" fill="#ffe9ad"/><circle cx="145" cy="75" r="3" fill="#f6e5ba"/></g><g transform="translate(0,27) scale(.95)" filter="url(#w-shadow)"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/></g></symbol>
+    <symbol id="cloudy" viewBox="0 0 160 160"><g transform="translate(42,8) scale(.69)" opacity=".65"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/></g><g transform="translate(0,23)" filter="url(#w-shadow)"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/></g></symbol>
+    <symbol id="rain" viewBox="0 0 160 160"><g filter="url(#w-shadow)"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/></g><g stroke="#6b9fc5" stroke-width="5" stroke-linecap="round"><path d="m50 120-6 13m32-13-6 13m32-13-6 13"/></g></symbol>
+    <symbol id="night-rain" viewBox="0 0 160 160"><g transform="translate(38,-15) scale(.62)"><path d="M105 35a50 50 0 1 0 22 78c-36 8-62-25-53-54 5-13 14-20 31-24Z" fill="url(#w-moon-fill)"/><path d="m123 36 3 9 9 3-9 3-3 9-3-9-9-3 9-3Z" fill="#ffe9ad"/><circle cx="145" cy="75" r="3" fill="#f6e5ba"/></g><g transform="translate(0,8)"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/><g stroke="#6b9fc5" stroke-width="5" stroke-linecap="round"><path d="m50 120-6 13m32-13-6 13m32-13-6 13"/></g></g></symbol>
+    <symbol id="showers" viewBox="0 0 160 160"><g transform="translate(32,-22) scale(.65)"><g stroke="#f3b45c" stroke-width="3" stroke-linecap="round"><path d="M80 20v9m0 102v9M20 80h9m102 0h9M38 38l7 7m70 70 7 7M38 122l7-7m70-70 7-7"/></g><circle cx="80" cy="80" r="39" fill="url(#w-sun-fill)"/><circle cx="69" cy="67" r="24" fill="#ffe5a8" opacity=".25"/></g><g transform="translate(0,8)" filter="url(#w-shadow)"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/></g><g transform="translate(0,8)" stroke="#6b9fc5" stroke-width="5" stroke-linecap="round"><path d="m50 120-6 13m32-13-6 13m32-13-6 13"/></g></symbol>
+    <symbol id="storm" viewBox="0 0 160 160"><g filter="url(#w-shadow)"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/></g><path d="m78 95-15 27h14l-6 24 29-35H84l8-16Z" fill="#efb765"/><path d="m44 119-5 13m79-13-5 13" stroke="#6b9fc5" stroke-width="4" stroke-linecap="round"/></symbol>
+    <symbol id="snow" viewBox="0 0 160 160"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)"/><g stroke="#7da8bd" stroke-width="2.5" stroke-linecap="round"><path d="M50 120v20m-9-15 18 10m-18 0 18-10M107 120v20m-9-15 18 10m-18 0 18-10"/></g></symbol>
+    <symbol id="fog" viewBox="0 0 160 160"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)" opacity=".85"/><g stroke="#8babb7" stroke-width="4" stroke-linecap="round"><path d="M28 110h98M40 123h98M25 136h82"/></g></symbol>
+    <symbol id="unknown" viewBox="0 0 160 160"><circle cx="80" cy="80" r="50" fill="#e6eef1"/><path d="M64 62c0-22 34-22 34 0 0 13-18 13-18 28" fill="none" stroke="#63818c" stroke-width="8" stroke-linecap="round"/><circle cx="80" cy="108" r="5" fill="#63818c"/></symbol>
   </defs></svg>
   <a class="skip-link" href="#weather-content">Đến thông tin thời tiết</a>
   <div class="app-shell">
     <aside class="sidebar" aria-labelledby="search-title">
-      <a class="brand brand-weather" href="./" aria-label="Thời tiết, trang chính"><img class="brand-logo" src="assets/favicon.svg?v=20261026" width="38" height="38" alt=""><span>Thời tiết<span class="brand-dot">.</span></span></a>
+      <a class="brand brand-weather" href="./" aria-label="Thời tiết, trang chính"><img class="brand-logo" src="assets/favicon.svg?v=2.1.2" width="34" height="34" alt=""><span>Thời tiết<span class="brand-dot">.</span></span></a>
       
       
       
-      <details id="location-drawer" class="location-drawer" open>
+      <details id="location-drawer" class="location-drawer">
         <summary><span class="drawer-label">Chọn địa điểm<span class="drawer-hint">Tìm kiếm, định vị và các nơi đã lưu</span></span><span class="drawer-chevron" aria-hidden="true"></span></summary>
       <div class="search-panel">
         
         <h2 id="search-title">Tìm địa điểm</h2>
         <form id="search-form" novalidate>
           <label for="location-input" class="form-label">Thành phố hoặc địa điểm</label>
-          <div class="input-wrap"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input id="location-input" class="form-control search-input" type="search" placeholder="Tìm một địa điểm…" maxlength="120" autocomplete="off" aria-describedby="search-help search-status" required></div>
-          <button id="search-button" class="btn search-button" type="submit">Tìm địa điểm <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <div class="input-wrap"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-search"/></svg><input id="location-input" class="form-control search-input" type="search" placeholder="Tìm một địa điểm…" maxlength="120" autocomplete="off" aria-describedby="search-help search-status" required></div>
+          <button id="search-button" class="btn search-button" type="submit">Tìm địa điểm <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></button>
           <p id="search-help" class="field-help">Chọn đúng tỉnh và quốc gia trong kết quả.</p>
         </form>
-        <div class="location-tools" role="group" aria-labelledby="location-tools-label"><p id="location-tools-label">Vị trí của tôi</p><div class="location-tool-buttons"><button id="locate-button" class="locate-button" type="button"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg><span id="locate-label">Thời tiết gần tôi</span></button><div class="map-panel"><button id="place-map" aria-label="Xem vị trí của tôi trên bản đồ" type="button" class="btn refresh-button"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Mở bản đồ</button></div></div></div>
-        <div id="my-map-result" class="share-result" hidden><p id="my-map-status" role="status"></p><button id="map-cancel" type="button" hidden>Hủy</button><a id="my-map-link" target="_blank" rel="noopener noreferrer" hidden>Mở Google Maps <span aria-hidden="true">↗</span></a></div>
+        <div class="location-tools" role="group" aria-labelledby="location-tools-label"><p id="location-tools-label">Vị trí của tôi</p><div class="location-tool-buttons"><button id="locate-button" class="locate-button" type="button"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-sun"/></svg><span id="locate-label">Thời tiết gần tôi</span></button><div class="map-panel"><button id="place-map" aria-label="Xem vị trí tổng quát gần tôi trên bản đồ" type="button" class="btn refresh-button"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-pin"/></svg>Bản đồ khu vực</button></div></div></div>
+        <div id="my-map-result" class="share-result" hidden><p id="my-map-status" role="status"></p><div id="my-map-overview" class="map-overview" hidden></div><button id="map-cancel" type="button" hidden>Hủy</button><a id="my-map-link" target="_blank" rel="noopener noreferrer" hidden>Mở Google Maps (vùng tổng quát) <span aria-hidden="true">↗</span></a></div>
         
         <p id="locate-status" class="search-status" role="status" aria-live="polite"></p>
         <button id="locate-cancel" class="locate-secondary" type="button" hidden>Hủy định vị</button>
@@ -83,7 +99,7 @@
         <h3 id="quick-title" class="eyebrow">Địa điểm phổ biến</h3>
         <div id="quick-locations" class="quick-locations"></div>
       </section>
-      <details class="personal-section" open>
+      <details class="personal-section">
         <summary>Địa điểm của bạn</summary>
         <p class="personal-caption">Yêu thích <span>tối đa 6 nơi</span></p>
         <div id="favorite-list" class="personal-list"></div>
@@ -98,12 +114,12 @@
     <main class="main-content">
       <header class="page-header">
         <div><h1><span id="page-title-text">Thời tiết hôm nay</span><span>.</span></h1></div>
-        <div class="header-meta"><div class="date-toolbar"><label for="weather-date" class="date-picker-label">Xem ngày</label><button id="date-now" type="button" disabled>Về hôm nay</button></div><div class="day-navigation"><button id="date-prev" type="button" aria-label="Xem ngày trước" disabled>‹</button><span class="date-badge"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><select id="weather-date" disabled><option value="">Đang tải…</option></select><span id="page-date" class="visually-hidden"></span></span><button id="date-next" type="button" aria-label="Xem ngày tiếp theo" disabled>›</button></div></div>
+        <div class="header-meta"><div class="date-toolbar"><label for="weather-date" class="date-picker-label">Xem ngày</label><button id="date-now" type="button" disabled>Về hôm nay</button></div><div class="day-navigation"><button id="date-prev" type="button" aria-label="Xem ngày trước" disabled>‹</button><span class="date-badge"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-calendar"/></svg><select id="weather-date" disabled><option value="">Đang tải…</option></select><span id="page-date" class="visually-hidden"></span></span><button id="date-next" type="button" aria-label="Xem ngày tiếp theo" disabled>›</button></div></div>
       </header>
       <nav class="weather-tabs" aria-label="Các mục trên trang"><a href="#weather-content" aria-current="location">Tổng quan</a><a href="#forecast-group">Dự báo</a><a href="#conditions-group">Chỉ số</a><a href="#advice-section">Hoạt động</a><a href="#comparison-section">So sánh</a></nav>
       
       <section id="weather-content" class="weather-content" aria-labelledby="place-name" aria-busy="true">
-        <div class="overview-heading"><div class="section-label"><span class="status-dot" aria-hidden="true"></span> Tổng quan thời tiết</div><div class="overview-actions"><button id="save-location" class="btn refresh-button" type="button" aria-pressed="false" disabled>☆ Lưu yêu thích</button><button id="refresh-button" class="btn refresh-button" type="button" disabled><svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg><span>Cập nhật</span></button></div></div>
+        <div class="overview-heading"><div class="section-label"><span class="status-dot" aria-hidden="true"></span> Tổng quan thời tiết</div><div class="overview-actions"><button id="save-location" class="btn refresh-button" type="button" aria-pressed="false" disabled>☆ Lưu yêu thích</button><button id="refresh-button" class="btn refresh-button" type="button" disabled><svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-refresh"/></svg><span>Cập nhật</span></button></div></div>
 
         <p id="weather-age" class="weather-age" role="status" hidden></p>
         <p id="connection-status" class="weather-status" data-kind="error" role="status" hidden>Thiết bị đang ngoại tuyến. Hãy kết nối Internet rồi bấm Cập nhật hoặc Thử tải lại. Dữ liệu đã hiển thị có thể cũ.</p>
@@ -114,23 +130,23 @@
             <div class="sky-decoration" aria-hidden="true"><i class="orbit orbit-one"></i><i class="orbit orbit-two"></i><i class="sky-dot dot-one"></i><i class="sky-dot dot-two"></i><i class="sky-dot dot-three"></i></div>
             <div class="current-topline"><h3 id="current-title">THỜI TIẾT HIỆN TẠI</h3><span id="day-label" class="day-label"></span></div>
             <div class="current-main">
-              <div class="current-info"><div class="location-heading"><h2 id="place-name">Vĩnh Long</h2><p class="place-line"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span id="place-region">Việt Nam</span></p></div><p class="temperature"><span id="temperature">—</span><span class="degree">°C</span></p><div class="condition-line"><p id="condition" class="condition"></p><span class="condition-separator" aria-hidden="true"></span><p id="today-range"></p></div></div>
+              <div class="current-info"><div class="location-heading"><h2 id="place-name">Vĩnh Long</h2><p class="place-line"><svg class="icon" width="13" height="13" aria-hidden="true"><use href="#i-pin"/></svg><span id="place-region">Việt Nam</span></p></div><p class="temperature"><span id="temperature">—</span><span class="degree">°C</span></p><div class="condition-line"><p id="condition" class="condition"></p><span class="condition-separator" aria-hidden="true"></span><p id="today-range"></p></div></div>
               <div class="weather-art"><span id="weather-icon" class="weather-icon" aria-hidden="true"></span></div>
             </div>
             <div class="current-bottom"><p id="data-time"></p><span class="data-source">Nguồn: Open-Meteo <span aria-hidden="true">↗</span></span></div>
           </section>
           <section id="current-metrics" class="metrics row g-3" aria-label="Chi tiết thời tiết hiện tại">
-            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Độ ẩm</span><span class="metric-icon blue"><svg class="icon" aria-hidden="true"><use href="#i-drop"/></svg></span></div><p class="metric-value"><strong id="humidity">—</strong><span class="metric-unit">%</span></p><div class="humidity-track" aria-hidden="true"><span id="humidity-fill"></span></div><span class="metric-note">Độ ẩm tương đối</span></article></div>
-            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Tốc độ gió</span><span class="metric-icon mint"><svg class="icon" aria-hidden="true"><use href="#i-wind"/></svg></span></div><p class="metric-value"><strong id="wind">—</strong><span class="metric-unit">km/h</span></p><span class="metric-note">Ở độ cao 10 m</span></article></div>
-            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Cảm nhận</span><span class="metric-icon peach"><svg class="icon" aria-hidden="true"><use href="#i-temp"/></svg></span></div><p class="metric-value"><strong id="feels-like">—</strong><span class="metric-unit">°C</span></p><span class="metric-note">Nhiệt độ cảm nhận ngoài trời</span></article></div>
-            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Giáng thủy</span><span class="metric-icon lavender"><svg class="icon" aria-hidden="true"><use href="#i-rain"/></svg></span></div><p class="metric-value"><strong id="precipitation">—</strong><span class="metric-unit">mm</span></p><span class="metric-note">Trong khoảng dữ liệu hiện tại</span></article></div>
+            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Độ ẩm</span><span class="metric-icon blue"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-drop"/></svg></span></div><p class="metric-value"><strong id="humidity">—</strong><span class="metric-unit">%</span></p><div class="humidity-track" aria-hidden="true"><span id="humidity-fill"></span></div><span class="metric-note">Độ ẩm tương đối</span></article></div>
+            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Tốc độ gió</span><span class="metric-icon mint"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-wind"/></svg></span></div><p class="metric-value"><strong id="wind">—</strong><span class="metric-unit">km/h</span></p><span class="metric-note">Ở độ cao 10 m</span></article></div>
+            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Cảm nhận</span><span class="metric-icon peach"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-temp"/></svg></span></div><p class="metric-value"><strong id="feels-like">—</strong><span class="metric-unit">°C</span></p><span class="metric-note">Nhiệt độ cảm nhận ngoài trời</span></article></div>
+            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Giáng thủy</span><span class="metric-icon lavender"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-rain"/></svg></span></div><p class="metric-value"><strong id="precipitation">—</strong><span class="metric-unit">mm</span></p><span class="metric-note">Trong khoảng dữ liệu hiện tại</span></article></div>
           </section>
           <section id="daily-view" class="daily-view" hidden aria-labelledby="daily-place">
             <div class="daily-hero"><div class="daily-topline"><span>DỰ BÁO THEO NGÀY</span><span id="daily-date"></span></div><div class="daily-main"><div><h2 id="daily-place"></h2><p id="daily-region"></p><p class="daily-range"><strong id="daily-high"></strong><span id="daily-low"></span></p><p class="daily-range-label">Cao nhất / thấp nhất trong ngày</p><p id="daily-condition"></p></div><div id="daily-icon" class="daily-icon" aria-hidden="true"></div></div><p id="daily-source" class="daily-source"></p></div>
             <div id="daily-metrics" class="daily-metrics"></div>
             <p class="daily-note">Dự báo tổng quan trong ngày.</p>
           </section>
-<section id="forecast-group" class="weather-group" aria-labelledby="forecast-group-title"><div class="group-header"><h3 id="forecast-group-title"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Dự báo thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Dự báo thời tiết"><button type="button" role="tab" id="tab-hourly-section" aria-controls="pane-hourly-section" aria-selected="true" tabindex="0">Theo giờ</button><button type="button" role="tab" id="tab-forecast-section" aria-controls="pane-forecast-section" aria-selected="false" tabindex="-1">7 ngày</button></div></div><div id="pane-hourly-section" class="group-pane" role="tabpanel" aria-labelledby="tab-hourly-section" tabindex="0">          <section id="hourly-section" class="dashboard-section" aria-labelledby="hourly-title">
+<section id="forecast-group" class="weather-group" aria-labelledby="forecast-group-title"><div class="group-header"><h3 id="forecast-group-title"><svg class="icon" width="22" height="22" aria-hidden="true"><use href="#i-calendar"/></svg>Dự báo thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Dự báo thời tiết"><button type="button" role="tab" id="tab-hourly-section" aria-controls="pane-hourly-section" aria-selected="true" tabindex="0">Theo giờ</button><button type="button" role="tab" id="tab-forecast-section" aria-controls="pane-forecast-section" aria-selected="false" tabindex="-1">7 ngày</button></div></div><div id="pane-hourly-section" class="group-pane" role="tabpanel" aria-labelledby="tab-hourly-section" tabindex="0">          <section id="hourly-section" class="dashboard-section" aria-labelledby="hourly-title">
             <div class="section-heading"><div><h3 id="hourly-title">Dự báo theo giờ</h3></div><div class="hour-modes" role="group" aria-label="Chỉ số biểu đồ theo giờ"><button type="button" data-hour-mode="temperature_2m" aria-pressed="true">Nhiệt độ</button><button type="button" data-hour-mode="precipitation_probability" aria-pressed="false">Khả năng mưa</button><button type="button" data-hour-mode="wind_speed_10m" aria-pressed="false">Gió</button><button type="button" data-hour-mode="precipitation" aria-pressed="false">Lượng mưa</button></div></div>
             <p id="hourly-caption" class="dashboard-caption"></p><p id="hourly-message" class="dashboard-caption" role="status"></p>
             <div id="hourly-chart" class="hourly-chart"></div><div id="hourly-list" class="hourly-list" role="group" aria-label="Chọn giờ xem dự báo" tabindex="0"></div>
@@ -138,15 +154,15 @@
             <p class="dashboard-footnote">Vuốt hoặc cuộn ngang để xem thêm giờ. Lượng giáng thủy được tính trong giờ trước mốc dự báo.</p>
           </section>
 </div><div id="pane-forecast-section" class="group-pane" role="tabpanel" aria-labelledby="tab-forecast-section" tabindex="0" hidden>          <section id="forecast-section" class="forecast-section" aria-labelledby="forecast-title">
-            <div class="section-heading"><div><h3 id="forecast-title">Dự báo 7 ngày</h3></div><div class="view-switch" role="group" aria-label="Cách xem dự báo"><button id="cards-button" type="button" aria-pressed="true" aria-controls="forecast-list"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Tổng quan</span></button><button id="chart-button" type="button" aria-pressed="false" aria-controls="forecast-chart"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span>Biểu đồ</span></button></div></div>
+            <div class="section-heading"><div><h3 id="forecast-title">Dự báo 7 ngày</h3></div><div class="view-switch" role="group" aria-label="Cách xem dự báo"><button id="cards-button" type="button" aria-pressed="true" aria-controls="forecast-list"><svg class="icon" width="13" height="13" aria-hidden="true"><use href="#i-grid"/></svg><span>Tổng quan</span></button><button id="chart-button" type="button" aria-pressed="false" aria-controls="forecast-chart"><svg class="icon" width="13" height="13" aria-hidden="true"><use href="#i-chart"/></svg><span>Biểu đồ</span></button></div></div>
             <div id="forecast-list" class="forecast-grid"></div>
             <div id="forecast-chart" class="forecast-chart" hidden><div class="chart-header"><span>Nhiệt độ trong 7 ngày <small>°C</small></span><div class="chart-legend"><span><i class="legend-high"></i>Cao nhất</span><span><i class="legend-low"></i>Thấp nhất</span></div></div><div id="chart-graphic"></div><table id="chart-data" class="visually-hidden"><caption>Nhiệt độ cao nhất và thấp nhất từng ngày</caption><thead><tr><th scope="col">Ngày</th><th scope="col">Cao nhất °C</th><th scope="col">Thấp nhất °C</th></tr></thead><tbody></tbody></table></div>
             <p class="forecast-note">Nhiệt độ cao nhất và thấp nhất. Tỷ lệ mưa là xác suất cao nhất trong ngày.</p>
           </section>
 </div></section>
-<section id="conditions-group" class="weather-group" aria-labelledby="conditions-group-title"><div class="group-header"><h3 id="conditions-group-title"><svg class="icon" aria-hidden="true"><use href="#i-wind"/></svg>Điều kiện thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Điều kiện thời tiết"><button type="button" role="tab" id="tab-details-section" aria-controls="pane-details-section" aria-selected="true" tabindex="0">Chỉ số</button><button type="button" role="tab" id="tab-air-section" aria-controls="pane-air-section" aria-selected="false" tabindex="-1">Không khí</button></div></div><div id="pane-details-section" class="group-pane" role="tabpanel" aria-labelledby="tab-details-section" tabindex="0">          <section id="details-section" class="dashboard-section" aria-labelledby="details-title">
+<section id="conditions-group" class="weather-group" aria-labelledby="conditions-group-title"><div class="group-header"><h3 id="conditions-group-title"><svg class="icon" width="22" height="22" aria-hidden="true"><use href="#i-wind"/></svg>Điều kiện thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Điều kiện thời tiết"><button type="button" role="tab" id="tab-details-section" aria-controls="pane-details-section" aria-selected="true" tabindex="0">Chỉ số</button><button type="button" role="tab" id="tab-air-section" aria-controls="pane-air-section" aria-selected="false" tabindex="-1">Không khí</button></div></div><div id="pane-details-section" class="group-pane" role="tabpanel" aria-labelledby="tab-details-section" tabindex="0">          <section id="details-section" class="dashboard-section" aria-labelledby="details-title">
             <h3 id="details-title" class="visually-hidden">Chỉ số thời tiết hiện tại</h3>
-            <div class="weather-details-layout"><article class="sun-card"><div class="sun-card-heading"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><h4>Nhịp mặt trời</h4></div><div class="sun-times"><div><span>Mặt trời mọc</span><strong id="sunrise-time">—</strong></div><div><span>Mặt trời lặn</span><strong id="sunset-time">—</strong></div></div><p id="sun-duration" class="dashboard-caption"></p><p id="sun-note" class="dashboard-footnote"></p></article><div id="extra-metrics" class="extra-metrics"></div></div>
+            <div class="weather-details-layout"><article class="sun-card"><div class="sun-card-heading"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="#i-calendar"/></svg><h4>Nhịp mặt trời</h4></div><div class="sun-times"><div><span>Mặt trời mọc</span><strong id="sunrise-time">—</strong></div><div><span>Mặt trời lặn</span><strong id="sunset-time">—</strong></div></div><p id="sun-duration" class="dashboard-caption"></p><p id="sun-note" class="dashboard-footnote"></p></article><div id="extra-metrics" class="extra-metrics"></div></div>
             <p id="indices-note" class="dashboard-footnote" hidden></p>
           </section>
 </div><div id="pane-air-section" class="group-pane" role="tabpanel" aria-labelledby="tab-air-section" tabindex="0" hidden>          <section id="air-section" class="dashboard-section air-section" aria-labelledby="air-title" hidden>
@@ -165,7 +181,7 @@
           </section>
 </div></section>
           <section id="advice-section" class="advice-section" aria-labelledby="advice-title">
-            <div class="section-heading feature-heading"><div class="feature-title"><img class="feature-illustration" src="assets/plan-weather.svg?v=20261026" width="72" height="72" alt="" loading="lazy"><div><h3 id="advice-title">Thời tiết cho hoạt động ngoài trời</h3></div></div></div>
+            <div class="section-heading feature-heading"><div class="feature-title"><img class="feature-illustration" src="assets/plan-weather.svg?v=2.1.2" width="40" height="40" alt="" loading="lazy"><div><h3 id="advice-title">Thời tiết cho hoạt động ngoài trời</h3></div></div></div>
             
             <p id="advice-location" class="advice-location"></p>
             <p id="advice-unavailable" class="advice-notice" role="status" hidden>Đang cập nhật. Gợi ý tạm ẩn để tránh dùng thông tin cũ.</p>
@@ -183,7 +199,7 @@
             </div>
           </section>
           <section id="comparison-section" class="comparison-section" aria-labelledby="comparison-title" aria-busy="false">
-            <div class="section-heading feature-heading"><div class="feature-title"><img class="feature-illustration" src="assets/compare-weather.svg?v=20261026" width="72" height="72" alt="" loading="lazy"><div><h3 id="comparison-title">So sánh thời tiết hai nơi</h3></div></div></div>
+            <div class="section-heading feature-heading"><div class="feature-title"><img class="feature-illustration" src="assets/compare-weather.svg?v=2.1.2" width="40" height="40" alt="" loading="lazy"><div><h3 id="comparison-title">So sánh thời tiết hai nơi</h3></div></div></div>
             <p class="comparison-intro">Chọn một nơi để đối chiếu thời tiết hiện tại với địa điểm đang xem.</p>
             <form id="compare-form" class="compare-form" novalidate>
               <label for="compare-input">Địa điểm muốn so sánh</label>
@@ -200,9 +216,9 @@
             </div>
           </section>
         </div>
-        <div id="empty-view" class="empty-view"><svg class="empty-weather" viewBox="0 0 160 160" aria-hidden="true"><use href="assets/weather.svg#partly-cloudy"/></svg><h3 id="empty-title">Đang tải thời tiết</h3><p id="empty-message">Thông tin thời tiết sẽ xuất hiện ở đây.</p></div>
+        <div id="empty-view" class="empty-view"><svg class="empty-weather" viewBox="0 0 160 160" width="140" height="140" aria-hidden="true"><use href="#partly-cloudy"/></svg><h3 id="empty-title">Đang tải thời tiết</h3><p id="empty-message">Thông tin thời tiết sẽ xuất hiện ở đây.</p></div>
       </section>
-      <footer class="site-footer"><span class="footer-brand"><img class="footer-logo" src="assets/favicon.svg?v=20261026" width="30" height="30" alt=""><span class="footer-brand-copy"><b>Thời tiết.</b></span></span><span>Lê Đăng Huy <span class="footer-separator">/</span> <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a> · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span></footer>
+      <footer class="site-footer"><span class="footer-brand"><img class="footer-logo" src="assets/favicon.svg?v=2.1.2" width="30" height="30" alt=""><span class="footer-brand-copy"><b>Thời tiết.</b></span></span><span>Lê Đăng Huy <span class="footer-separator">/</span> <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a> · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span></footer>
     </main>
   </div>
   <noscript><p class="noscript-message">Hãy bật JavaScript trong trình duyệt để tìm địa điểm và tải dữ liệu thời tiết.</p></noscript>

@@ -99,7 +99,7 @@ globalThis.MayDashboardData = (() => {
     const max = key === "precipitation_probability" ? 100 : Math.ceil(Math.max(...finite) + 2);
     const x = index => left + index * (width - left - right) / Math.max(1, rows.length - 1);
     const y = n => top + (max - n) / Math.max(1, max - min) * (height - top - bottom);
-    const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": `Biểu đồ ${dataTools.specs[key][0].toLowerCase()} (${unit}). Số liệu chi tiết có ở từng thẻ giờ bên dưới.` });
+    const svg = svgElement("svg", { viewBox: `0 0 ${width} ${height}`, width: String(width), height: String(height), role: "img", "aria-label": `Biểu đồ ${dataTools.specs[key][0].toLowerCase()} (${unit}). Số liệu chi tiết có ở từng thẻ giờ bên dưới.` });
     const unitLabel = svgElement("text", { x: left - 8, y: 11, "text-anchor": "end", class: "hour-axis" });
     unitLabel.textContent = unit;
     svg.append(unitLabel);
@@ -152,7 +152,7 @@ globalThis.MayDashboardData = (() => {
     const icons = ["i-temp", "i-wind", "i-grid", "i-chart", "i-pin", "i-wind"];
     $("extra-metrics").replaceChildren(...["uv_index", "visibility", "cloud_cover", "surface_pressure", "wind_direction_10m", "wind_gusts_10m"].map((key, i) => {
       const n = dataTools.value(source, "current", key), card = node("article", "extra-metric"); card.dataset.extra = key;
-      const heading = node("div", "extra-heading"); const icon = svgElement("svg", { class: "icon", "aria-hidden": "true" }); icon.append(svgElement("use", { href: `#${icons[i]}` })); heading.append(icon, node("h4", "", dataTools.specs[key][0]));
+      const heading = node("div", "extra-heading"); const icon = svgElement("svg", { class: "icon", width: "17", height: "17", "aria-hidden": "true" }); icon.append(svgElement("use", { href: `#${icons[i]}` })); heading.append(icon, node("h4", "", dataTools.specs[key][0]));
       let text = metricText(key, n);
       if (n !== null && key === "visibility") text = `${formatNumber(n / 1000)} km`;
       if (n !== null && key === "wind_direction_10m") text = `${dataTools.direction(n)} · ${formatNumber(n)}°`;
@@ -188,6 +188,6 @@ globalThis.MayDashboardData = (() => {
     if (source && hourlyChart.clientWidth && hourlyChart.clientWidth !== chartWidth) renderChart(chartRows);
   }).observe(hourlyChart);
   window.MayDashboard = { render, onLoading };
-  if (window.matchMedia("(max-width: 760px)").matches) document.querySelector(".personal-section").open = false;
+  document.querySelector(".personal-section").open = !window.matchMedia("(max-width: 760px)").matches;
   if (state.weather) render(state.weather, $("weather-date").value);
 })();

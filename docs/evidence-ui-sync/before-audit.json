@@ -1,0 +1,1406 @@
+{
+  "phase": "before",
+  "timestamp": "2026-11-13T14:16:31.358Z",
+  "widths": {
+    "320": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 320,
+      "innerWidth": 320,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "38",
+          "heightAttr": "38",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#rain",
+          "assets/weather.svg#cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#showers",
+          "assets/weather.svg#storm",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#partly-cloudy"
+        ],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 63,
+      "svgsWithoutSizeAttrSample": [
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "input-wrap",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "search-button",
+          "parentClass": "btn search-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "locate-button",
+          "parentClass": "locate-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "place-map",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "date-badge",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "refresh-button",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        }
+      ],
+      "layout": {
+        "appShellDisplay": "block",
+        "appShellColumns": "225px minmax(0px, 1fr)",
+        "sidebarPosition": "relative",
+        "sidebarTop": -903,
+        "sidebarLeft": 0,
+        "sidebarWidth": 320,
+        "mainTop": -749,
+        "mainLeft": 0,
+        "mainWidth": 320,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": false,
+        "drawerSummaryDisplay": "flex",
+        "weatherViewColumns": "288px"
+      }
+    },
+    "360": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "38",
+          "heightAttr": "38",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#rain",
+          "assets/weather.svg#cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#showers",
+          "assets/weather.svg#storm",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#partly-cloudy"
+        ],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 63,
+      "svgsWithoutSizeAttrSample": [
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "input-wrap",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "search-button",
+          "parentClass": "btn search-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "locate-button",
+          "parentClass": "locate-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "place-map",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "date-badge",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "refresh-button",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        }
+      ],
+      "layout": {
+        "appShellDisplay": "block",
+        "appShellColumns": "225px minmax(0px, 1fr)",
+        "sidebarPosition": "relative",
+        "sidebarTop": -857,
+        "sidebarLeft": 0,
+        "sidebarWidth": 360,
+        "mainTop": -703,
+        "mainLeft": 0,
+        "mainWidth": 360,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": false,
+        "drawerSummaryDisplay": "flex",
+        "weatherViewColumns": "328px"
+      }
+    },
+    "390": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "38",
+          "heightAttr": "38",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#rain",
+          "assets/weather.svg#cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#showers",
+          "assets/weather.svg#storm",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#partly-cloudy"
+        ],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 63,
+      "svgsWithoutSizeAttrSample": [
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "input-wrap",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "search-button",
+          "parentClass": "btn search-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "locate-button",
+          "parentClass": "locate-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "place-map",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "date-badge",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "refresh-button",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        }
+      ],
+      "layout": {
+        "appShellDisplay": "block",
+        "appShellColumns": "225px minmax(0px, 1fr)",
+        "sidebarPosition": "relative",
+        "sidebarTop": -857,
+        "sidebarLeft": 0,
+        "sidebarWidth": 390,
+        "mainTop": -703,
+        "mainLeft": 0,
+        "mainWidth": 390,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": false,
+        "drawerSummaryDisplay": "flex",
+        "weatherViewColumns": "358px"
+      }
+    },
+    "430": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 430,
+      "innerWidth": 430,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "38",
+          "heightAttr": "38",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#rain",
+          "assets/weather.svg#cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#showers",
+          "assets/weather.svg#storm",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#partly-cloudy"
+        ],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 63,
+      "svgsWithoutSizeAttrSample": [
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "input-wrap",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "search-button",
+          "parentClass": "btn search-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "locate-button",
+          "parentClass": "locate-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "place-map",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "date-badge",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "refresh-button",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        }
+      ],
+      "layout": {
+        "appShellDisplay": "block",
+        "appShellColumns": "225px minmax(0px, 1fr)",
+        "sidebarPosition": "relative",
+        "sidebarTop": -840,
+        "sidebarLeft": 0,
+        "sidebarWidth": 430,
+        "mainTop": -686,
+        "mainLeft": 0,
+        "mainWidth": 430,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": false,
+        "drawerSummaryDisplay": "flex",
+        "weatherViewColumns": "398px"
+      }
+    },
+    "768": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "innerWidth": 768,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "38",
+          "heightAttr": "38",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 38,
+            "height": 38
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 48,
+            "height": 48
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 48,
+            "height": 48
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#rain",
+          "assets/weather.svg#cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#showers",
+          "assets/weather.svg#storm",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#partly-cloudy"
+        ],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 63,
+      "svgsWithoutSizeAttrSample": [
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "input-wrap",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "search-button",
+          "parentClass": "btn search-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "locate-button",
+          "parentClass": "locate-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "place-map",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "date-badge",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "refresh-button",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        }
+      ],
+      "layout": {
+        "appShellDisplay": "grid",
+        "appShellColumns": "225px 543px",
+        "sidebarPosition": "sticky",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 225,
+        "mainTop": -522,
+        "mainLeft": 225,
+        "mainWidth": 543,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": true,
+        "drawerSummaryDisplay": "none",
+        "weatherViewColumns": "495px"
+      }
+    },
+    "1024": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 1024,
+      "innerWidth": 1024,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "38",
+          "heightAttr": "38",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 38,
+            "height": 38
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 48,
+            "height": 48
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 48,
+            "height": 48
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#rain",
+          "assets/weather.svg#cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#showers",
+          "assets/weather.svg#storm",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#partly-cloudy"
+        ],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 63,
+      "svgsWithoutSizeAttrSample": [
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "input-wrap",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "search-button",
+          "parentClass": "btn search-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "locate-button",
+          "parentClass": "locate-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "place-map",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "date-badge",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "refresh-button",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        }
+      ],
+      "layout": {
+        "appShellDisplay": "grid",
+        "appShellColumns": "225px 799px",
+        "sidebarPosition": "sticky",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 225,
+        "mainTop": -497,
+        "mainLeft": 225,
+        "mainWidth": 799,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": true,
+        "drawerSummaryDisplay": "none",
+        "weatherViewColumns": "751px"
+      }
+    },
+    "1440": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "38",
+          "heightAttr": "38",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 38,
+            "height": 38
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 48,
+            "height": 48
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=20261026",
+          "widthAttr": "72",
+          "heightAttr": "72",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 48,
+            "height": 48
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=20261026",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#moon",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#rain",
+          "assets/weather.svg#cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#showers",
+          "assets/weather.svg#storm",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#partly-cloudy",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#clear",
+          "assets/weather.svg#partly-cloudy"
+        ],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 63,
+      "svgsWithoutSizeAttrSample": [
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "input-wrap",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "search-button",
+          "parentClass": "btn search-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "locate-button",
+          "parentClass": "locate-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "place-map",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "quick-button",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "",
+          "parentClass": "date-badge",
+          "widthAttr": null,
+          "heightAttr": null
+        },
+        {
+          "className": "icon",
+          "parentId": "refresh-button",
+          "parentClass": "btn refresh-button",
+          "widthAttr": null,
+          "heightAttr": null
+        }
+      ],
+      "layout": {
+        "appShellDisplay": "grid",
+        "appShellColumns": "252px 1188px",
+        "sidebarPosition": "sticky",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 252,
+        "mainTop": -270,
+        "mainLeft": 252,
+        "mainWidth": 1188,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": true,
+        "drawerSummaryDisplay": "none",
+        "weatherViewColumns": "666.188px 429.797px"
+      }
+    }
+  }
+}

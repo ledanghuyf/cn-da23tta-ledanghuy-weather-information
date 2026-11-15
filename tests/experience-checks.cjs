@@ -16,7 +16,7 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     for(const [code,weather,symbol] of [[0,'sunny','moon'],[3,'cloudy','night-cloud'],[61,'rain','night-rain'],[95,'storm','storm']]){
       const d=fixture(baseFixture);d.current.is_day=0;d.current.weather_code=code;await show(d);
       assert.equal(await page.locator('body').getAttribute('data-phase'),'night');assert.equal(await page.locator('body').getAttribute('data-weather'),weather);
-      assert.equal(await page.locator('#weather-icon use').getAttribute('href'),`assets/weather.svg#${symbol}`);
+      assert.equal(await page.locator('#weather-icon use').getAttribute('href'),`#${symbol}`);
       heights.push((await page.locator('#current-panel').boundingBox()).height);
       await page.locator('#current-panel').screenshot({path:path.join(evidence,`theme-night-${weather}.png`)});
     }

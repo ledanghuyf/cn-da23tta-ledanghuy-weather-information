@@ -3,7 +3,7 @@
 (() => {
   const drawer = document.getElementById('location-drawer');
   const small = window.matchMedia('(max-width: 760px)');
-  if (small.matches) drawer.open = false;
+  drawer.open = !small.matches;
   small.addEventListener('change', event => { if (!event.matches) drawer.open = true; });
   drawer.addEventListener('keydown', event => {
     if (event.key === 'Escape' && small.matches) { drawer.open = false; drawer.querySelector('summary').focus(); }

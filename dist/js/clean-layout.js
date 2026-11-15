@@ -1,8 +1,7 @@
 "use strict";
-// Trên điện thoại, người dùng mở danh sách đã lưu khi cần.
-if (window.matchMedia("(max-width: 760px)").matches) {
-  document.querySelector(".personal-section").open = false;
-}
+// Trên màn hình nhỏ, thu gọn danh sách đã lưu để phần thời tiết lên ngay đầu trang.
+if (window.matchMedia("(max-width: 760px)").matches) document.querySelector(".personal-section").open = false;
+else document.querySelector(".personal-section").open = true;
 
 // Each group keeps its own selected view; API updates only render inside the panes.
 (() => {

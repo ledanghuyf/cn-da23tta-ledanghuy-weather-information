@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-09T17:13:53.591Z",
+  "date": "2026-11-13T16:22:36.390Z",
   "results": [
     {
       "name": "L01 Nguồn, mốc dữ liệu, AQI và nồng độ khớp JSON",
@@ -42,7 +42,7 @@
       "status": "PASS"
     },
     {
-      "name": "L14 Google Maps mở đúng tọa độ thiết bị và ẩn liên kết khi từ chối hoặc hủy",
+      "name": "L14 Bản đồ khu vực tự mở ngay tab Google Maps vùng tổng quát kèm chấm đỏ và ẩn khi từ chối hoặc hủy",
       "status": "PASS"
     },
     {

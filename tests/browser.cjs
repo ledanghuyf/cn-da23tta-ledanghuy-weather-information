@@ -36,13 +36,17 @@ const errors = [];
 const json = (route, value, status=200) => route.fulfill({status,contentType:'application/json',body:JSON.stringify(value)});
 async function ready(){await page.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');}
 async function statusHas(text){await page.waitForFunction(t=>document.getElementById('weather-status').textContent.includes(t),text);}
+async function openDrawer(p=page){
+  if(!await p.locator('#location-drawer').evaluate(el=>el.open))await p.locator('#location-drawer>summary').click();
+  if(!await p.locator('.personal-section').evaluate(el=>el.open))await p.locator('.personal-section>summary').click();
+}
 async function reset(){
   forecast = route=>json(route,fixture);
   geocoding = route=>json(route,{results:locations});
   await context.setOffline(false);
   await page.goto(base);
   await ready();
-  if(!await page.locator('#location-drawer').evaluate(el=>el.open))await page.locator('#location-drawer>summary').click();
+  await openDrawer();
 }
 async function search(value){await page.locator('#location-input').fill(value);await page.locator('#location-input').press('Enter');await page.waitForFunction(()=>!document.getElementById('search-button').disabled);}
 async function test(name,fn){
@@ -164,7 +168,7 @@ async function main(){
       const d=clone();d.current.weather_code=code;d.current.is_day=isDay;forecast=r=>json(r,d);
       await page.locator('#refresh-button').click();await ready();
       assert.equal(await page.locator('#current-panel').getAttribute('data-scene'),scene);
-      assert.equal(await page.locator('#weather-icon use').getAttribute('href'),`assets/weather.svg#${symbol}`);
+      assert.equal(await page.locator('#weather-icon use').getAttribute('href'),`#${symbol}`);
       if(scene==='night'){
         await page.setViewportSize({width:1366,height:900});
         await page.screenshot({path:path.join(evidence,'ban-dem.png'),fullPage:true});
@@ -176,11 +180,11 @@ async function main(){
     assert.deepEqual(errors,[]);
   });
   await test('25 Lưu yêu thích, chống trùng và tải lại trang',async()=>{
-    await reset();await page.evaluate(()=>localStorage.clear());await page.reload();await ready();
+    await reset();await page.evaluate(()=>localStorage.clear());await page.reload();await ready();await openDrawer();
     await page.locator('#save-location').click();
     assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
     assert.equal(await page.locator('#save-location').getAttribute('aria-pressed'),'true');
-    await page.reload();await ready();assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
+    await page.reload();await ready();await openDrawer();assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('may.locations.v1')));
     assert.equal(saved.favorites[0].name,'Vĩnh Long');assert.equal(saved.history.length,1);
     assert.equal(JSON.stringify(saved).includes('temperature'),false);
@@ -280,6 +284,63 @@ async function main(){
   await require('./experience-checks.cjs')({page,test,baseFixture:fixture,setForecast:handler=>{forecast=handler;},json,ready,evidence});
   await require('./dashboard-checks.cjs')({page,test,baseFixture:fixture,setForecast:handler=>{forecast=handler;},json,ready,evidence});
   await require('./location-checks.cjs')({page,test,baseFixture:fixture,setForecast:handler=>{forecast=handler;},json,ready,evidence});
+  await test('56 Logo, ảnh minh họa, biểu tượng SVG cục bộ và bố cục máy tính/điện thoại ở 320–1440 px',async()=>{
+    await reset();
+    await page.locator('#compare-quick button').first().click();await compareReady();
+    for(const width of [320,360,390,430,768,1024,1440]){
+      await page.setViewportSize({width,height:900});
+      await page.evaluate(()=>{for(const img of document.querySelectorAll('img'))img.scrollIntoView();window.scrollTo(0,0);});
+      const check=await page.evaluate(()=>{
+        const imgs=[...document.querySelectorAll('img')].map(img=>{
+          const r=img.getBoundingClientRect(),p=img.parentElement.getBoundingClientRect();
+          const clipped=r.width===0||r.height===0||r.left<p.left-1||r.right>p.right+1||r.top<p.top-1||r.bottom>p.bottom+1;
+          return {src:img.getAttribute('src'),wAttr:img.getAttribute('width'),hAttr:img.getAttribute('height'),nw:img.naturalWidth,clipped};
+        });
+        const svgsWithoutSize=[...document.querySelectorAll('svg:not(.icon-definitions)')].filter(s=>!s.getAttribute('width')||!s.getAttribute('height')).length;
+        const uses=[...document.querySelectorAll('use')].map(u=>{
+          const href=u.getAttribute('href')||'';
+          const svg=u.closest('svg');
+          const hidden=Boolean(u.closest('[hidden]'))||Boolean(u.closest('details:not([open])>:not(summary)'))||(svg&&getComputedStyle(svg).display==='none');
+          const sr=svg?svg.getBoundingClientRect():{width:0,height:0};
+          const ur=u.getBoundingClientRect();
+          return {href,local:href.startsWith('#')&&Boolean(document.querySelector(href)),hidden,zero:!hidden&&(sr.width===0||sr.height===0||ur.width===0||ur.height===0)};
+        });
+        const shell=getComputedStyle(document.querySelector('.app-shell'));
+        const sidebar=getComputedStyle(document.querySelector('.sidebar'));
+        const summary=getComputedStyle(document.querySelector('#location-drawer>summary'));
+        return {
+          overflow:document.documentElement.scrollWidth>window.innerWidth,
+          imgs,
+          svgsWithoutSize,
+          externalUses:uses.filter(u=>!u.href.startsWith('#')).length,
+          missingSymbols:uses.filter(u=>!u.local).length,
+          zeroUses:uses.filter(u=>u.zero).length,
+          shellDisplay:shell.display,
+          sidebarPosition:sidebar.position,
+          summaryDisplay:summary.display
+        };
+      });
+      assert.equal(check.overflow,false,`Overflow at ${width}`);
+      assert.equal(check.svgsWithoutSize,0,`SVG missing width/height at ${width}`);
+      assert.equal(check.externalUses,0,`External <use> at ${width}`);
+      assert.equal(check.missingSymbols,0,`Missing symbol at ${width}`);
+      assert.equal(check.zeroUses,0,`Zero-size visible <use> at ${width}`);
+      if(width>760){
+        assert.equal(check.shellDisplay,'grid',`Desktop shell display at ${width}`);
+        assert.equal(check.sidebarPosition,'sticky',`Desktop sidebar position at ${width}`);
+        assert.equal(check.summaryDisplay,'none',`Desktop drawer summary display at ${width}`);
+      }else{
+        assert.equal(check.shellDisplay,'block',`Mobile shell display at ${width}`);
+        assert.equal(check.summaryDisplay,'flex',`Mobile drawer summary display at ${width}`);
+      }
+      for(const img of check.imgs){
+        assert.ok(img.nw>0,`Image naturalWidth=0 (${img.src}) at ${width}`);
+        assert.ok(img.wAttr&&img.hAttr,`Image missing width/height (${img.src}) at ${width}`);
+        assert.ok(img.src.includes('?v=2.1.2'),`Image version query (${img.src}) at ${width}`);
+        assert.equal(img.clipped,false,`Image clipped (${img.src}) at ${width}`);
+      }
+    }
+  });
   await test('41 Không có lỗi JavaScript sau toàn bộ tính năng mới',async()=>assert.deepEqual(errors,[]));
   await context.close();
   // API thật: tách riêng để không nhầm kết quả mô phỏng với kết nối Internet.
@@ -302,6 +363,7 @@ async function main(){
     await livePage.setViewportSize({width:1440,height:1050});
   });
   for(const [index,city] of ['Hanoi','Tokyo'].entries()) await test(`${20+index} API thật tìm và chọn ${city}`,async()=>{
+    await openDrawer(livePage);
     await livePage.locator('#location-input').fill(city);await livePage.locator('#location-input').press('Enter');
     await livePage.waitForFunction(()=>!document.getElementById('search-button').disabled);
     assert.ok(await livePage.locator('.result-button').count(),await livePage.locator('#search-status').innerText());
@@ -322,6 +384,7 @@ async function main(){
     await livePage.locator('#comparison-section').screenshot({path:path.join(evidence,'so-sanh-api-that.png')});
     await livePage.screenshot({path:path.join(evidence,'toan-trang-moi.png'),fullPage:true});
     await livePage.reload();await livePage.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');
+    await openDrawer(livePage);
     assert.equal(await livePage.locator('#favorite-list .personal-place').count(),1);
     await livePage.locator('#favorite-list .personal-place').click();
     await livePage.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');

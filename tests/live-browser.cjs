@@ -6,7 +6,7 @@ const freshAir=()=>({latitude:10.3,longitude:106,timezone:'Asia/Ho_Chi_Minh',utc
 let weather=freshWeather(),air=freshAir(),airMode='ok',weatherMode='ok',weatherCalls=0;
 const results=[],errors=[],api=[];let page,context,browser,url,delayResolve;
 const server=http.createServer((req,res)=>{const p=path.resolve(root,'dist','.'+(new URL(req.url,'http://x').pathname==='/'?'/index.html':new URL(req.url,'http://x').pathname));if(!p.startsWith(path.join(root,'dist')+path.sep)){res.writeHead(403).end();return}fs.readFile(p,(e,data)=>{if(e){res.writeHead(404).end();return}res.setHeader('Content-Type',({'.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.html':'text/html; charset=utf-8'})[path.extname(p)]||'text/plain');res.end(data)})});
-const ready=()=>page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');
+const ready=async()=>{await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');if(!await page.locator('#location-drawer').evaluate(el=>el.open))await page.locator('#location-drawer>summary').click()};
 const airReady=async()=>{await page.waitForFunction(()=>document.querySelector('#air-section').getAttribute('aria-busy')==='false');await page.locator('#tab-air-section').click()};
 const refresh=async()=>{await page.locator('#refresh-button').click();await ready();await airReady()};
 async function test(name,fn){try{await fn();results.push({name,status:'PASS'});console.log('PASS '+name)}catch(e){results.push({name,status:'FAIL',error:e.message});console.error('FAIL '+name+' '+e.message)}}
@@ -25,29 +25,28 @@ await test('L04 Đổi địa điểm bỏ phản hồi AQI đến trễ',async(
 await test('L05 Lỗi cập nhật thời tiết ghi rõ bản cũ, không hiện AQI nơi khác',async()=>{weatherMode='error';await page.locator('#refresh-button').click();await ready();assert.match(await page.locator('#weather-status').innerText(),/Đang giữ thông tin đã tải/);assert.equal(await page.locator('#air-values').isVisible(),false);weatherMode='ok';await refresh()});
 await test('L06 Bỏ công cụ kỹ thuật khỏi giao diện',async()=>{assert.equal(await page.locator('#export-weather,#export-air,#air-api,#source-api').count(),0);assert.equal(await page.locator('#share-place,#share-result,#auto-refresh,#source-details,#live-status,.live-caption').count(),0);assert.equal(await page.locator('.map-panel button:visible').count(),1);assert.equal(await page.locator('#place-map').isVisible(),true)});
 await test('L07 Chia sẻ mở đúng địa điểm, tên HTML không thực thi, URL lỗi trở về mặc định',async()=>{const link=url+'/?lat=21.0245&lon=105.8412&place='+encodeURIComponent('Hà Nội');await page.goto(link);await ready();await airReady();assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');await page.goto(url+'/?lat=0&lon=0&place='+encodeURIComponent('<img src=x onerror=alert(1)>'));await ready();await airReady();assert.equal(await page.locator('#place-name img').count(),0);assert.match(await page.locator('#place-name').innerText(),/<img/);await page.goto(url+'/?lat=bad&lon=0');await ready();await airReady();assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long')});
-await test('L08 AQI luôn ghi mốc hiện tại khi xem ngày khác; mã lạ dùng hình trung tính',async()=>{await page.locator('#weather-date').selectOption(base.daily.time[2]);assert.match(await page.locator('#air-section .feature-badge').innerText(),/Hiện tại/);assert.equal(await page.locator('#air-us_aqi').innerText(),'66');await page.locator('#weather-date').selectOption('');weather.current.weather_code=777;await refresh();assert.equal(await page.locator('#weather-icon use').getAttribute('href'),'assets/weather.svg#unknown');weather=freshWeather();await refresh()});
+await test('L08 AQI luôn ghi mốc hiện tại khi xem ngày khác; mã lạ dùng hình trung tính',async()=>{await page.locator('#weather-date').selectOption(base.daily.time[2]);assert.match(await page.locator('#air-section .feature-badge').innerText(),/Hiện tại/);assert.equal(await page.locator('#air-us_aqi').innerText(),'66');await page.locator('#weather-date').selectOption('');weather.current.weather_code=777;await refresh();assert.equal(await page.locator('#weather-icon use').getAttribute('href'),'#unknown');weather=freshWeather();await refresh()});
 await test('L09 Không tự gọi lại API khi đã bỏ tùy chọn tự cập nhật',async()=>{await page.clock.install();await page.goto(url);await ready();await airReady();const before=weatherCalls;await page.clock.fastForward(16*60000);assert.equal(weatherCalls,before);await page.clock.resume()});
 await test('L10 Desktop/mobile không tràn, tải được hình; lưu minh chứng',async()=>{for(const width of [1440,390,320]){await page.setViewportSize({width,height:1000});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.locator('#air-section').scrollIntoViewIfNeeded();await page.locator('#air-section').screenshot({path:path.join(out,`aqi-mophong-${width}.png`)});await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(out,`trang-mophong-${width}.png`)});}});
-await test('L14 Google Maps mở đúng tọa độ thiết bị và ẩn liên kết khi từ chối hoặc hủy',async()=>{
- await page.evaluate(()=>{window.open=()=>null;Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition(ok){ok({coords:{latitude:10.12345,longitude:106.54321,accuracy:24}})}}})});
- await page.locator('#place-map').click();
- const mapLink=page.getByRole('link',{name:'Mở Google Maps'});
- const mapUrl=new URL(await mapLink.getAttribute('href'));
+await test('L14 Bản đồ khu vực tự mở ngay tab Google Maps vùng tổng quát kèm chấm đỏ và ẩn khi từ chối hoặc hủy',async()=>{
+ await page.setViewportSize({width:1440,height:1000});
+ if(!await page.locator('#location-drawer').evaluate(el=>el.open))await page.locator('#location-drawer>summary').click();
+ await page.evaluate(()=>{Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition(ok){ok({coords:{latitude:10.12345,longitude:106.54321,accuracy:24}})}}})});
+ await context.route('https://www.google.com/maps/place/**',route=>route.fulfill({body:'Map navigation check'}));
+ const [mapTab]=await Promise.all([page.waitForEvent('popup'),page.locator('#place-map').click()]);
+ await mapTab.waitForURL('https://www.google.com/maps/place/**');
+ const mapUrl=new URL(mapTab.url());
  assert.equal(mapUrl.origin,'https://www.google.com');
- assert.equal(mapUrl.pathname,'/maps/search/');
- assert.equal(mapUrl.searchParams.get('api'),'1');
- assert.equal(mapUrl.searchParams.get('query'),'10.12345,106.54321');
- await context.route('https://www.google.com/maps/search/**',route=>route.fulfill({body:'Map navigation check'}));
- const [mapTab]=await Promise.all([page.waitForEvent('popup'),mapLink.click()]);
- assert.equal(mapTab.url(),mapUrl.href);
+ assert.equal(mapUrl.pathname,'/maps/place/10.12,106.54/@10.12,106.54,11z');
  await mapTab.close();
- await page.locator('#my-map-result').screenshot({path:path.join(out,'mo-google-maps.png')});
- assert.match(await page.locator('#my-map-status').innerText(),/Đã lấy vị trí/);
+ assert.equal(await page.locator('#my-map-result').isVisible(),false);
+ assert.equal(await page.locator('#my-map-link').isVisible(),false);
+ await page.locator('.location-tools').screenshot({path:path.join(out,'mo-google-maps.png')});
  await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition(ok,fail){fail({code:1})}}}));
- await page.locator('#place-map').click();assert.equal(await page.locator('#my-map-link').isVisible(),false);assert.match(await page.locator('#my-map-status').innerText(),/bị chặn/);
+ await page.locator('#place-map').click();assert.equal(await page.locator('#my-map-link').isVisible(),false);assert.equal(await page.locator('#my-map-overview').isVisible(),false);assert.match(await page.locator('#my-map-status').innerText(),/bị chặn/);
  await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition(ok){window.lateMap=ok}}}));
  await page.locator('#place-map').click();await page.locator('#map-cancel').click();
- await page.evaluate(()=>window.lateMap({coords:{latitude:1,longitude:1}}));assert.equal(await page.locator('#my-map-link').isVisible(),false);assert.equal(await page.locator('#place-map').isDisabled(),false);
+ await page.evaluate(()=>window.lateMap({coords:{latitude:1,longitude:1}}));assert.equal(await page.locator('#my-map-overview').isVisible(),false);assert.equal(await page.locator('#place-map').isDisabled(),false);
 });
 await test('L15 Mây và thanh nhiệt độ nằm trong từng thẻ ở mọi độ rộng',async()=>{
  await page.locator('#tab-forecast-section').click();

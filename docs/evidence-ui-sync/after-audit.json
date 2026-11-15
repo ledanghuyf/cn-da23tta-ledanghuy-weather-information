@@ -1,0 +1,657 @@
+{
+  "phase": "after",
+  "timestamp": "2026-11-13T15:27:39.289Z",
+  "widths": {
+    "320": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 320,
+      "innerWidth": 320,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "34",
+          "heightAttr": "34",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 0,
+      "svgsWithoutSizeAttrSample": [],
+      "layout": {
+        "appShellDisplay": "block",
+        "appShellColumns": "242px minmax(0px, 1fr)",
+        "sidebarPosition": "relative",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 320,
+        "mainTop": 161,
+        "mainLeft": 0,
+        "mainWidth": 320,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": false,
+        "drawerSummaryDisplay": "flex",
+        "weatherViewColumns": "292px"
+      }
+    },
+    "360": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "34",
+          "heightAttr": "34",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 0,
+      "svgsWithoutSizeAttrSample": [],
+      "layout": {
+        "appShellDisplay": "block",
+        "appShellColumns": "242px minmax(0px, 1fr)",
+        "sidebarPosition": "relative",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 360,
+        "mainTop": 161,
+        "mainLeft": 0,
+        "mainWidth": 360,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": false,
+        "drawerSummaryDisplay": "flex",
+        "weatherViewColumns": "332px"
+      }
+    },
+    "390": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "34",
+          "heightAttr": "34",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 0,
+      "svgsWithoutSizeAttrSample": [],
+      "layout": {
+        "appShellDisplay": "block",
+        "appShellColumns": "242px minmax(0px, 1fr)",
+        "sidebarPosition": "relative",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 390,
+        "mainTop": 161,
+        "mainLeft": 0,
+        "mainWidth": 390,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": false,
+        "drawerSummaryDisplay": "flex",
+        "weatherViewColumns": "358px"
+      }
+    },
+    "430": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 430,
+      "innerWidth": 430,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "34",
+          "heightAttr": "34",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 0,
+      "svgsWithoutSizeAttrSample": [],
+      "layout": {
+        "appShellDisplay": "block",
+        "appShellColumns": "242px minmax(0px, 1fr)",
+        "sidebarPosition": "relative",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 430,
+        "mainTop": 161,
+        "mainLeft": 0,
+        "mainWidth": 430,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": false,
+        "drawerSummaryDisplay": "flex",
+        "weatherViewColumns": "398px"
+      }
+    },
+    "768": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 768,
+      "innerWidth": 768,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "34",
+          "heightAttr": "34",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 0,
+      "svgsWithoutSizeAttrSample": [],
+      "layout": {
+        "appShellDisplay": "grid",
+        "appShellColumns": "242px 526px",
+        "sidebarPosition": "sticky",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 242,
+        "mainTop": 0,
+        "mainLeft": 242,
+        "mainWidth": 526,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": true,
+        "drawerSummaryDisplay": "none",
+        "weatherViewColumns": "478px"
+      }
+    },
+    "1024": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 1024,
+      "innerWidth": 1024,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "34",
+          "heightAttr": "34",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 0,
+      "svgsWithoutSizeAttrSample": [],
+      "layout": {
+        "appShellDisplay": "grid",
+        "appShellColumns": "242px 782px",
+        "sidebarPosition": "sticky",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 242,
+        "mainTop": 0,
+        "mainLeft": 242,
+        "mainWidth": 782,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": true,
+        "drawerSummaryDisplay": "none",
+        "weatherViewColumns": "734px"
+      }
+    },
+    "1440": {
+      "consoleErrors": [],
+      "pageErrors": [],
+      "networkErrors": [],
+      "overflowX": false,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "imgs": [
+        {
+          "className": "brand-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "34",
+          "heightAttr": "34",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 34,
+            "height": 34
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/plan-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "feature-illustration",
+          "src": "assets/compare-weather.svg?v=2.1.2",
+          "widthAttr": "40",
+          "heightAttr": "40",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 40,
+            "height": 40
+          },
+          "clipped": false
+        },
+        {
+          "className": "footer-logo",
+          "src": "assets/favicon.svg?v=2.1.2",
+          "widthAttr": "30",
+          "heightAttr": "30",
+          "altAttr": "",
+          "complete": true,
+          "naturalWidth": 150,
+          "naturalHeight": 150,
+          "rect": {
+            "width": 30,
+            "height": 30
+          },
+          "clipped": false
+        }
+      ],
+      "usesSummary": {
+        "total": 61,
+        "externalRefs": [],
+        "missingLocalSymbols": [],
+        "zeroSizeVisibleUses": []
+      },
+      "svgsWithoutSizeAttrCount": 0,
+      "svgsWithoutSizeAttrSample": [],
+      "layout": {
+        "appShellDisplay": "grid",
+        "appShellColumns": "272px 1168px",
+        "sidebarPosition": "sticky",
+        "sidebarTop": 0,
+        "sidebarLeft": 0,
+        "sidebarWidth": 272,
+        "mainTop": 0,
+        "mainLeft": 272,
+        "mainWidth": 1168,
+        "mainMaxWidth": "1560px",
+        "drawerOpen": true,
+        "drawerSummaryDisplay": "none",
+        "weatherViewColumns": "651.594px 420.391px"
+      }
+    }
+  }
+}

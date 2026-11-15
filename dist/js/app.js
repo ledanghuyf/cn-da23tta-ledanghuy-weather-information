@@ -75,8 +75,8 @@ function svgElement(tag, attributes = {}) {
 }
 
 function weatherGraphic(code, isDay = 1) {
-  const svg = svgElement("svg", { viewBox: "0 0 160 160", "aria-hidden": "true", focusable: "false" });
-  svg.append(svgElement("use", { href: `assets/weather.svg#${weatherSymbol(code, isDay)}` }));
+  const svg = svgElement("svg", { viewBox: "0 0 160 160", width: "160", height: "160", "aria-hidden": "true", focusable: "false" });
+  svg.append(svgElement("use", { href: `#${weatherSymbol(code, isDay)}` }));
   return svg;
 }
 
@@ -87,7 +87,7 @@ function renderQuickLocations() {
     button.type = "button";
     button.className = "quick-button";
     button.setAttribute("aria-pressed", "false");
-    const icon = svgElement("svg", { class: "icon", "aria-hidden": "true" });
+    const icon = svgElement("svg", { class: "icon", width: "14", height: "14", "aria-hidden": "true" });
     icon.append(svgElement("use", { href: "#i-pin" }));
     const label = document.createElement("span");
     label.textContent = location.name;
@@ -430,7 +430,7 @@ function renderTemperatureChart(daily) {
   const right = compact ? 19 : 26;
   const x = (i) => left + i * (width - left - right) / Math.max(1, highs.length - 1);
   const y = (value) => 190 - (value - min) / (max - min) * 150;
-  const svg = svgElement("svg", { viewBox: `0 0 ${width} 240`, role: "img", "aria-labelledby": "chart-title chart-desc" });
+  const svg = svgElement("svg", { viewBox: `0 0 ${width} 240`, width: String(width), height: "240", role: "img", "aria-labelledby": "chart-title chart-desc" });
   const title = svgElement("title", { id: "chart-title" });
   title.textContent = "Biểu đồ nhiệt độ cao nhất và thấp nhất trong 7 ngày";
   const description = svgElement("desc", { id: "chart-desc" });
