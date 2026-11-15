@@ -203,24 +203,23 @@ async function searchLocations(rawQuery) {
   $("location-input").removeAttribute("aria-invalid");
   $("search-button").disabled = true;
   setStatus("search-status", "Đang tìm địa điểm…");
-  const url = new URL(API.geocoding);
-  url.search = new URLSearchParams({ name: query, count: "8", language: "vi", format: "json" });
   try {
-    const data = await fetchJSON(url, controller.signal);
+    const data = await fetchJSON(geocodingURL(query), controller.signal);
     if (controller.signal.aborted) return [];
     if (data.results !== undefined && !Array.isArray(data.results)) {
       throw new Error("Danh sách địa điểm trả về không hợp lệ. Vui lòng thử lại.");
     }
-    state.results = Array.isArray(data.results) ? data.results.filter((item) => {
+    const valid = Array.isArray(data.results) ? data.results.filter((item) => {
       try { validateLocation(item); return true; } catch { return false; }
     }) : [];
-    if (data.results?.length && !state.results.length) {
+    if (data.results?.length && !valid.length) {
       throw new Error("Dịch vụ trả về địa điểm thiếu thông tin tọa độ. Vui lòng thử lại.");
     }
+    state.results = valid.filter(inVietnam);
     renderSearchResults();
     setStatus("search-status", state.results.length
       ? `Tìm thấy ${state.results.length} địa điểm. Chọn nơi bạn muốn xem.`
-      : "Không tìm thấy địa điểm. Thử tên thành phố khác hoặc tên không dấu.");
+      : "Không tìm thấy địa điểm ở Việt Nam. Thử tên tỉnh, thành khác hoặc gõ không dấu.");
     return state.results;
   } catch (error) {
     if (!controller.signal.aborted) setStatus("search-status", error.message, "error");
@@ -229,6 +228,14 @@ async function searchLocations(rawQuery) {
     if (state.searchController === controller) $("search-button").disabled = false;
   }
 }
+
+// Ứng dụng chỉ hỗ trợ địa điểm ở Việt Nam: nhờ dịch vụ lọc sẵn (countryCode) và tự kiểm tra lại từng kết quả.
+function geocodingURL(query) {
+  const url = new URL(API.geocoding);
+  url.search = new URLSearchParams({ name: query, count: "8", language: "vi", format: "json", countryCode: "VN" });
+  return url;
+}
+const inVietnam = (item) => item?.country_code === "VN";
 
 function renderSearchResults() {
   const focusedIndex = [...$("search-results").children].indexOf(document.activeElement);

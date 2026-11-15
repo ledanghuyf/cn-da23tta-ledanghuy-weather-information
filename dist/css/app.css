@@ -542,6 +542,33 @@ dd { font-size: 15px; font-weight: 650; }
   .temperature { font-size: 88px; }
 }
 
+/* ---------- Hiệu ứng động (tắt hết khi người dùng chọn giảm chuyển động) ---------- */
+/* Mỗi lần tải xong (aria-busy về false): các khối lần lượt trượt lên và hiện dần — báo hiệu dữ liệu đã mới. */
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+.weather-content[aria-busy="false"] #weather-view > * { animation: rise .6s cubic-bezier(.2, .7, .2, 1) both; }
+.weather-content[aria-busy="false"] #weather-view > :nth-child(2) { animation-delay: .06s; }
+.weather-content[aria-busy="false"] #weather-view > :nth-child(3) { animation-delay: .12s; }
+.weather-content[aria-busy="false"] #weather-view > :nth-child(4) { animation-delay: .18s; }
+.weather-content[aria-busy="false"] #weather-view > :nth-child(n+5) { animation-delay: .24s; }
+.weather-content[aria-busy="false"] .highlight { animation: rise .5s .3s cubic-bezier(.2, .7, .2, 1) both; }
+.weather-content[aria-busy="false"] .highlight:nth-child(2) { animation-delay: .4s; }
+.weather-content[aria-busy="false"] .highlight:nth-child(3) { animation-delay: .5s; }
+/* Biểu tượng cảnh báo khẽ nhún để thu hút ánh nhìn (không nhấp nháy). */
+@keyframes nudge { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(-3px); } 90% { transform: translateY(1px); } }
+.highlight:not(.is-calm) > .icon { animation: nudge 3.2s ease-in-out 1s infinite; }
+/* Rê chuột lên ô chỉ số: nhích nhẹ lên. */
+.metric, .daily-metric, .extra-metric, .sun-card, .air-metric, .air-score { transition: transform .25s ease, background-color .25s ease; }
+@media (hover: hover) { .metric:hover, .daily-metric:hover, .extra-metric:hover, .sun-card:hover, .air-metric:hover, .air-score:hover { transform: translateY(-3px); } }
+/* Mặt trời "thở": quầng nắng phồng nhẹ theo chu kỳ. */
+@keyframes sun-breathe { 50% { transform: scale(1.06); opacity: .85; } }
+body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow { animation: sun-breathe 7s ease-in-out infinite; }
+/* Ban đêm: sao lấp lánh và thỉnh thoảng có sao băng (mỗi ~14 giây). */
+@keyframes twinkle { from { opacity: .5; } to { opacity: .9; } }
+body[data-phase="night"]:not([data-weather="rain"]):not([data-weather="storm"]) .sky-stars { animation: twinkle 4s ease-in-out infinite alternate; }
+.sky-stars::after { content: ""; position: absolute; top: 12%; left: 62%; width: 120px; height: 1.5px; border-radius: 2px; background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0)); opacity: 0; transform: rotate(-24deg); } /* đầu sáng ở bên trái = hướng bay xuống trái */
+@keyframes shooting-star { 0%, 88% { opacity: 0; transform: translate(0, 0) rotate(-24deg); } 89% { opacity: 1; } 95% { opacity: 0; transform: translate(-260px, 116px) rotate(-24deg); } 100% { opacity: 0; } }
+body[data-phase="night"]:not([data-weather="rain"]):not([data-weather="storm"]) .sky-stars::after { animation: shooting-star 14s linear 3s infinite; }
+
 /* ---------- Màn hình cảm ứng: vùng bấm tối thiểu 44 px ---------- */
 @media (pointer: coarse) {
   .weather-tabs a, .group-tabs button, .view-switch button, .hour-modes button, .compare-choice { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }

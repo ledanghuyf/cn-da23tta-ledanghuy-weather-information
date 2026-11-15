@@ -16,8 +16,8 @@ const fixture = {
   daily:{time:Array.from({length:7},(_,i)=>`2026-10-${String(9+i).padStart(2,'0')}`),temperature_2m_max:[32,33,31,32,30,32,33],temperature_2m_min:[25,25,24,25,24,25,25],weather_code:[61,3,0,80,95,2,1],precipitation_probability_max:[80,40,0,65,90,20,10]}
 };
 const locations = [
-  {name:'Hà Nội',admin1:'Hà Nội',country:'Việt Nam',latitude:21.0245,longitude:105.8412},
-  {name:'Tokyo',admin1:'Tokyo',country:'Nhật Bản',latitude:35.6895,longitude:139.6917}
+  {name:'Hà Nội',admin1:'Hà Nội',country:'Việt Nam',country_code:'VN',latitude:21.0245,longitude:105.8412},
+  {name:'Đà Lạt',admin1:'Lâm Đồng',country:'Việt Nam',country_code:'VN',latitude:11.9404,longitude:108.4583}
 ];
 const clone = () => structuredClone(fixture);
 const server = http.createServer((req,res)=>{
@@ -93,6 +93,15 @@ async function main(){
   });
   await test('03 Từ chối tên trống và một ký tự',async()=>{for(const value of ['',' ','a']){await search(value);assert.match(await page.locator('#search-status').innerText(),/2 đến 120/);assert.equal(await page.locator('#location-input').getAttribute('aria-invalid'),'true');}});
   await test('04 Không tìm thấy địa điểm',async()=>{geocoding=r=>json(r,{});await search('khongtontai');assert.match(await page.locator('#search-status').innerText(),/Không tìm thấy/);});
+  await test('04b Chỉ hiện địa điểm ở Việt Nam và yêu cầu dịch vụ lọc countryCode=VN',async()=>{
+    const tokyo={name:'Tokyo',admin1:'Tokyo',country:'Nhật Bản',country_code:'JP',latitude:35.6895,longitude:139.6917};let asked;
+    geocoding=r=>{asked=new URL(r.request().url());return json(r,{results:[locations[0],tokyo]});};
+    await search('Ha');assert.equal(asked.searchParams.get('countryCode'),'VN');
+    assert.deepEqual(await page.locator('.result-name').allInnerTexts(),['Hà Nội']);
+    geocoding=r=>json(r,{results:[tokyo]});await search('Tokyo');
+    assert.equal(await page.locator('.result-button').count(),0);assert.match(await page.locator('#search-status').innerText(),/Không tìm thấy địa điểm ở Việt Nam/);
+    geocoding=r=>json(r,{results:locations});
+  });
   await test('05 Kết quả tìm kiếm sai cấu trúc và thiếu tọa độ',async()=>{
     for(const data of [{results:{}},{results:[{name:'abc'}]}]){geocoding=r=>json(r,data);await search('abc');assert.equal(await page.locator('#search-status').getAttribute('data-kind'),'error');}
   });
@@ -135,9 +144,9 @@ async function main(){
     await reset();await search('abc');let old;
     forecast=r=>{if(new URL(r.request().url()).searchParams.get('latitude')==='21.0245')old=r;else return json(r,fixture);};
     await page.locator('.result-button').first().click();await page.waitForFunction(()=>document.getElementById('weather-status').textContent.includes('Đang tải'));
-    await page.locator('.result-button').nth(1).click();await statusHas('Đã cập nhật thời tiết Tokyo');
+    await page.locator('.result-button').nth(1).click();await statusHas('Đã cập nhật thời tiết Đà Lạt');
     if(old)await json(old,{...clone(),current:{...fixture.current,temperature_2m:-50}}).catch(()=>{});
-    assert.equal(await page.locator('#place-name').innerText(),'Tokyo');assert.equal(await page.locator('#temperature').innerText(),'30');
+    assert.equal(await page.locator('#place-name').innerText(),'Đà Lạt');assert.equal(await page.locator('#temperature').innerText(),'30');
   });
   await test('16 Tìm liên tiếp, kết quả cũ không ghi đè',async()=>{
     let old;geocoding=r=>{if(new URL(r.request().url()).searchParams.get('name')==='cu')old=r;else return json(r,{results:[locations[1]]});};
@@ -148,7 +157,7 @@ async function main(){
     await page.locator('#search-form').evaluate(form=>form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})));
     await page.waitForFunction(()=>!document.getElementById('search-button').disabled);
     if(old)await json(old,{results:[locations[0]]}).catch(()=>{});
-    assert.equal(await page.locator('.result-name').innerText(),'Tokyo');
+    assert.equal(await page.locator('.result-name').innerText(),'Đà Lạt');
   });
   await test('17 Màn hình 320, 390, 768, 1024, 1440 px không tràn ngang',async()=>{
     await reset();for(const width of [320,390,768,1024,1366,1440]){await page.setViewportSize({width,height:1000});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true,`Overflow ${width}`);await page.screenshot({path:path.join(evidence,`giaolap-${width}.png`),fullPage:true});}
@@ -239,15 +248,15 @@ async function main(){
     await compareSearch('a');assert.equal(await page.locator('#compare-input').getAttribute('aria-invalid'),'true');
     geocoding=r=>json(r,{results:[]});await compareSearch('abc');assert.match(await page.locator('#compare-search-status').innerText(),/Không tìm thấy/);
     geocoding=r=>json(r,{results:'invalid'});await compareSearch('abc');assert.match(await page.locator('#compare-search-status').innerText(),/không hợp lệ/);
-    geocoding=r=>json(r,{results:[locations[1]]});await compareSearch('Tokyo');
+    geocoding=r=>json(r,{results:[locations[1]]});await compareSearch('Đà Lạt');
     await page.locator('.compare-result').focus();await page.keyboard.press('Enter');await compareReady();
-    assert.equal(await page.locator('.compare-place-name').nth(1).innerText(),'Tokyo');
+    assert.equal(await page.locator('.compare-place-name').nth(1).innerText(),'Đà Lạt');
     assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');
   });
   await test('29 Bên B lỗi giữ dữ liệu cũ và thử lại đúng nơi',async()=>{
     forecast=r=>json(r,{},429);await page.locator('#compare-quick button').first().click();await compareReady();
-    assert.match(await page.locator('#compare-status').innerText(),/Đang giữ bên B đã tải của Tokyo/);
-    assert.equal(await page.locator('.compare-place-name').nth(1).innerText(),'Tokyo');
+    assert.match(await page.locator('#compare-status').innerText(),/Đang giữ bên B đã tải của Đà Lạt/);
+    assert.equal(await page.locator('.compare-place-name').nth(1).innerText(),'Đà Lạt');
     forecast=r=>json(r,fixture);await page.locator('#compare-retry').click();await compareReady();
     assert.equal(await page.locator('.compare-place-name').nth(1).innerText(),'Hà Nội');
   });
@@ -376,7 +385,7 @@ async function main(){
     await livePage.screenshot({path:path.join(evidence,'mobile-forecast.png')});
     await livePage.setViewportSize({width:1440,height:1050});
   });
-  for(const [index,city] of ['Hanoi','Tokyo'].entries()) await test(`${20+index} API thật tìm và chọn ${city}`,async()=>{
+  for(const [index,city] of ['Hanoi','Hue'].entries()) await test(`${20+index} API thật tìm và chọn ${city}`,async()=>{
     await openDrawer(livePage);
     await livePage.locator('#location-input').fill(city);await livePage.locator('#location-input').press('Enter');
     await livePage.waitForFunction(()=>!document.getElementById('search-button').disabled);
@@ -402,7 +411,7 @@ async function main(){
     assert.equal(await livePage.locator('#favorite-list .personal-place').count(),1);
     await livePage.locator('#favorite-list .personal-place').click();
     await livePage.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');
-    assert.match(await livePage.locator('#place-name').innerText(),/Tokyo/i);
+    assert.match(await livePage.locator('#place-name').innerText(),/Hu[eế]/i);
   });
   await test('42 API thật có hourly/UV, gợi ý khớp số liệu và chủ đề khớp mã',async()=>{
     const response=[...liveResponses].reverse().find(r=>new URL(r.url).searchParams.has('hourly'));

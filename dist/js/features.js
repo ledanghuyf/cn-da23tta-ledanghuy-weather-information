@@ -219,20 +219,19 @@
     $("compare-input").removeAttribute("aria-invalid");
     $("compare-search-button").disabled = true;
     setStatus("compare-search-status", "Đang tìm địa điểm bên B…");
-    const url = new URL(API.geocoding);
-    url.search = new URLSearchParams({ name: query, count: "8", language: "vi", format: "json" });
     try {
-      const data = await fetchJSON(url, controller.signal);
+      const data = await fetchJSON(geocodingURL(query), controller.signal);
       if (controller.signal.aborted) return;
       if (data.results !== undefined && !Array.isArray(data.results)) throw new Error("Danh sách địa điểm trả về không hợp lệ.");
-      const places = (data.results || []).flatMap(item => { try { return [cleanPlace(item)]; } catch { return []; } });
-      if (data.results?.length && !places.length) throw new Error("Địa điểm trả về thiếu tọa độ hợp lệ.");
+      const valid = (data.results || []).flatMap(item => { try { cleanPlace(item); return [item]; } catch { return []; } });
+      if (data.results?.length && !valid.length) throw new Error("Địa điểm trả về thiếu tọa độ hợp lệ.");
+      const places = valid.filter(inVietnam).map(cleanPlace);
       $("compare-results").replaceChildren(...places.map(place => {
         const choice = button("", "compare-result", () => loadComparison(place));
         choice.append(node("strong", "", place.name), node("small", "", regionLabel(place)));
         return choice;
       }));
-      setStatus("compare-search-status", places.length ? "Chọn đúng tỉnh và quốc gia để so sánh." : "Không tìm thấy địa điểm. Thử tên khác hoặc tên không dấu.");
+      setStatus("compare-search-status", places.length ? "Chọn đúng tỉnh, thành để so sánh." : "Không tìm thấy địa điểm ở Việt Nam. Thử tên khác hoặc gõ không dấu.");
     } catch (error) {
       if (!controller.signal.aborted) setStatus("compare-search-status", error.message, "error");
     } finally {
