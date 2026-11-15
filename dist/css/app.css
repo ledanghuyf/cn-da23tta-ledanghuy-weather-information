@@ -118,6 +118,7 @@ body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow {
 .input-wrap > .icon { position: absolute; top: 50%; left: 13px; width: 17px; height: 17px; transform: translateY(-50%); color: #6b808b; pointer-events: none; }
 input[type="search"], input[type="text"], select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid rgba(20, 47, 59, .2); border-radius: var(--radius-sm); background: #fff; color: #142f3b; }
 .input-wrap .search-input { padding-left: 40px; }
+.search-input:placeholder-shown::-webkit-search-cancel-button { display: none; } /* ô trống: không chừa chỗ cho nút ×, để chữ gợi ý hiện đủ */
 .search-button { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; margin-top: 10px; padding: 10px 14px; border: 0; border-radius: var(--radius-sm); background: var(--accent); color: #2b1a05; font-weight: 650; }
 .search-button:hover { background: #f5b062; }
 .field-help { margin-top: 8px; font-size: 12px; color: rgba(255, 255, 255, .85); }
@@ -210,6 +211,7 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .date-toolbar { order: 2; flex: none; font-size: 13px; }
 #date-now { min-height: 44px; padding: 4px 10px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 12px; background: rgba(6, 18, 36, .34); font-weight: 600; }
 #date-now:disabled { display: none; }
+.date-toolbar:has(> #date-now:disabled) { margin-left: -8px; } /* nút ẩn: bù khoảng gap để thanh ngày chạm đủ lề phải */
 .day-navigation { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 6px; }
 .day-navigation > button { min-height: 44px; border: 1px solid rgba(255, 255, 255, .28); border-radius: 12px; background: rgba(6, 18, 36, .34); font-size: 24px; line-height: 1; }
 .day-navigation > button:disabled { opacity: .45; }
@@ -474,12 +476,16 @@ dd { font-size: 15px; font-weight: 650; }
 /* ---------- Điện thoại: thanh địa điểm thành ngăn kéo ---------- */
 @media (max-width: 760px) {
   .app-shell { display: block; }
-  /* Logo và nút "Chọn địa điểm" chung một hàng để thời tiết lên sớm hơn. */
-  .sidebar { position: static; display: flex; align-items: flex-start; gap: 10px; height: auto; overflow: visible; padding: 10px 16px; border-bottom: 1px solid rgba(255, 255, 255, .12); }
-  .brand { flex: none; margin-top: 8px; }
+  /* Logo nằm trong thẻ "Chọn địa điểm" (đặt nổi) nên nội dung ngăn kéo rộng hết, thẳng hàng với thanh ngày ở dưới. */
+  .sidebar { position: relative; display: block; height: auto; overflow: visible; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, .12); }
+  .brand { position: absolute; top: 10px; left: 30px; z-index: 1; height: 64px; pointer-events: none; } /* cao bằng thẻ để logo nằm giữa; chạm vào logo vẫn mở ngăn kéo */
   .brand > span { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
-  .location-drawer { flex: 1; min-width: 0; }
-  .location-drawer > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; padding: 10px 14px; list-style: none; cursor: pointer; border: 1px solid rgba(255, 255, 255, .25); border-radius: var(--radius); background: rgba(255, 255, 255, .1); }
+  .location-drawer { width: 100%; padding: 0 16px; }
+  .location-drawer > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 64px; padding: 10px 14px 10px 56px; list-style: none; cursor: pointer; border: 1px solid rgba(255, 255, 255, .25); border-radius: var(--radius); background: rgba(255, 255, 255, .1); }
+  .search-row { gap: 8px; }
+  .search-row .search-button { flex-shrink: 0; }
+  .location-tool-buttons { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quick-button { width: 100%; }
   .location-drawer > summary::-webkit-details-marker { display: none; }
   .drawer-label { display: flex; flex-direction: column; font-weight: 650; }
   .drawer-hint { font-size: 12px; font-weight: 400; }
@@ -499,6 +505,12 @@ dd { font-size: 15px; font-weight: 650; }
   .extra-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .forecast-day { grid-template-columns: minmax(56px, auto) 32px 34px minmax(40px, 1fr) 34px; grid-template-areas: "day icon low range high" "date rain rain rain rain"; column-gap: 8px; row-gap: 2px; padding: 10px 2px; }
   .forecast-icon { width: 32px; height: 32px; }
+}
+@media (max-width: 359px) {
+  /* Màn rất hẹp: chữ gợi ý 14px để vẫn hiện đủ "Tìm địa điểm ở Việt Nam…" (ô nhập giữ 16px để iOS không tự phóng to). */
+  .input-wrap .search-input { padding-left: 36px; padding-right: 8px; }
+  .search-input::placeholder { font-size: 14px; }
+  .search-row .search-button { padding: 10px 10px; }
 }
 @media (max-width: 420px) {
   .metric, .daily-metric { min-height: 140px; padding: 12px; }
