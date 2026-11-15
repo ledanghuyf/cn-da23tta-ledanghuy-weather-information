@@ -41,6 +41,10 @@ test('Điểm cần chú ý: mưa, cảm nhận lệch, UV, gió giật; yên kh
   d.current.precipitation=1.2;assert.equal(h(d)[0],'Đang có mưa');
   d=fixture();d.hourly_units.precipitation_probability='mm';assert.deepEqual(h(d),[]);
   d=fixture();d.current.weather_code=61;assert.equal(h(d)[0],'Đang có mưa');d.current.weather_code=95;assert.equal(h(d)[0],'Đang có giông');
+  // Không khí: >100 thì cảnh báo và không còn "khá yên"; <=100 hoặc chưa có thì bỏ qua.
+  const ha=(d,air)=>Array.from(context.MayDashboardData.highlights(d,air),i=>i.title);
+  d=fixture();assert.deepEqual(ha(d,{aqi:162,label:'Không tốt'}),['Không khí không tốt (AQI 162)']);
+  assert.deepEqual(ha(d,{aqi:100,label:'Trung bình'}),['12 giờ tới khá yên']);assert.deepEqual(ha(d,{aqi:null,label:'Chưa có chỉ số'}),['12 giờ tới khá yên']);
   assert.equal(context.MayDashboardData.feelsGap(27.4,34.5),8);assert.equal(context.MayDashboardData.feelsGap(29.6,31),0);assert.equal(context.MayDashboardData.feelsGap(20,16.6),-3);
   assert.equal(context.MayDashboardData.uvLevel(5.9),'Trung bình');assert.equal(context.MayDashboardData.uvLevel(11),'Cực cao');
 });

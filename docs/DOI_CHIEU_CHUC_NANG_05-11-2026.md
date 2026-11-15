@@ -18,7 +18,7 @@
 - Định vị để xem thời tiết; bản đồ dùng tọa độ thiết bị chỉ sau khi người dùng bấm và cho phép.
 - UV, tầm nhìn, mây, áp suất, hướng gió, gió giật, mặt trời mọc/lặn.
 - Không khí: US AQI, PM2.5, PM10, NO₂, O₃, mốc thời gian và nguồn riêng.
-- So sánh thời tiết hiện tại ở hai địa điểm.
+- (Đã bỏ phần So sánh thời tiết hai nơi theo yêu cầu cập nhật; tập trung vào tra cứu địa điểm ở Việt Nam.)
 - Hoạt động: người dùng tự chọn ngày, giờ và đi bộ/chạy bộ/đạp xe; chỉ sau khi chọn mới hiện đánh giá. Không có các thẻ gợi ý giờ tự động.
 - Giao diện theo mã thời tiết và ngày/đêm của địa điểm.
 - Biểu đồ lượng mưa theo giờ từ trường `hourly.precipitation`, đơn vị mm; đây là lượng tích lũy trong giờ trước mốc ghi trên biểu đồ, không phải xác suất mưa.
@@ -41,7 +41,7 @@ Tài liệu API đã đối chiếu: https://open-meteo.com/en/docs
 3. **Dự báo → Theo giờ → Lượng mưa**, chọn một giờ để xem số liệu; chuyển **7 ngày** để xem thẻ/biểu đồ.
 4. **Chỉ số → Không khí** để xem AQI; đổi địa điểm và kiểm tra tên/mốc mới.
 5. **Hoạt động**: chọn ngày, giờ, rồi hoạt động; đổi hoạt động để so sánh đánh giá cùng giờ.
-6. Lưu yêu thích, mở lại trong **Địa điểm của bạn**, so sánh thêm một thành phố.
+6. Lưu yêu thích, mở lại trong **Đã lưu** trên thanh trên cùng.
 7. Trong phần tìm địa điểm, bấm **Mở bản đồ** và cấp quyền vị trí nếu muốn xem tọa độ thiết bị.
 
 Chạy cục bộ: mở thư mục dự án trong VS Code, chạy `node scripts/serve.cjs --open`. Máy chủ tự chọn cổng trống; dùng đúng địa chỉ in trong terminal.

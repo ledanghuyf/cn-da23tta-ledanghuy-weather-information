@@ -8,21 +8,21 @@ const server=http.createServer((req,res)=>{const p=new URL(req.url,'http://local
   browser=await chromium.launch({channel:'chrome',headless:true});
   for(const width of [390,630,1440]){
    const page=await browser.newPage({viewport:{width,height:width===1440?900:668},reducedMotion:'reduce'});page.on('pageerror',e=>errors.push(e.message));
-   await page.goto(`http://127.0.0.1:${server.address().port}/#comparison-section`);
+   await page.goto(`http://127.0.0.1:${server.address().port}/#advice-section`);
    await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');
    assert.equal(await page.locator('#weather-status').getAttribute('data-kind'),'success');
    const active=()=>page.locator('.weather-tabs a[aria-current="location"]');
-   await page.waitForFunction(()=>document.querySelector('.weather-tabs a[aria-current="location"]')?.hash==='#comparison-section');
-   assert.equal(await active().count(),1);checks.push(`Direct comparison link ${width}`);
-   await page.screenshot({path:path.join(out,`comparison-${width}.png`)});
-   for(const hash of ['#advice-section','#comparison-section','#forecast-group','#conditions-group','#weather-content']){
+   await page.waitForFunction(()=>document.querySelector('.weather-tabs a[aria-current="location"]')?.hash==='#advice-section');
+   assert.equal(await active().count(),1);checks.push(`Direct advice link ${width}`);
+   await page.screenshot({path:path.join(out,`advice-${width}.png`)});
+   for(const hash of ['#advice-section','#forecast-group','#conditions-group','#weather-content']){
     await page.locator(`.weather-tabs a[href="${hash}"]`).click();
     await page.waitForFunction(h=>document.querySelector('.weather-tabs a[aria-current="location"]')?.hash===h,hash);
     assert.equal(await active().count(),1);
    }
    checks.push(`All navigation clicks ${width}`);
    await page.evaluate(()=>{window.dispatchEvent(new WheelEvent('wheel'));scrollTo(0,document.documentElement.scrollHeight)});
-   await page.waitForFunction(()=>document.querySelector('.weather-tabs a[aria-current="location"]')?.hash==='#comparison-section');
+   await page.waitForFunction(()=>document.querySelector('.weather-tabs a[aria-current="location"]')?.hash==='#advice-section');
    await page.evaluate(()=>{window.dispatchEvent(new WheelEvent('wheel'));document.querySelector('#advice-section').scrollIntoView({block:'start'})});
    // In a tall viewport two short final sections may both fit; return to the long forecast section.
    await page.evaluate(()=>{window.dispatchEvent(new WheelEvent('wheel'));document.querySelector('#forecast-group').scrollIntoView({block:'start'})});

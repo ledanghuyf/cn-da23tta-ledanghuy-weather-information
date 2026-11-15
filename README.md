@@ -8,7 +8,7 @@
 
 Ứng dụng web giúp người dùng tìm địa điểm và xem thời tiết hiện tại, dự báo theo giờ và dự báo bảy ngày trên cùng một giao diện. Dữ liệu được lấy qua REST API, nhận ở định dạng JSON và hiển thị trong một trang web thích ứng trải rộng trên máy tính, máy tính bảng và thu gọn tối ưu trên điện thoại (320 px – 1440 px).
 
-Đề tài tập trung vào việc khảo sát yêu cầu, tích hợp API, xử lý dữ liệu bất đồng bộ, trình bày thông tin thời tiết và xử lý các tình huống như địa điểm không hợp lệ, lỗi kết nối hoặc dữ liệu thiếu. Các chức năng mở rộng phục vụ tra cứu thực tế gồm chất lượng không khí, gợi ý hoạt động theo thời tiết, địa điểm yêu thích, lịch sử, so sánh địa điểm và định vị.
+Đề tài tập trung vào việc khảo sát yêu cầu, tích hợp API, xử lý dữ liệu bất đồng bộ, trình bày thông tin thời tiết và xử lý các tình huống như địa điểm không hợp lệ, lỗi kết nối hoặc dữ liệu thiếu. Các chức năng mở rộng phục vụ tra cứu thực tế gồm chất lượng không khí, gợi ý hoạt động theo thời tiết, địa điểm yêu thích, lịch sử và định vị.
 
 ## Trải nghiệm ứng dụng
 
@@ -17,12 +17,12 @@
 
 ## Chức năng
 
-- Tìm địa điểm theo tên, chọn kết quả phù hợp với tỉnh/thành phố và quốc gia; có thể dùng vị trí thiết bị nếu người dùng cấp quyền.
+- Tìm địa điểm ở Việt Nam theo tên (có dấu hoặc không dấu), chọn đúng tỉnh/thành trong kết quả; có thể dùng vị trí thiết bị nếu người dùng cấp quyền. Vị trí hoặc liên kết ở ngoài Việt Nam được từ chối kèm thông báo.
 - Xem thời tiết hiện tại và dự báo theo giờ hoặc bảy ngày; chọn ngày, xem chi tiết và biểu đồ lượng mưa.
 - Theo dõi nhiệt độ, cảm giác như, độ ẩm, lượng mưa, gió, UV và các chỉ số khác khi API cung cấp.
 - Xem thông tin chất lượng không khí từ Open-Meteo/CAMS, bao gồm chỉ số US AQI, nguồn dữ liệu và thời điểm dữ liệu.
 - Chọn ngày, giờ và hoạt động để nhận tối đa ba gợi ý, kèm mức thuận lợi và giải thích dựa trên số liệu dự báo. Gợi ý không thay thế tư vấn chuyên môn hay bảo đảm điều kiện thực tế.
-- Lưu địa điểm yêu thích, xem lịch sử tra cứu, so sánh hai địa điểm và mở bản đồ vị trí thiết bị.
+- Lưu địa điểm yêu thích, xem lịch sử tra cứu, tự mở lại nơi vừa xem và mở bản đồ vị trí thiết bị.
 - Hiển thị giao diện trải rộng đa cột trên máy tính và thu gọn trên điện thoại với thanh điều hướng 5 mục, bản đồ khu vực tổng quát kèm dấu chấm vị trí, bộ biểu tượng SVG thời tiết nhúng cục bộ trong `index.html`, đổi màu theo điều kiện thời tiết và ngày/đêm của địa điểm; hỗ trợ tùy chọn giảm chuyển động (`prefers-reduced-motion`).
 - Thông báo trạng thái tải, lỗi API, dữ liệu cũ hoặc thiếu; không tự tạo dữ liệu thời tiết thay thế khi dịch vụ lỗi.
 

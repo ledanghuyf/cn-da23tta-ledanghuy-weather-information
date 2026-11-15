@@ -43,7 +43,7 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
 
   await page.locator('#current-panel').evaluate(el=>el.scrollIntoView({block:'start'}));await page.screenshot({path:path.join(out,'mobile-current-api-that.png')});
   await page.locator('#tab-forecast-section').click();await page.locator('#forecast-group').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,'mobile-forecast-api-that.png')});
-  assert.equal(await page.locator('.weather-tabs a').count(),5);
+  assert.equal(await page.locator('.weather-tabs a').count(),4);
   assert.equal(await page.locator('#pane-hourly-section').isVisible(),false);
   assert.equal(await page.locator('#pane-forecast-section').isVisible(),true);
   await page.locator('#weather-date').selectOption(weather.data.daily.time[1]);

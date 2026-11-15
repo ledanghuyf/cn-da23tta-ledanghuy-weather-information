@@ -220,7 +220,7 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .weather-tabs a { flex: none; padding: 8px 15px; border-radius: 999px; color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; }
 .weather-tabs a:hover { background: rgba(255, 255, 255, .12); }
 .weather-tabs a[aria-current="location"] { background: #fff; color: #142f3b; }
-.weather-content, .weather-group, #advice-section, #comparison-section { scroll-margin-top: 85px; }
+.weather-content, .weather-group, #advice-section { scroll-margin-top: 85px; }
 
 /* ---------- Trạng thái ---------- */
 .overview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -329,7 +329,7 @@ dd { font-size: 15px; font-weight: 650; }
 .hourly-detail { margin-top: 8px; padding: 12px 14px; border-radius: 14px; background: var(--tile); }
 .hour-detail-heading { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
 .hour-detail-heading span { color: var(--ink-soft); font-size: 14px; }
-.hour-detail-metrics, .activity-metrics, .compare-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px 14px; }
+.hour-detail-metrics, .activity-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px 14px; }
 
 /* 7 ngày: danh sách hàng — thứ | biểu tượng | mưa | thấp | thanh nhiệt độ | cao | xem */
 .forecast-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
@@ -457,39 +457,6 @@ dd { font-size: 15px; font-weight: 650; }
 .advice-card p { font-size: 13px; color: var(--ink-soft); }
 .advice-method p { margin-top: 6px; color: var(--ink-soft); }
 
-/* ---------- So sánh ---------- */
-.compare-input-row { display: flex; gap: 8px; }
-.compare-input-row input { flex: 1; min-width: 0; }
-.primary-button { flex: none; min-height: 44px; padding: 10px 16px; border: 0; border-radius: var(--radius-sm); background: #fff; color: #142f3b; font-weight: 650; }
-.primary-button:hover { background: #e8f1f7; }
-.feature-status { margin: 10px 0; font-size: 13px; color: var(--ink-soft); overflow-wrap: anywhere; }
-.feature-status:empty { display: none; }
-.feature-status[data-kind="error"] { color: #ffb4a3; }
-.feature-status[data-kind="success"] { color: #9be7bf; }
-.compare-results { display: grid; gap: 6px; margin-bottom: 10px; }
-.compare-results:empty { display: none; }
-.compare-result { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--tile); color: #fff; text-align: left; }
-.compare-shortcuts { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 10px; font-size: 13px; color: var(--ink-soft); }
-#compare-quick { display: flex; gap: 6px; flex-wrap: wrap; }
-.compare-choice { min-height: 36px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--tile); color: #fff; font-size: 13px; }
-.compare-choice[aria-pressed="true"] { border-color: #fff; background: #fff; color: #142f3b; }
-.compare-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.compare-toolbar .feature-status { flex: 1; min-width: 160px; margin: 0; }
-.glass-card .text-button { border-color: var(--line); color: #fff; }
-.compare-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
-.compare-card { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--tile); }
-.compare-label { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--ink-faint); }
-.compare-place-name { font-size: 20px; font-weight: 600; }
-.compare-region { font-size: 13px; color: var(--ink-soft); }
-.compare-weather { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0; }
-.compare-temperature { font-size: 44px; font-weight: 300; letter-spacing: -1px; }
-.compare-weather svg { width: 64px; height: 64px; }
-.compare-condition { margin-bottom: 10px; font-weight: 600; }
-.compare-time { margin-top: 10px; font-size: 12px; color: var(--ink-faint); overflow-wrap: anywhere; }
-.comparison-insight { margin-top: 12px; padding: 14px 16px; border-radius: 16px; border-left: 4px solid var(--accent); background: rgba(240, 160, 75, .16); }
-.insight-label { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; }
-#compare-insights { display: grid; gap: 4px; margin-top: 6px; padding-left: 18px; }
-
 /* ---------- Chân trang ---------- */
 .site-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; padding: 14px 18px; border-radius: 18px; background: rgba(5, 16, 32, .42); font-size: 13px; }
 .footer-brand { display: inline-flex; align-items: center; gap: 8px; }
@@ -532,8 +499,6 @@ dd { font-size: 15px; font-weight: 650; }
   .extra-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .forecast-day { grid-template-columns: minmax(56px, auto) 32px 34px minmax(40px, 1fr) 34px; grid-template-areas: "day icon low range high" "date rain rain rain rain"; column-gap: 8px; row-gap: 2px; padding: 10px 2px; }
   .forecast-icon { width: 32px; height: 32px; }
-  .compare-cards { grid-template-columns: 1fr; }
-  .compare-input-row { flex-direction: column; }
 }
 @media (max-width: 420px) {
   .metric, .daily-metric { min-height: 140px; padding: 12px; }
@@ -591,7 +556,7 @@ body[data-phase="night"]:not([data-weather="rain"]):not([data-weather="storm"]) 
 
 /* ---------- Màn hình cảm ứng: vùng bấm tối thiểu 44 px ---------- */
 @media (pointer: coarse) {
-  .weather-tabs a, .group-tabs button, .view-switch button, .hour-modes button, .compare-choice { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
+  .weather-tabs a, .group-tabs button, .view-switch button, .hour-modes button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
 }
 
 /* ---------- Giảm chuyển động ---------- */

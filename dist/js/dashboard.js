@@ -68,7 +68,8 @@ globalThis.MayDashboardData = (() => {
     return Math.abs(gap) >= 3 ? gap : 0;
   };
   // Tối đa 3 điểm cần chú ý trong 12 giờ tới, xếp theo mức ảnh hưởng; [] nếu thiếu dữ liệu để kết luận.
-  function highlights(data) {
+  // air: { aqi, label } của nơi đang xem khi đã tải được chất lượng không khí (không có thì bỏ qua).
+  function highlights(data, air = null) {
     const now = key => value(data, "current", key), next = hours(data).slice(0, 12), items = [];
     const rainNow = now("precipitation"), rainHour = next.find(r => r.precipitation_probability >= 50);
     // Mã thời tiết hiện tại báo mưa/giông vẫn tính là đang mưa dù lượng đo được bằng 0.
@@ -76,6 +77,9 @@ globalThis.MayDashboardData = (() => {
     if (rainNow > 0 || storm || MayWeatherConfig.rainCodes.includes(code)) items.push({ icon: "i-rain", title: storm ? "Đang có giông" : "Đang có mưa",
       text: rainNow > 0 ? `Vừa ghi nhận ${num(rainNow)} mm · nhớ mang ô` : storm ? "Ưu tiên ở trong nhà, tránh nơi trống trải" : "Theo dữ liệu hiện tại · nhớ mang ô" });
     else if (rainHour) items.push({ icon: "i-rain", title: `Có thể mưa lúc ${rainHour.time.slice(11)}`, text: `Khả năng ${num(rainHour.precipitation_probability)}% · nên mang ô` });
+    // Thang US AQI: trên 100 là kém với nhóm nhạy cảm, trên 150 là không tốt cho mọi người.
+    if (air?.aqi > 100) items.push({ icon: "i-wind", title: `Không khí ${air.label.toLowerCase()} (AQI ${num(air.aqi)})`,
+      text: air.aqi > 150 ? "Hạn chế ra ngoài, đeo khẩu trang khi cần" : "Người nhạy cảm nên hạn chế ở ngoài lâu" });
     const temp = now("temperature_2m"), feels = now("apparent_temperature");
     const gap = feelsGap(temp, feels);
     if (gap) items.push({ icon: "i-temp", title: `Cảm giác ${gap > 0 ? "nóng" : "lạnh"} hơn ${Math.abs(gap)}°`, text: `Nhiệt độ ${num(temp)}° nhưng cảm nhận ${num(feels)}°` });
@@ -215,7 +219,8 @@ globalThis.MayDashboardData = (() => {
   }
   function renderHighlights() {
     // Khi chọn ngày khác, daily-view.js ẩn cả #current-panel (chứa dải này) nên không cần kiểm tra ngày ở đây.
-    const list = $("weather-highlights"), items = dataTools.highlights(source);
+    const air = state.air?.key === `${state.location.latitude},${state.location.longitude}` ? state.air : null;
+    const list = $("weather-highlights"), items = dataTools.highlights(source, air);
     list.hidden = !items.length;
     list.replaceChildren(...items.map(item => {
       const li = node("li", item.calm ? "highlight is-calm" : "highlight");
@@ -246,6 +251,7 @@ globalThis.MayDashboardData = (() => {
   new ResizeObserver(() => {
     if (source && hourlyChart.clientWidth && hourlyChart.clientWidth !== chartWidth) renderChart(chartRows);
   }).observe(hourlyChart);
-  window.MayDashboard = { render, onLoading };
+  // live-data.js gọi khi chất lượng không khí tải xong/lỗi để dải điểm nhấn cập nhật theo.
+  window.MayDashboard = { render, onLoading, refreshHighlights: () => { if (source) renderHighlights(); } };
   if (state.weather) render(state.weather, $("weather-date").value);
 })();

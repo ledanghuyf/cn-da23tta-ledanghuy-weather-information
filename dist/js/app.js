@@ -263,7 +263,7 @@ function isSameLocation(a, b) {
   return a.latitude === b.latitude && a.longitude === b.longitude;
 }
 
-// Dùng chung truy vấn và bộ kiểm tra dữ liệu cho màn hình chính và so sánh.
+// Truy vấn dự báo dùng chung cho màn hình chính, định vị và địa điểm đã lưu.
 function forecastURL(location, includeHourly = false) {
   const url = new URL(API.forecast);
   url.search = new URLSearchParams({
@@ -304,6 +304,11 @@ async function loadWeather(location) {
     const data = await fetchJSON(url, controller.signal);
     if (controller.signal.aborted) return null;
     validateWeather(data);
+    // Tọa độ từ GPS/link chia sẻ có thể ở nước ngoài: chỉ nhận khi múi giờ của điểm đó là của Việt Nam.
+    // shortcut: dựa vào múi giờ Open-Meteo gán; vài đảo xa bờ có thể bị gán múi giờ khác — khi cần thì đổi sang kiểm tra biên giới.
+    if (location.vietnamOnly && !["Asia/Ho_Chi_Minh", "Asia/Saigon"].includes(data.timezone)) {
+      throw Object.assign(new Error("Vị trí này nằm ngoài Việt Nam. Ứng dụng chỉ hỗ trợ địa điểm ở Việt Nam, hãy tìm một nơi bằng tên."), { outside: true });
+    }
     if (!isSameLocation(location, state.location)) delete $("activity-date").dataset.userPicked;
     state.location = location;
     state.weather = data;
@@ -316,6 +321,7 @@ async function loadWeather(location) {
     return data;
   } catch (error) {
     if (controller.signal.aborted) return null;
+    state.lastError = error;
     MayTheme.apply();
     window.MayLive?.onError();
     $("advice-unavailable").textContent = "Chưa tải được dữ liệu mới. Gợi ý tạm ẩn; hãy bấm Thử tải lại.";
@@ -325,7 +331,7 @@ async function loadWeather(location) {
       $("empty-title").textContent = "Chưa thể tải thời tiết";
       $("empty-message").textContent = "Chưa tải được dữ liệu. Bạn có thể thử lại hoặc tìm một địa điểm khác.";
     }
-    $("retry-button").hidden = false;
+    $("retry-button").hidden = Boolean(error.outside); // thử lại cũng vẫn ngoài Việt Nam
     $("retry-button").onclick = () => loadWeather(location);
     return null;
   } finally {
@@ -546,6 +552,10 @@ function rememberLocation(location) {
   try { localStorage.setItem(LAST_KEY, JSON.stringify({ name: location.name, admin1: location.admin1, country: location.country, latitude: location.latitude, longitude: location.longitude })); } catch { /* Không lưu được thì lần sau mở nơi mặc định. */ }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  void loadWeather(WeatherDataTools.sharedLocation(window.location.search) || lastViewed() || DEFAULT_LOCATION);
+document.addEventListener("DOMContentLoaded", async () => {
+  const shared = WeatherDataTools.sharedLocation(window.location.search);
+  const fallback = lastViewed() || DEFAULT_LOCATION;
+  // Link chia sẻ trỏ ra nước ngoài thì mở nơi thường dùng thay vì để trang trống.
+  if (shared && !(await loadWeather({ ...shared, vietnamOnly: true })) && state.lastError?.outside) void loadWeather(fallback);
+  else if (!shared) void loadWeather(fallback);
 }, { once: true });

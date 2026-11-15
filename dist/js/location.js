@@ -14,6 +14,7 @@
     invalid: "Trình duyệt trả về tọa độ chưa hợp lệ. Hãy thử lại hoặc tìm địa điểm bằng tên.",
     unknown: "Trình duyệt không hoàn tất yêu cầu định vị. Hãy kiểm tra quyền Vị trí hoặc tìm địa điểm bằng tên.",
     weather: "Đã nhận được tọa độ nhưng chưa tải được thời tiết. Xem thông báo ở phần Tổng quan và bấm Thử tải lại.",
+    outside: "Vị trí hiện tại của bạn nằm ngoài Việt Nam. Ứng dụng chỉ hỗ trợ địa điểm ở Việt Nam, hãy tìm một nơi bằng tên.",
   };
   function finish() {
     clearTimeout(timer); timer = null; active = false;
@@ -23,6 +24,7 @@
     finish(); serial++; status.dataset.error = kind;
     status.textContent = messages[kind] || messages.unknown;
     label.textContent = "Thử định vị lại";
+    if (kind === "outside") return; // không phải lỗi GPS nên không mở hướng dẫn xử lý định vị
     help.hidden = false; help.open = true;
     $("locate-url").value = `${location.origin}${location.pathname}`;
   }
@@ -59,11 +61,11 @@
       status.textContent = "Đã nhận được vị trí gần bạn. Đang tải thời tiết…";
       try {
         ownWeatherStart = true;
-        const pending = loadWeather({ name: "Vị trí của bạn", admin1: `${latitude.toFixed(5)}°, ${longitude.toFixed(5)}°`, country: "", latitude, longitude });
+        const pending = loadWeather({ name: "Vị trí của bạn", admin1: `${latitude.toFixed(5)}°, ${longitude.toFixed(5)}°`, country: "", latitude, longitude, vietnamOnly: true });
         ownWeatherStart = false;
         const weather = await pending;
         if (token !== serial) return;
-        if (!weather) { fail("weather"); return; }
+        if (!weather) { fail(state.lastError?.outside ? "outside" : "weather"); return; }
         finish(); label.textContent = idleLabel;
         status.textContent = accuracy === null
           ? "Đã tải thời tiết theo vị trí của bạn."

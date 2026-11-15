@@ -203,7 +203,8 @@ globalThis.MayAdvice = (() => {
     const dates = (data.daily?.time || []).slice(0, 7).filter(date => date > today && Number.isFinite(localStamp(`${date}T00:00`)));
     let selectedDate = dates.includes(daySelect.value) ? daySelect.value : "";
     // Buổi tối hôm nay đã hết giờ ban ngày: tự xem ngày mai thay vì bắt người dùng tự đổi (trừ khi họ đã tự chọn ngày).
-    const autoNext = !selectedDate && !daySelect.dataset.userPicked && dates.length > 0 &&
+    // Gồm cả lần vẽ lại sau đó (ngày mai đã được tự chọn) để câu giải thích không biến mất.
+    const autoNext = (!selectedDate || selectedDate === dates[0]) && !daySelect.dataset.userPicked && dates.length > 0 &&
       !chooseSlots(data, activity, today).allSlots.length && chooseSlots(data, activity, dates[0]).allSlots.length > 0;
     if (autoNext) selectedDate = dates[0];
     const option = (value, label) => { const item = element("option", "", label); item.value = value; return item; };

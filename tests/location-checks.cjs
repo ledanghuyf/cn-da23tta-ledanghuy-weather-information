@@ -2,6 +2,15 @@ const assert=require('node:assert/strict');
 const path=require('node:path');
 module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
   const mock=async code=>page.evaluate(code=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:(ok,fail,options)=>{window.geoOptions=options;fail({code});}}}),code);
+  await test('53b Vị trí ngoài Việt Nam bị từ chối, giữ nơi đang xem, không gợi ý thử lại',async()=>{
+    const before=await page.locator('#place-name').innerText();
+    const abroad=structuredClone(baseFixture);abroad.timezone='Asia/Bangkok';setForecast(route=>json(route,abroad));
+    await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>ok({coords:{latitude:13.75,longitude:100.5,accuracy:20}})}}));
+    await page.locator('#locate-button').click();await page.waitForFunction(()=>document.getElementById('locate-status').dataset.error==='outside');
+    assert.equal(await page.locator('#place-name').innerText(),before);assert.match(await page.locator('#weather-status').innerText(),/ngoài Việt Nam/);
+    assert.equal(await page.locator('#retry-button').isVisible(),false);assert.equal(await page.locator('#locate-help').isVisible(),false);
+    setForecast(route=>json(route,baseFixture));await page.locator('#refresh-button').click();await ready();
+  });
   await test('53 Định vị phân biệt bị chặn, không có tọa độ, hết giờ; thử lại lấy vị trí mới',async()=>{
     for(const [code,kind,text] of [[1,'denied','chưa cho phép'],[2,'unavailable','lỗi 2'],[3,'timeout','lỗi 3']]){
       await mock(code);await page.locator('#locate-button').click();assert.equal(await page.locator('#locate-status').getAttribute('data-error'),kind);assert.ok((await page.locator('#locate-status').innerText()).includes(text));

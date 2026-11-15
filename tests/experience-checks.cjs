@@ -113,8 +113,6 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     await json(pending,{},500);await ready();assert.equal(await page.locator('body').getAttribute('data-weather'),'default');assert.match(await page.locator('#advice-unavailable').innerText(),/Chưa tải được/);
     const d=fixture(baseFixture);d.current.weather_code=61;setForecast(route=>json(route,d));
     await page.locator('.quick-button').nth(1).click();await ready();assert.match(await page.locator('#advice-location').innerText(),/Hà Nội/);assert.equal(await page.locator('body').getAttribute('data-weather'),'rain');assert.equal(await page.locator('#advice-results').isVisible(),true);
-    await page.locator('#compare-quick button').first().click();await page.waitForFunction(()=>document.getElementById('comparison-section').getAttribute('aria-busy')==='false');
-    assert.match(await page.locator('#advice-location').innerText(),/Hà Nội/);
   });
   await test('44 Chọn ngày ở đầu trang đổi tổng quan, số liệu và gợi ý đúng ngày',async()=>{
     const d=fixture(baseFixture);
