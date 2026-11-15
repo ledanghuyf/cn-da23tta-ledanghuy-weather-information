@@ -4,31 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Tra cứu thời tiết hiện tại và dự báo 7 ngày tại nơi bạn quan tâm.">
-  <meta name="theme-color" content="#162f38">
+  <meta name="theme-color" content="#1559a3">
   <title>Thời tiết — Dự báo mỗi ngày</title>
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=2.2.0">
-  <link rel="stylesheet" href="css/bootstrap.min.css?v=2.2.0">
-  <link rel="stylesheet" href="css/style.css?v=2.2.0">
-  <link rel="stylesheet" href="css/features.css?v=2.2.0">
-  <link rel="stylesheet" href="css/weather-experience.css?v=2.2.0">
-  <link rel="stylesheet" href="css/daily-view.css?v=2.2.0">
-  <link rel="stylesheet" href="css/dashboard.css?v=2.2.0">
-  <script src="js/weather-config.js?v=2.2.0" defer></script>
-  <script src="js/weather-theme.js?v=2.2.0" defer></script>
-  <script src="js/recommendations.js?v=2.2.0" defer></script>
-  <script src="js/app.js?v=2.2.0" defer></script>
-  <script src="js/features.js?v=2.2.0" defer></script>
-  <script src="js/daily-view.js?v=2.2.0" defer></script>
-  <script src="js/dashboard.js?v=2.2.0" defer></script>
-  <script src="js/location.js?v=2.2.0" defer></script>
-  <link rel="stylesheet" href="css/branding.css?v=2.2.0">
-  <link rel="stylesheet" href="css/live-data.css?v=2.2.0">
-  <script src="js/live-data.js?v=2.2.0" defer></script>
-  <script src="js/my-map.js?v=2.2.0" defer></script>
-  <link rel="stylesheet" href="css/clean-layout.css?v=2.2.0">
-  <script src="js/clean-layout.js?v=2.2.0" defer></script>
-  <link rel="stylesheet" href="css/polish.css?v=2.2.0">
-  <script src="js/usability.js?v=2.2.0" defer></script>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=3.0.0">
+  <link rel="stylesheet" href="css/bootstrap.min.css?v=3.0.0">
+  <link rel="stylesheet" href="css/app.css?v=3.0.0">
+  <script src="js/weather-config.js?v=3.0.0" defer></script>
+  <script src="js/weather-theme.js?v=3.0.0" defer></script>
+  <script src="js/recommendations.js?v=3.0.0" defer></script>
+  <script src="js/app.js?v=3.0.0" defer></script>
+  <script src="js/features.js?v=3.0.0" defer></script>
+  <script src="js/daily-view.js?v=3.0.0" defer></script>
+  <script src="js/dashboard.js?v=3.0.0" defer></script>
+  <script src="js/location.js?v=3.0.0" defer></script>
+  <script src="js/live-data.js?v=3.0.0" defer></script>
+  <script src="js/my-map.js?v=3.0.0" defer></script>
+  <script src="js/clean-layout.js?v=3.0.0" defer></script>
+  <script src="js/usability.js?v=3.0.0" defer></script>
 </head>
 <body data-weather="default" data-phase="unknown">
   <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true"><defs>
@@ -61,150 +53,182 @@
     <symbol id="fog" viewBox="0 0 160 160"><path d="M43 112c-15 0-27-10-27-24s11-25 25-25c5-20 20-31 39-28 17 2 28 13 31 28 18-2 33 8 33 25 0 14-12 24-28 24Z" fill="url(#w-cloud-fill)" opacity=".85"/><g stroke="#8babb7" stroke-width="4" stroke-linecap="round"><path d="M28 110h98M40 123h98M25 136h82"/></g></symbol>
     <symbol id="unknown" viewBox="0 0 160 160"><circle cx="80" cy="80" r="50" fill="#e6eef1"/><path d="M64 62c0-22 34-22 34 0 0 13-18 13-18 28" fill="none" stroke="#63818c" stroke-width="8" stroke-linecap="round"/><circle cx="80" cy="108" r="5" fill="#63818c"/></symbol>
   </defs></svg>
+  <div class="sky" aria-hidden="true"><i class="sky-glow"></i><i class="sky-stars"></i><i class="sky-cloud cloud-a"></i><i class="sky-cloud cloud-b"></i><i class="sky-rain"></i></div>
   <a class="skip-link" href="#weather-content">Đến thông tin thời tiết</a>
   <div class="app-shell">
     <aside class="sidebar" aria-labelledby="search-title">
-      <a class="brand brand-weather" href="./" aria-label="Thời tiết, trang chính"><img class="brand-logo" src="assets/favicon.svg?v=2.2.0" width="34" height="34" alt=""><span>Thời tiết<span class="brand-dot">.</span></span></a>
-      
-      
-      
+      <a class="brand" href="./" aria-label="Thời tiết, trang chính"><img class="brand-logo" src="assets/favicon.svg?v=3.0.0" width="32" height="32" alt=""><span>Thời tiết</span></a>
       <details id="location-drawer" class="location-drawer">
         <summary><span class="drawer-label">Chọn địa điểm<span class="drawer-hint">Tìm kiếm, định vị và các nơi đã lưu</span></span><span class="drawer-chevron" aria-hidden="true"></span></summary>
-      <div class="search-panel">
-        
-        <h2 id="search-title">Tìm địa điểm</h2>
-        <form id="search-form" novalidate>
-          <label for="location-input" class="form-label">Thành phố hoặc địa điểm</label>
-          <div class="input-wrap"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-search"/></svg><input id="location-input" class="form-control search-input" type="search" placeholder="Tìm một địa điểm…" maxlength="120" autocomplete="off" aria-describedby="search-help search-status" required></div>
-          <button id="search-button" class="btn search-button" type="submit">Tìm địa điểm <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-          <p id="search-help" class="field-help">Chọn đúng tỉnh và quốc gia trong kết quả.</p>
-        </form>
-        <div class="location-tools" role="group" aria-labelledby="location-tools-label"><p id="location-tools-label">Vị trí của tôi</p><div class="location-tool-buttons"><button id="locate-button" class="locate-button" type="button"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-sun"/></svg><span id="locate-label">Thời tiết gần tôi</span></button><div class="map-panel"><button id="place-map" aria-label="Xem vị trí tổng quát gần tôi trên bản đồ" type="button" class="btn refresh-button"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-pin"/></svg>Bản đồ khu vực</button></div></div></div>
-        <div id="my-map-result" class="share-result" hidden><p id="my-map-status" role="status"></p><div id="my-map-overview" class="map-overview" hidden></div><button id="map-cancel" type="button" hidden>Hủy</button><a id="my-map-link" target="_blank" rel="noopener noreferrer" hidden>Mở Google Maps (vùng tổng quát) <span aria-hidden="true">↗</span></a></div>
-        
-        <p id="locate-status" class="search-status" role="status" aria-live="polite"></p>
-        <button id="locate-cancel" class="locate-secondary" type="button" hidden>Hủy định vị</button>
-        <details id="locate-help" class="locate-help" hidden>
-          <summary>Cách xử lý định vị</summary>
-          <ol><li>Nếu địa chỉ bắt đầu bằng <strong>http://192.168…</strong>, hãy mở bản website có địa chỉ <strong>HTTPS</strong>. Trình duyệt điện thoại chặn GPS trên địa chỉ HTTP trong mạng Wi-Fi.</li><li>Trên website HTTPS, mở trực tiếp trang trong trình duyệt bạn muốn dùng và cho phép <strong>Vị trí</strong> khi được hỏi.</li><li>Nếu đã dùng HTTPS mà vẫn không định vị được, kiểm tra quyền Vị trí của trang và dịch vụ vị trí của điện thoại.</li></ol>
-          <label for="locate-url">Địa chỉ trang</label><input id="locate-url" type="text" readonly spellcheck="false">
-          <button id="locate-copy" class="locate-secondary" type="button">Sao chép địa chỉ</button><p id="locate-copy-status" role="status" aria-live="polite"></p>
-          <button id="locate-search" class="locate-secondary" type="button">Tìm địa điểm bằng tên</button>
-          <p>Tra cứu thời tiết theo tên địa điểm vẫn hoạt động. Định vị GPS trên điện thoại cần website HTTPS; localhost chỉ có hiệu lực trên chính thiết bị đang chạy máy chủ.</p>
+        <div class="search-panel">
+          <h2 id="search-title" class="panel-title">Tìm địa điểm</h2>
+          <form id="search-form" class="search-form" novalidate>
+            <label for="location-input" class="field-label">Thành phố hoặc địa điểm</label>
+            <div class="input-wrap"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-search"/></svg><input id="location-input" class="search-input" type="search" placeholder="Ví dụ: Cần Thơ, Đà Lạt…" maxlength="120" autocomplete="off" aria-describedby="search-help search-status" required></div>
+            <button id="search-button" class="search-button" type="submit">Tìm địa điểm <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <p id="search-help" class="field-help">Chọn đúng tỉnh và quốc gia trong kết quả.</p>
+          </form>
+          <p id="search-status" class="search-status" role="status" aria-live="polite"></p>
+          <div id="search-results" class="search-results" aria-label="Kết quả tìm địa điểm"></div>
+          <div class="location-tools" role="group" aria-labelledby="location-tools-label">
+            <p id="location-tools-label" class="eyebrow">Vị trí của tôi</p>
+            <div class="location-tool-buttons">
+              <button id="locate-button" class="locate-button" type="button"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-sun"/></svg><span id="locate-label">Thời tiết gần tôi</span></button>
+              <div class="map-panel"><button id="place-map" class="locate-button" type="button" aria-label="Xem vị trí tổng quát gần tôi trên bản đồ"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-pin"/></svg><span>Bản đồ khu vực</span></button></div>
+            </div>
+          </div>
+          <div id="my-map-result" class="share-result" hidden><p id="my-map-status" role="status"></p><div id="my-map-overview" class="map-overview" hidden></div><button id="map-cancel" class="locate-secondary" type="button" hidden>Hủy</button><a id="my-map-link" target="_blank" rel="noopener noreferrer" hidden>Mở Google Maps (vùng tổng quát) <span aria-hidden="true">↗</span></a></div>
+          <p id="locate-status" class="search-status" role="status" aria-live="polite"></p>
+          <button id="locate-cancel" class="locate-secondary" type="button" hidden>Hủy định vị</button>
+          <details id="locate-help" class="locate-help" hidden>
+            <summary>Cách xử lý định vị</summary>
+            <ol><li>Nếu địa chỉ bắt đầu bằng <strong>http://192.168…</strong>, hãy mở bản website có địa chỉ <strong>HTTPS</strong>. Trình duyệt điện thoại chặn GPS trên địa chỉ HTTP trong mạng Wi-Fi.</li><li>Trên website HTTPS, mở trực tiếp trang trong trình duyệt bạn muốn dùng và cho phép <strong>Vị trí</strong> khi được hỏi.</li><li>Nếu đã dùng HTTPS mà vẫn không định vị được, kiểm tra quyền Vị trí của trang và dịch vụ vị trí của điện thoại.</li></ol>
+            <label for="locate-url" class="field-label">Địa chỉ trang</label><input id="locate-url" type="text" readonly spellcheck="false">
+            <button id="locate-copy" class="locate-secondary" type="button">Sao chép địa chỉ</button><p id="locate-copy-status" role="status" aria-live="polite"></p>
+            <button id="locate-search" class="locate-secondary" type="button">Tìm địa điểm bằng tên</button>
+            <p>Tra cứu thời tiết theo tên địa điểm vẫn hoạt động. Định vị GPS trên điện thoại cần website HTTPS; localhost chỉ có hiệu lực trên chính thiết bị đang chạy máy chủ.</p>
+          </details>
+        </div>
+        <section class="quick-section" aria-labelledby="quick-title">
+          <h3 id="quick-title" class="eyebrow">Địa điểm phổ biến</h3>
+          <div id="quick-locations" class="quick-locations"></div>
+        </section>
+        <details class="personal-section">
+          <summary>Địa điểm của bạn</summary>
+          <p class="personal-caption">Yêu thích <span>tối đa 6 nơi</span></p>
+          <div id="favorite-list" class="personal-list"></div>
+          <div class="history-heading"><p class="personal-caption">Vừa tra cứu</p><button id="clear-history" class="text-button" type="button">Xóa lịch sử</button></div>
+          <div id="history-list" class="personal-list"></div>
+          <p id="saved-status" class="search-status" role="status" aria-live="polite"></p>
         </details>
-        <p id="search-status" class="search-status" role="status" aria-live="polite"></p>
-        <div id="search-results" class="search-results" aria-label="Kết quả tìm địa điểm"></div>
-      </div>
-      <section class="quick-section" aria-labelledby="quick-title">
-        <h3 id="quick-title" class="eyebrow">Địa điểm phổ biến</h3>
-        <div id="quick-locations" class="quick-locations"></div>
-      </section>
-      <details class="personal-section">
-        <summary>Địa điểm của bạn</summary>
-        <p class="personal-caption">Yêu thích <span>tối đa 6 nơi</span></p>
-        <div id="favorite-list" class="personal-list"></div>
-        <div class="history-heading"><p class="personal-caption">Vừa tra cứu</p><button id="clear-history" type="button">Xóa lịch sử</button></div>
-        <div id="history-list" class="personal-list"></div>
-        
-        <p id="saved-status" class="search-status" role="status" aria-live="polite"></p>
       </details>
-      </details>
-      </aside>
+    </aside>
 
     <main class="main-content">
       <header class="page-header">
-        <div><h1><span id="page-title-text">Thời tiết hôm nay</span><span>.</span></h1></div>
-        <div class="header-meta"><div class="date-toolbar"><label for="weather-date" class="date-picker-label">Xem ngày</label><button id="date-now" type="button" disabled>Về hôm nay</button></div><div class="day-navigation"><button id="date-prev" type="button" aria-label="Xem ngày trước" disabled>‹</button><span class="date-badge"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-calendar"/></svg><select id="weather-date" disabled><option value="">Đang tải…</option></select><span id="page-date" class="visually-hidden"></span></span><button id="date-next" type="button" aria-label="Xem ngày tiếp theo" disabled>›</button></div></div>
+        <h1><span id="page-title-text">Thời tiết hôm nay</span></h1>
+        <div class="header-meta">
+          <div class="date-toolbar"><label for="weather-date" class="date-picker-label">Xem ngày</label><button id="date-now" type="button" disabled>Về hôm nay</button></div>
+          <div class="day-navigation"><button id="date-prev" type="button" aria-label="Xem ngày trước" disabled>‹</button><span class="date-badge"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-calendar"/></svg><select id="weather-date" disabled><option value="">Đang tải…</option></select><span id="page-date" class="visually-hidden"></span></span><button id="date-next" type="button" aria-label="Xem ngày tiếp theo" disabled>›</button></div>
+        </div>
       </header>
       <nav class="weather-tabs" aria-label="Các mục trên trang"><a href="#weather-content" aria-current="location">Tổng quan</a><a href="#forecast-group">Dự báo</a><a href="#conditions-group">Chỉ số</a><a href="#advice-section">Hoạt động</a><a href="#comparison-section">So sánh</a></nav>
-      
-      <section id="weather-content" class="weather-content" aria-labelledby="place-name" aria-busy="true">
-        <div class="overview-heading"><div class="section-label"><span class="status-dot" aria-hidden="true"></span> Tổng quan thời tiết</div><div class="overview-actions"><button id="save-location" class="btn refresh-button" type="button" aria-pressed="false" disabled>☆ Lưu yêu thích</button><button id="refresh-button" class="btn refresh-button" type="button" disabled><svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-refresh"/></svg><span>Cập nhật</span></button></div></div>
 
-        <p id="weather-age" class="weather-age" role="status" hidden></p>
+      <section id="weather-content" class="weather-content" aria-labelledby="place-name" aria-busy="true">
+        <div class="overview-heading">
+          <p class="section-label"><span class="status-dot" aria-hidden="true"></span>Tổng quan thời tiết</p>
+          <div class="overview-actions"><button id="save-location" class="glass-button" type="button" aria-pressed="false" disabled>☆ Lưu yêu thích</button><button id="refresh-button" class="glass-button" type="button" disabled><svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-refresh"/></svg><span>Cập nhật</span></button></div>
+        </div>
+        <p id="weather-age" class="notice notice-warn" role="status" hidden></p>
         <p id="connection-status" class="weather-status" data-kind="error" role="status" hidden>Thiết bị đang ngoại tuyến. Hãy kết nối Internet rồi bấm Cập nhật hoặc Thử tải lại. Dữ liệu đã hiển thị có thể cũ.</p>
         <div id="weather-status" class="weather-status" role="status" aria-live="polite">Đang tải thời tiết Vĩnh Long…</div>
-        <button id="retry-button" class="btn retry-button" type="button" hidden>Thử tải lại <span aria-hidden="true">↗</span></button>
+        <button id="retry-button" class="glass-button retry-button" type="button" hidden>Thử tải lại <span aria-hidden="true">↻</span></button>
+
         <div id="weather-view" hidden>
           <section id="current-panel" class="current-panel" data-scene="day" aria-labelledby="current-title">
-            <div class="sky-decoration" aria-hidden="true"><i class="orbit orbit-one"></i><i class="orbit orbit-two"></i><i class="sky-dot dot-one"></i><i class="sky-dot dot-two"></i><i class="sky-dot dot-three"></i></div>
-            <div class="current-topline"><h3 id="current-title">THỜI TIẾT HIỆN TẠI</h3><span id="day-label" class="day-label"></span></div>
+            <div class="current-topline"><h3 id="current-title">Thời tiết hiện tại</h3><span id="day-label" class="day-label"></span></div>
             <div class="current-main">
-              <div class="current-info"><div class="location-heading"><h2 id="place-name">Vĩnh Long</h2><p class="place-line"><svg class="icon" width="13" height="13" aria-hidden="true"><use href="#i-pin"/></svg><span id="place-region">Việt Nam</span></p></div><p class="temperature"><span id="temperature">—</span><span class="degree">°C</span></p><div class="condition-line"><p id="condition" class="condition"></p><span class="condition-separator" aria-hidden="true"></span><p id="today-range"></p></div></div>
+              <div class="current-info">
+                <div class="location-heading"><h2 id="place-name">Vĩnh Long</h2><p class="place-line"><svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-pin"/></svg><span id="place-region">Việt Nam</span></p></div>
+                <p class="temperature"><span id="temperature">—</span><span class="degree">°C</span></p>
+                <div class="condition-line"><p id="condition" class="condition"></p><span class="condition-separator" aria-hidden="true"></span><p id="today-range"></p></div>
+              </div>
               <div class="weather-art"><span id="weather-icon" class="weather-icon" aria-hidden="true"></span></div>
             </div>
             <ul id="weather-highlights" class="weather-highlights" aria-label="Điểm cần chú ý" hidden></ul>
-            <div class="current-bottom"><p id="data-time"></p><span class="data-source">Nguồn: Open-Meteo <span aria-hidden="true">↗</span></span></div>
+            <div class="current-bottom"><p id="data-time"></p><span class="data-source">Nguồn: Open-Meteo</span></div>
           </section>
-          <section id="current-metrics" class="metrics row g-3" aria-label="Chi tiết thời tiết hiện tại">
-            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Độ ẩm</span><span class="metric-icon blue"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-drop"/></svg></span></div><p class="metric-value"><strong id="humidity">—</strong><span class="metric-unit">%</span></p><div class="humidity-track" aria-hidden="true"><span id="humidity-fill"></span></div><span class="metric-note">Độ ẩm tương đối</span></article></div>
-            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Tốc độ gió</span><span class="metric-icon mint"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-wind"/></svg></span></div><p class="metric-value"><strong id="wind">—</strong><span class="metric-unit">km/h</span></p><span class="metric-note">Ở độ cao 10 m</span></article></div>
-            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Cảm nhận</span><span class="metric-icon peach"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-temp"/></svg></span></div><p class="metric-value"><strong id="feels-like">—</strong><span class="metric-unit">°C</span></p><span class="metric-note">Nhiệt độ cảm nhận ngoài trời</span></article></div>
-            <div class="col-6 col-xl-3"><article class="metric"><div class="metric-top"><span class="metric-label">Giáng thủy</span><span class="metric-icon lavender"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-rain"/></svg></span></div><p class="metric-value"><strong id="precipitation">—</strong><span class="metric-unit">mm</span></p><span class="metric-note">Trong khoảng dữ liệu hiện tại</span></article></div>
+
+          <section id="current-metrics" class="metrics" aria-label="Chi tiết thời tiết hiện tại">
+            <article class="metric"><div class="metric-top"><span class="metric-label">Độ ẩm</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-drop"/></svg></span></div><p class="metric-value"><strong id="humidity">—</strong><span class="metric-unit">%</span></p><div class="humidity-track" aria-hidden="true"><span id="humidity-fill"></span></div><span class="metric-note">Độ ẩm tương đối</span></article>
+            <article class="metric"><div class="metric-top"><span class="metric-label">Tốc độ gió</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-wind"/></svg></span></div><p class="metric-value"><strong id="wind">—</strong><span class="metric-unit">km/h</span></p><span class="metric-note">Ở độ cao 10 m</span></article>
+            <article class="metric"><div class="metric-top"><span class="metric-label">Cảm nhận</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-temp"/></svg></span></div><p class="metric-value"><strong id="feels-like">—</strong><span class="metric-unit">°C</span></p><span class="metric-note">Nhiệt độ cảm nhận ngoài trời</span></article>
+            <article class="metric"><div class="metric-top"><span class="metric-label">Giáng thủy</span><span class="metric-icon"><svg class="icon" width="17" height="17" aria-hidden="true"><use href="#i-rain"/></svg></span></div><p class="metric-value"><strong id="precipitation">—</strong><span class="metric-unit">mm</span></p><span class="metric-note">Trong khoảng dữ liệu hiện tại</span></article>
           </section>
+
           <section id="daily-view" class="daily-view" hidden aria-labelledby="daily-place">
-            <div class="daily-hero"><div class="daily-topline"><span>DỰ BÁO THEO NGÀY</span><span id="daily-date"></span></div><div class="daily-main"><div><h2 id="daily-place"></h2><p id="daily-region"></p><p class="daily-range"><strong id="daily-high"></strong><span id="daily-low"></span></p><p class="daily-range-label">Cao nhất / thấp nhất trong ngày</p><p id="daily-condition"></p></div><div id="daily-icon" class="daily-icon" aria-hidden="true"></div></div><p id="daily-source" class="daily-source"></p></div>
+            <div class="daily-hero">
+              <div class="current-topline"><span>Dự báo theo ngày</span><span id="daily-date" class="day-label"></span></div>
+              <div class="daily-main"><div><h2 id="daily-place"></h2><p id="daily-region" class="place-line"></p><p class="daily-range"><strong id="daily-high"></strong><span id="daily-low"></span></p><p class="daily-range-label">Cao nhất / thấp nhất trong ngày</p><p id="daily-condition" class="condition"></p></div><div id="daily-icon" class="daily-icon" aria-hidden="true"></div></div>
+              <p id="daily-source" class="daily-source"></p>
+            </div>
             <div id="daily-metrics" class="daily-metrics"></div>
             <p class="daily-note">Dự báo tổng quan trong ngày.</p>
           </section>
-<section id="forecast-group" class="weather-group" aria-labelledby="forecast-group-title"><div class="group-header"><h3 id="forecast-group-title"><svg class="icon" width="22" height="22" aria-hidden="true"><use href="#i-calendar"/></svg>Dự báo thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Dự báo thời tiết"><button type="button" role="tab" id="tab-hourly-section" aria-controls="pane-hourly-section" aria-selected="true" tabindex="0">Theo giờ</button><button type="button" role="tab" id="tab-forecast-section" aria-controls="pane-forecast-section" aria-selected="false" tabindex="-1">7 ngày</button></div></div><div id="pane-hourly-section" class="group-pane" role="tabpanel" aria-labelledby="tab-hourly-section" tabindex="0">          <section id="hourly-section" class="dashboard-section" aria-labelledby="hourly-title">
-            <div class="section-heading"><div><h3 id="hourly-title">Dự báo theo giờ</h3></div><div class="hour-modes" role="group" aria-label="Chỉ số biểu đồ theo giờ"><button type="button" data-hour-mode="temperature_2m" aria-pressed="true">Nhiệt độ</button><button type="button" data-hour-mode="precipitation_probability" aria-pressed="false">Khả năng mưa</button><button type="button" data-hour-mode="wind_speed_10m" aria-pressed="false">Gió</button><button type="button" data-hour-mode="precipitation" aria-pressed="false">Lượng mưa</button></div></div>
-            <p id="hourly-caption" class="dashboard-caption"></p><p id="hourly-message" class="dashboard-caption" role="status"></p>
-            <div id="hourly-chart" class="hourly-chart"></div><div id="hourly-list" class="hourly-list" role="group" aria-label="Chọn giờ xem dự báo" tabindex="0"></div>
-            <div id="hourly-detail" class="hourly-detail" aria-live="polite" hidden></div>
-            <p class="dashboard-footnote">Vuốt hoặc cuộn ngang để xem thêm giờ. Lượng giáng thủy được tính trong giờ trước mốc dự báo.</p>
-          </section>
-</div><div id="pane-forecast-section" class="group-pane" role="tabpanel" aria-labelledby="tab-forecast-section" tabindex="0" hidden>          <section id="forecast-section" class="forecast-section" aria-labelledby="forecast-title">
-            <div class="section-heading"><div><h3 id="forecast-title">Dự báo 7 ngày</h3></div><div class="view-switch" role="group" aria-label="Cách xem dự báo"><button id="cards-button" type="button" aria-pressed="true" aria-controls="forecast-list"><svg class="icon" width="13" height="13" aria-hidden="true"><use href="#i-grid"/></svg><span>Tổng quan</span></button><button id="chart-button" type="button" aria-pressed="false" aria-controls="forecast-chart"><svg class="icon" width="13" height="13" aria-hidden="true"><use href="#i-chart"/></svg><span>Biểu đồ</span></button></div></div>
-            <div id="forecast-list" class="forecast-grid"></div>
-            <div id="forecast-chart" class="forecast-chart" hidden><div class="chart-header"><span>Nhiệt độ trong 7 ngày <small>°C</small></span><div class="chart-legend"><span><i class="legend-high"></i>Cao nhất</span><span><i class="legend-low"></i>Thấp nhất</span></div></div><div id="chart-graphic"></div><table id="chart-data" class="visually-hidden"><caption>Nhiệt độ cao nhất và thấp nhất từng ngày</caption><thead><tr><th scope="col">Ngày</th><th scope="col">Cao nhất °C</th><th scope="col">Thấp nhất °C</th></tr></thead><tbody></tbody></table></div>
-            <p class="forecast-note">Nhiệt độ cao nhất và thấp nhất. Tỷ lệ mưa là xác suất cao nhất trong ngày.</p>
-          </section>
-</div></section>
-<section id="conditions-group" class="weather-group" aria-labelledby="conditions-group-title"><div class="group-header"><h3 id="conditions-group-title"><svg class="icon" width="22" height="22" aria-hidden="true"><use href="#i-wind"/></svg>Điều kiện thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Điều kiện thời tiết"><button type="button" role="tab" id="tab-details-section" aria-controls="pane-details-section" aria-selected="true" tabindex="0">Chỉ số</button><button type="button" role="tab" id="tab-air-section" aria-controls="pane-air-section" aria-selected="false" tabindex="-1">Không khí</button></div></div><div id="pane-details-section" class="group-pane" role="tabpanel" aria-labelledby="tab-details-section" tabindex="0">          <section id="details-section" class="dashboard-section" aria-labelledby="details-title">
-            <h3 id="details-title" class="visually-hidden">Chỉ số thời tiết hiện tại</h3>
-            <div class="weather-details-layout"><article class="sun-card"><div class="sun-card-heading"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="#i-calendar"/></svg><h4>Nhịp mặt trời</h4></div><div class="sun-times"><div><span>Mặt trời mọc</span><strong id="sunrise-time">—</strong></div><div><span>Mặt trời lặn</span><strong id="sunset-time">—</strong></div></div><p id="sun-duration" class="dashboard-caption"></p><p id="sun-note" class="dashboard-footnote"></p></article><div id="extra-metrics" class="extra-metrics"></div></div>
-            <p id="indices-note" class="dashboard-footnote" hidden></p>
-          </section>
-</div><div id="pane-air-section" class="group-pane" role="tabpanel" aria-labelledby="tab-air-section" tabindex="0" hidden>          <section id="air-section" class="dashboard-section air-section" aria-labelledby="air-title" hidden>
-            <div class="section-heading"><div><h3 id="air-title">Chất lượng không khí</h3></div><span class="feature-badge">Hiện tại · US AQI</span></div>
-            <p id="air-status" class="dashboard-caption" role="status"></p>
-            <div id="air-values" class="air-values" hidden>
-              <div id="air-score" class="air-score"><span>Chỉ số US AQI</span><strong id="air-us_aqi">—</strong><b id="air-band"></b></div>
-              <div class="air-metric"><span>Bụi mịn PM2.5</span><strong id="air-pm2_5">—</strong><span>μg/m³</span></div>
-              <div class="air-metric"><span>Bụi PM10</span><strong id="air-pm10">—</strong><span>μg/m³</span></div>
-              <div class="air-metric"><span>NO₂</span><strong id="air-nitrogen_dioxide">—</strong><span>μg/m³</span></div>
-              <div class="air-metric"><span>Ozone O₃</span><strong id="air-ozone">—</strong><span>μg/m³</span></div>
+
+          <section id="forecast-group" class="weather-group glass-card" aria-labelledby="forecast-group-title">
+            <div class="group-header"><h3 id="forecast-group-title"><svg class="icon" width="22" height="22" aria-hidden="true"><use href="#i-calendar"/></svg>Dự báo thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Dự báo thời tiết"><button type="button" role="tab" id="tab-hourly-section" aria-controls="pane-hourly-section" aria-selected="true" tabindex="0">Theo giờ</button><button type="button" role="tab" id="tab-forecast-section" aria-controls="pane-forecast-section" aria-selected="false" tabindex="-1">7 ngày</button></div></div>
+            <div id="pane-hourly-section" class="group-pane" role="tabpanel" aria-labelledby="tab-hourly-section" tabindex="0">
+              <section id="hourly-section" class="dashboard-section" aria-labelledby="hourly-title">
+                <div class="section-heading"><h4 id="hourly-title" class="visually-hidden">Dự báo theo giờ</h4><p id="hourly-caption" class="dashboard-caption"></p><div class="hour-modes" role="group" aria-label="Chỉ số biểu đồ theo giờ"><button type="button" data-hour-mode="temperature_2m" aria-pressed="true">Nhiệt độ</button><button type="button" data-hour-mode="precipitation_probability" aria-pressed="false">Khả năng mưa</button><button type="button" data-hour-mode="wind_speed_10m" aria-pressed="false">Gió</button><button type="button" data-hour-mode="precipitation" aria-pressed="false">Lượng mưa</button></div></div>
+                <p id="hourly-message" class="dashboard-caption" role="status"></p>
+                <div id="hourly-chart" class="hourly-chart"></div>
+                <div id="hourly-list" class="hourly-list" role="group" aria-label="Chọn giờ xem dự báo" tabindex="0"></div>
+                <div id="hourly-detail" class="hourly-detail" aria-live="polite" hidden></div>
+                <p class="dashboard-footnote">Vuốt hoặc cuộn ngang để xem thêm giờ. Lượng giáng thủy được tính trong giờ trước mốc dự báo.</p>
+              </section>
             </div>
-            <div class="air-actions"><button id="air-retry" type="button" hidden>Thử tải lại</button></div>
-            <p class="air-note">Dữ liệu mô hình: <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener noreferrer">Open-Meteo</a> / <a href="https://atmosphere.copernicus.eu/" target="_blank" rel="noopener noreferrer">CAMS</a> · Thang US AQI.</p>
-            <details class="source-details"><summary>Cách đọc chỉ số US AQI</summary><p>0–50: Tốt · trên 50–100: Trung bình · trên 100–150: Kém với nhóm nhạy cảm · trên 150–200: Không tốt · trên 200–300: Rất không tốt · trên 300: Nguy hại. Nồng độ chất ô nhiễm hiển thị ở mốc hiện tại; AQI có thể dùng các khoảng trung bình khác nhau theo quy tắc của nhà cung cấp.</p></details>
+            <div id="pane-forecast-section" class="group-pane" role="tabpanel" aria-labelledby="tab-forecast-section" tabindex="0" hidden>
+              <section id="forecast-section" class="forecast-section" aria-labelledby="forecast-title">
+                <div class="section-heading"><h4 id="forecast-title" class="visually-hidden">Dự báo 7 ngày</h4><p class="dashboard-caption">Nhiệt độ cao nhất, thấp nhất và xác suất mưa cao nhất trong ngày.</p><div class="view-switch" role="group" aria-label="Cách xem dự báo"><button id="cards-button" type="button" aria-pressed="true" aria-controls="forecast-list"><svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-grid"/></svg><span>Tổng quan</span></button><button id="chart-button" type="button" aria-pressed="false" aria-controls="forecast-chart"><svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-chart"/></svg><span>Biểu đồ</span></button></div></div>
+                <div id="forecast-list" class="forecast-grid"></div>
+                <div id="forecast-chart" class="forecast-chart" hidden><div class="chart-header"><span>Nhiệt độ trong 7 ngày <small>°C</small></span><div class="chart-legend"><span><i class="legend-high"></i>Cao nhất</span><span><i class="legend-low"></i>Thấp nhất</span></div></div><div id="chart-graphic"></div><table id="chart-data" class="visually-hidden"><caption>Nhiệt độ cao nhất và thấp nhất từng ngày</caption><thead><tr><th scope="col">Ngày</th><th scope="col">Cao nhất °C</th><th scope="col">Thấp nhất °C</th></tr></thead><tbody></tbody></table></div>
+              </section>
+            </div>
           </section>
-</div></section>
-          <section id="advice-section" class="advice-section" aria-labelledby="advice-title">
-            <div class="section-heading feature-heading"><div class="feature-title"><img class="feature-illustration" src="assets/plan-weather.svg?v=2.2.0" width="40" height="40" alt="" loading="lazy"><div><h3 id="advice-title">Thời tiết cho hoạt động ngoài trời</h3></div></div></div>
-            
-            <p id="advice-location" class="advice-location"></p>
-            <p id="advice-unavailable" class="advice-notice" role="status" hidden>Đang cập nhật. Gợi ý tạm ẩn để tránh dùng thông tin cũ.</p>
+
+          <section id="conditions-group" class="weather-group glass-card" aria-labelledby="conditions-group-title">
+            <div class="group-header"><h3 id="conditions-group-title"><svg class="icon" width="22" height="22" aria-hidden="true"><use href="#i-wind"/></svg>Điều kiện thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Điều kiện thời tiết"><button type="button" role="tab" id="tab-details-section" aria-controls="pane-details-section" aria-selected="true" tabindex="0">Chỉ số</button><button type="button" role="tab" id="tab-air-section" aria-controls="pane-air-section" aria-selected="false" tabindex="-1">Không khí</button></div></div>
+            <div id="pane-details-section" class="group-pane" role="tabpanel" aria-labelledby="tab-details-section" tabindex="0">
+              <section id="details-section" class="dashboard-section" aria-labelledby="details-title">
+                <h4 id="details-title" class="visually-hidden">Chỉ số thời tiết hiện tại</h4>
+                <div class="weather-details-layout">
+                  <article class="sun-card"><div class="sun-card-heading"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="#i-sun"/></svg><h4>Nhịp mặt trời</h4></div><div class="sun-times"><div><span>Mặt trời mọc</span><strong id="sunrise-time">—</strong></div><div><span>Mặt trời lặn</span><strong id="sunset-time">—</strong></div></div><p id="sun-duration" class="dashboard-caption"></p><p id="sun-note" class="dashboard-footnote"></p></article>
+                  <div id="extra-metrics" class="extra-metrics"></div>
+                </div>
+                <p id="indices-note" class="dashboard-footnote" hidden></p>
+              </section>
+            </div>
+            <div id="pane-air-section" class="group-pane" role="tabpanel" aria-labelledby="tab-air-section" tabindex="0" hidden>
+              <section id="air-section" class="dashboard-section air-section" aria-labelledby="air-title" hidden>
+                <div class="section-heading"><h4 id="air-title">Chất lượng không khí</h4><span class="feature-badge">Hiện tại · US AQI</span></div>
+                <p id="air-status" class="dashboard-caption" role="status"></p>
+                <div id="air-values" class="air-values" hidden>
+                  <div id="air-score" class="air-score"><span>Chỉ số US AQI</span><strong id="air-us_aqi">—</strong><b id="air-band"></b></div>
+                  <div class="air-metric"><span>Bụi mịn PM2.5</span><strong id="air-pm2_5">—</strong><span>μg/m³</span></div>
+                  <div class="air-metric"><span>Bụi PM10</span><strong id="air-pm10">—</strong><span>μg/m³</span></div>
+                  <div class="air-metric"><span>NO₂</span><strong id="air-nitrogen_dioxide">—</strong><span>μg/m³</span></div>
+                  <div class="air-metric"><span>Ozone O₃</span><strong id="air-ozone">—</strong><span>μg/m³</span></div>
+                </div>
+                <div class="air-actions"><button id="air-retry" class="glass-button" type="button" hidden>Thử tải lại</button></div>
+                <p class="air-note">Dữ liệu mô hình: <a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener noreferrer">Open-Meteo</a> / <a href="https://atmosphere.copernicus.eu/" target="_blank" rel="noopener noreferrer">CAMS</a> · Thang US AQI.</p>
+                <details class="source-details"><summary>Cách đọc chỉ số US AQI</summary><p>0–50: Tốt · trên 50–100: Trung bình · trên 100–150: Kém với nhóm nhạy cảm · trên 150–200: Không tốt · trên 200–300: Rất không tốt · trên 300: Nguy hại. Nồng độ chất ô nhiễm hiển thị ở mốc hiện tại; AQI có thể dùng các khoảng trung bình khác nhau theo quy tắc của nhà cung cấp.</p></details>
+              </section>
+            </div>
+          </section>
+
+          <section id="advice-section" class="advice-section glass-card" aria-labelledby="advice-title">
+            <div class="feature-heading"><img class="feature-illustration" src="assets/plan-weather.svg?v=3.0.0" width="44" height="44" alt="" loading="lazy"><div><h3 id="advice-title">Thời tiết cho hoạt động ngoài trời</h3><p id="advice-location" class="advice-location"></p></div></div>
+            <p id="advice-unavailable" class="notice" role="status" hidden>Đang cập nhật. Gợi ý tạm ẩn để tránh dùng thông tin cũ.</p>
             <div id="advice-results">
               <p id="activity-period" class="visually-hidden"></p>
-              <div class="activity-controls activity-planner" role="group" aria-label="Chọn ngày, giờ và hoạt động">
-                <div><label for="activity-date">Ngày</label><select id="activity-date"><option value="">Hôm nay</option></select></div>
-                <div id="activity-hour-picker"><label for="activity-hour">Khung giờ</label><select id="activity-hour" aria-controls="activity-hour-detail"><option value="">Chọn giờ</option></select></div>
-                <div class="activity-choice"><label for="activity-select">Hoạt động</label><select id="activity-select" aria-controls="activity-hour-detail"><option value="">Chọn hoạt động</option><option value="walk">Đi bộ</option><option value="run">Chạy bộ</option><option value="cycle">Đạp xe</option></select></div>
+              <div class="activity-planner" role="group" aria-label="Chọn ngày, giờ và hoạt động">
+                <div><label for="activity-date" class="field-label">Ngày</label><select id="activity-date"><option value="">Hôm nay</option></select></div>
+                <div id="activity-hour-picker"><label for="activity-hour" class="field-label">Khung giờ</label><select id="activity-hour" aria-controls="activity-hour-detail"><option value="">Chọn giờ</option></select></div>
+                <div><label for="activity-select" class="field-label">Hoạt động</label><select id="activity-select" aria-controls="activity-hour-detail"><option value="">Chọn hoạt động</option><option value="walk">Đi bộ</option><option value="run">Chạy bộ</option><option value="cycle">Đạp xe</option></select></div>
               </div>
-              <p id="activity-status" class="advice-notice" role="status" aria-live="polite">Chọn ngày, giờ và hoạt động để xem đánh giá.</p>
+              <p id="activity-status" class="notice" role="status" aria-live="polite">Chọn ngày, giờ và hoạt động để xem đánh giá.</p>
               <div id="activity-hour-detail" class="activity-hour-detail" tabindex="-1" role="region" aria-label="Đánh giá hoạt động đã chọn" aria-live="polite" hidden></div>
               <details id="advice-current-block" class="planner-current" hidden><summary>Lưu ý nếu ra ngoài ngay</summary><div id="current-advice" class="current-advice"></div></details>
               <details class="advice-method" hidden><summary>Cách đánh giá khung giờ</summary><p id="activity-criteria"></p></details>
             </div>
           </section>
-          <section id="comparison-section" class="comparison-section" aria-labelledby="comparison-title" aria-busy="false">
-            <div class="section-heading feature-heading"><div class="feature-title"><img class="feature-illustration" src="assets/compare-weather.svg?v=2.2.0" width="40" height="40" alt="" loading="lazy"><div><h3 id="comparison-title">So sánh thời tiết hai nơi</h3></div></div></div>
-            <p class="comparison-intro">Chọn một nơi để đối chiếu thời tiết hiện tại với địa điểm đang xem.</p>
+
+          <section id="comparison-section" class="comparison-section glass-card" aria-labelledby="comparison-title" aria-busy="false">
+            <div class="feature-heading"><img class="feature-illustration" src="assets/compare-weather.svg?v=3.0.0" width="44" height="44" alt="" loading="lazy"><div><h3 id="comparison-title">So sánh thời tiết hai nơi</h3><p class="advice-location">Đối chiếu thời tiết hiện tại với địa điểm đang xem.</p></div></div>
             <form id="compare-form" class="compare-form" novalidate>
-              <label for="compare-input">Địa điểm muốn so sánh</label>
-              <div class="compare-input-row"><input id="compare-input" class="form-control" type="search" placeholder="Ví dụ: Đà Lạt, Hà Nội…" maxlength="120" autocomplete="off" aria-describedby="compare-search-status"><button id="compare-search-button" class="feature-button" type="submit">Tìm để so sánh</button></div>
+              <label for="compare-input" class="field-label">Địa điểm muốn so sánh</label>
+              <div class="compare-input-row"><input id="compare-input" type="search" placeholder="Ví dụ: Đà Lạt, Hà Nội…" maxlength="120" autocomplete="off" aria-describedby="compare-search-status"><button id="compare-search-button" class="primary-button" type="submit">Tìm để so sánh</button></div>
             </form>
             <p id="compare-search-status" class="feature-status" role="status" aria-live="polite"></p>
             <div id="compare-results" class="compare-results" aria-label="Kết quả tìm địa điểm để so sánh"></div>
@@ -212,14 +236,16 @@
             <div class="compare-toolbar"><p id="compare-status" class="feature-status" role="status" aria-live="polite">Chọn địa điểm để bắt đầu so sánh.</p><button id="compare-refresh" class="text-button" type="button" hidden>Cập nhật cả hai</button><button id="compare-retry" class="text-button" type="button" hidden>Thử lại</button></div>
             <div id="compare-content" hidden>
               <div id="compare-cards" class="compare-cards"></div>
-              <div class="comparison-insight"><span class="insight-label">ĐIỂM KHÁC BIỆT</span><ul id="compare-insights"></ul></div>
-              <p class="comparison-note">So sánh số liệu hiện tại theo giờ địa phương. Tỷ lệ mưa là xác suất cao nhất hôm nay.</p>
+              <div class="comparison-insight"><span class="insight-label">Điểm khác biệt</span><ul id="compare-insights"></ul></div>
+              <p class="dashboard-footnote">So sánh số liệu hiện tại theo giờ địa phương. Tỷ lệ mưa là xác suất cao nhất hôm nay.</p>
             </div>
           </section>
         </div>
+
         <div id="empty-view" class="empty-view"><svg class="empty-weather" viewBox="0 0 160 160" width="140" height="140" aria-hidden="true"><use href="#partly-cloudy"/></svg><h3 id="empty-title">Đang tải thời tiết</h3><p id="empty-message">Thông tin thời tiết sẽ xuất hiện ở đây.</p></div>
       </section>
-      <footer class="site-footer"><span class="footer-brand"><img class="footer-logo" src="assets/favicon.svg?v=2.2.0" width="30" height="30" alt=""><span class="footer-brand-copy"><b>Thời tiết.</b></span></span><span>Lê Đăng Huy <span class="footer-separator">/</span> <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a> · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span></footer>
+
+      <footer class="site-footer"><span class="footer-brand"><img class="footer-logo" src="assets/favicon.svg?v=3.0.0" width="24" height="24" alt=""><b>Thời tiết</b></span><span>Lê Đăng Huy · Dữ liệu: <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a> · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span></footer>
     </main>
   </div>
   <noscript><p class="noscript-message">Hãy bật JavaScript trong trình duyệt để tìm địa điểm và tải dữ liệu thời tiết.</p></noscript>

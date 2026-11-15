@@ -71,7 +71,10 @@ globalThis.MayDashboardData = (() => {
   function highlights(data) {
     const now = key => value(data, "current", key), next = hours(data).slice(0, 12), items = [];
     const rainNow = now("precipitation"), rainHour = next.find(r => r.precipitation_probability >= 50);
-    if (rainNow > 0) items.push({ icon: "i-rain", title: "Đang có mưa", text: `${num(rainNow)} mm trong khoảng dữ liệu hiện tại · nhớ mang ô` });
+    // Mã thời tiết hiện tại báo mưa/giông vẫn tính là đang mưa dù lượng đo được bằng 0.
+    const code = data?.current?.weather_code, storm = MayWeatherConfig.stormCodes.includes(code);
+    if (rainNow > 0 || storm || MayWeatherConfig.rainCodes.includes(code)) items.push({ icon: "i-rain", title: storm ? "Đang có giông" : "Đang có mưa",
+      text: rainNow > 0 ? `${num(rainNow)} mm trong khoảng dữ liệu hiện tại · nhớ mang ô` : storm ? "Ưu tiên ở trong nhà, tránh nơi trống trải" : "Theo dữ liệu hiện tại · nhớ mang ô" });
     else if (rainHour) items.push({ icon: "i-rain", title: `Có thể mưa lúc ${rainHour.time.slice(11)}`, text: `Khả năng ${num(rainHour.precipitation_probability)}% · nên mang ô` });
     const temp = now("temperature_2m"), feels = now("apparent_temperature");
     const gap = feelsGap(temp, feels);

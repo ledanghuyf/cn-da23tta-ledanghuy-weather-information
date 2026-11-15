@@ -40,6 +40,7 @@ test('Điểm cần chú ý: mưa, cảm nhận lệch, UV, gió giật; yên kh
   assert.deepEqual(h(d),['Có thể mưa lúc 17:00','Cảm giác nóng hơn 8°','UV rất cao (8,4)']);
   d.current.precipitation=1.2;assert.equal(h(d)[0],'Đang có mưa');
   d=fixture();d.hourly_units.precipitation_probability='mm';assert.deepEqual(h(d),[]);
+  d=fixture();d.current.weather_code=61;assert.equal(h(d)[0],'Đang có mưa');d.current.weather_code=95;assert.equal(h(d)[0],'Đang có giông');
   assert.equal(context.MayDashboardData.feelsGap(27.4,34.5),8);assert.equal(context.MayDashboardData.feelsGap(29.6,31),0);assert.equal(context.MayDashboardData.feelsGap(20,16.6),-3);
   assert.equal(context.MayDashboardData.uvLevel(5.9),'Trung bình');assert.equal(context.MayDashboardData.uvLevel(11),'Cực cao');
 });

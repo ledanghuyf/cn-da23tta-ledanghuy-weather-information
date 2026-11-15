@@ -1,0 +1,457 @@
+/* Thời tiết 3.0 — "Bầu trời theo thời tiết".
+   Nền trang là bầu trời đổi theo body[data-weather] / body[data-phase] (do weather-theme.js gán).
+   Chữ trên nền trời luôn trắng: mọi màu trời được chọn để chữ trắng đạt tương phản ≥ 4.5:1.
+   Dữ liệu chi tiết nằm trên thẻ kính sáng (chữ tối) để dễ đọc ở mọi cảnh. */
+
+:root {
+  --sky-top: #1c4a73; --sky-bottom: #2d6496; --glow: rgba(255, 255, 255, .10);
+  --ink: #142f3b; --ink-soft: #4a6270; --ink-faint: #6b808b;
+  --line: rgba(20, 47, 59, .12);
+  --card: rgba(255, 255, 255, .88); --card-solid: #fff; --tile: rgba(240, 246, 250, .9);
+  --on-sky: #fff;
+  --accent: #f0a04b; --accent-ink: #8a4f10; --accent-bg: #fff4e5;
+  --rain: #1d6197; --good: #2f7f5f; --bad: #a43f29;
+  --radius-lg: 24px; --radius: 16px; --radius-sm: 10px;
+  --shadow: 0 10px 30px rgba(8, 26, 48, .14);
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+body[data-weather="sunny"]  { --sky-top: #1559a3; --sky-bottom: #2a72bf; --glow: rgba(255, 228, 150, .26); }
+body[data-weather="cloudy"] { --sky-top: #334a5f; --sky-bottom: #536a80; --glow: rgba(255, 255, 255, .10); }
+body[data-weather="rain"]   { --sky-top: #1f3346; --sky-bottom: #3d5870; --glow: rgba(160, 200, 230, .10); }
+body[data-weather="storm"]  { --sky-top: #141526; --sky-bottom: #35334d; --glow: rgba(170, 150, 230, .14); }
+body[data-phase="night"]    { --sky-top: #08122b; --sky-bottom: #1f3463; --glow: rgba(255, 236, 180, .16); }
+body[data-phase="night"][data-weather="rain"],
+body[data-phase="night"][data-weather="storm"] { --sky-top: #070d1c; --sky-bottom: #1d2840; }
+
+/* ---------- Nền tảng ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-padding-top: 76px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; min-height: 100vh; font: 15px/1.5 var(--font); color: var(--ink); background: var(--sky-bottom); }
+h1, h2, h3, h4, h5, p, ul, ol, dl, dd, figure { margin: 0; }
+ul, ol { padding: 0; }
+img, svg { max-width: 100%; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid #ffd27a; outline-offset: 2px; }
+.glass-card :focus-visible, .metric:focus-visible { outline-color: #1d6197; }
+.icon-definitions { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon { display: inline-block; width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.skip-link { position: absolute; left: -9999px; top: 10px; z-index: 30; padding: 10px 14px; border-radius: var(--radius-sm); background: #fff; color: var(--ink); }
+.skip-link:focus { left: 10px; }
+.noscript-message { margin: 16px; padding: 12px 16px; border-radius: var(--radius-sm); background: #fff3cd; color: #5c4400; }
+
+/* ---------- Bầu trời ---------- */
+.sky { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom)); transition: background .6s; }
+.sky > i { position: absolute; display: block; }
+.sky-glow { inset: -20% -10% auto auto; width: 70vmax; height: 70vmax; border-radius: 50%; background: radial-gradient(circle, var(--glow), transparent 62%); }
+.sky-stars { inset: 0 0 45% 0; opacity: 0; transition: opacity .6s;
+  background-image: radial-gradient(1.5px 1.5px at 12% 18%, #fff, transparent), radial-gradient(1px 1px at 28% 42%, #fff, transparent), radial-gradient(1.5px 1.5px at 46% 12%, #fff, transparent), radial-gradient(1px 1px at 63% 33%, #fff, transparent), radial-gradient(1.5px 1.5px at 78% 9%, #fff, transparent), radial-gradient(1px 1px at 88% 48%, #fff, transparent), radial-gradient(1px 1px at 6% 62%, #fff, transparent), radial-gradient(1.5px 1.5px at 55% 70%, #fff, transparent); }
+body[data-phase="night"] .sky-stars { opacity: .75; }
+body[data-phase="night"][data-weather="rain"] .sky-stars, body[data-phase="night"][data-weather="storm"] .sky-stars { opacity: .2; }
+.sky-cloud { width: 60vmax; height: 22vmax; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(255, 255, 255, .55), transparent 70%); filter: blur(10px); opacity: .1; animation: drift 70s linear infinite; }
+.cloud-a { top: 6%; left: -30%; }
+.cloud-b { top: 38%; left: -60%; animation-duration: 95s; animation-delay: -40s; }
+body[data-weather="cloudy"] .sky-cloud, body[data-weather="rain"] .sky-cloud { opacity: .22; }
+body[data-weather="storm"] .sky-cloud { opacity: .16; }
+.sky-rain { inset: -10% 0 0 0; opacity: 0; background: repeating-linear-gradient(105deg, transparent 0 22px, rgba(200, 225, 255, .22) 22px 23px, transparent 23px 46px); background-size: 100% 240px; animation: rainfall .9s linear infinite; }
+body[data-weather="rain"] .sky-rain { opacity: .55; }
+body[data-weather="storm"] .sky-rain { opacity: .75; }
+@keyframes drift { to { transform: translateX(170vw); } }
+@keyframes rainfall { to { background-position: 0 240px; } }
+@keyframes float { 50% { transform: translateY(-8px); } }
+
+/* ---------- Khung trang ---------- */
+.app-shell { display: grid; grid-template-columns: 296px minmax(0, 1fr); max-width: 1640px; min-height: 100vh; margin: 0 auto; }
+.sidebar { position: sticky; top: 0; height: 100vh; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.3) transparent; padding: 22px 18px 28px; color: var(--on-sky); background: rgba(5, 16, 32, .46); border-right: 1px solid rgba(255, 255, 255, .12); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.main-content { min-width: 0; padding: 26px 34px 32px; color: var(--on-sky); }
+
+/* ---------- Thanh bên: tìm kiếm & địa điểm ---------- */
+.brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 20px; font-size: 22px; font-weight: 700; letter-spacing: -.4px; text-decoration: none; }
+.location-drawer > summary { display: none; }
+.panel-title { font-size: 17px; font-weight: 650; margin-bottom: 12px; }
+.field-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.sidebar .field-label { color: rgba(255, 255, 255, .92); }
+.input-wrap { position: relative; }
+.input-wrap > .icon { position: absolute; top: 50%; left: 13px; width: 17px; height: 17px; transform: translateY(-50%); color: #6b808b; pointer-events: none; }
+input[type="search"], input[type="text"], select { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: #fff; color: var(--ink); }
+.input-wrap .search-input { padding-left: 40px; }
+.search-button { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; margin-top: 10px; padding: 10px 14px; border: 0; border-radius: var(--radius-sm); background: var(--accent); color: #2b1a05; font-weight: 650; }
+.search-button:hover { background: #f5b062; }
+.field-help { margin-top: 8px; font-size: 12px; color: rgba(255, 255, 255, .85); }
+.search-status { margin-top: 10px; font-size: 13px; color: #fff; overflow-wrap: anywhere; }
+.search-status:empty { display: none; }
+.search-status[data-kind="error"], .search-status[data-error]:not([data-error=""]) { color: #ffd0c2; }
+.search-results { display: grid; gap: 6px; margin-top: 10px; }
+.search-results:empty { display: none; }
+.result-button, .quick-button, .personal-place { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid rgba(255, 255, 255, .18); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); text-align: left; }
+.result-button:hover, .quick-button:hover, .personal-place:hover { background: rgba(255, 255, 255, .16); }
+.result-button[aria-pressed="true"], .quick-button[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 160, 75, .2); }
+.result-name { font-weight: 600; }
+.result-region, .personal-place small { font-size: 12px; color: rgba(255, 255, 255, .85); }
+.eyebrow { margin: 22px 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: rgba(255, 255, 255, .9); }
+.location-tool-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.locate-button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 56px; padding: 8px 6px; border: 1px solid rgba(255, 255, 255, .2); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); font-size: 13px; text-align: center; }
+.locate-button:hover:not(:disabled) { background: rgba(255, 255, 255, .16); }
+.locate-button:disabled { opacity: .7; }
+.share-result { margin-top: 10px; padding: 10px 12px; border: 1px solid rgba(255, 255, 255, .2); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); font-size: 13px; }
+.share-result a { display: inline-block; margin-top: 6px; }
+.locate-secondary, .text-button { min-height: 36px; padding: 6px 10px; border: 1px solid currentColor; border-radius: 8px; background: transparent; font-size: 13px; }
+.sidebar .locate-secondary { margin-top: 8px; }
+.locate-help { margin-top: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: rgba(255, 255, 255, .1); font-size: 13px; }
+.locate-help summary { cursor: pointer; font-weight: 600; }
+.locate-help ol { padding-left: 18px; margin: 8px 0; }
+.locate-help input { margin-bottom: 6px; }
+.locate-help p { margin-top: 8px; }
+.quick-locations { display: grid; gap: 6px; }
+.quick-button { flex-direction: row; align-items: center; gap: 10px; }
+.quick-button > .icon { width: 15px; height: 15px; color: rgba(255, 255, 255, .85); }
+.quick-button[aria-pressed="true"] > .icon { color: var(--accent); }
+.personal-section { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .16); }
+.personal-section > summary { cursor: pointer; font-weight: 650; }
+.personal-caption { display: flex; justify-content: space-between; margin: 12px 0 6px; font-size: 13px; color: rgba(255, 255, 255, .9); }
+.personal-caption span { font-size: 12px; }
+.personal-list { display: grid; gap: 6px; }
+.personal-row { display: flex; gap: 6px; }
+.personal-row .personal-place { flex: 1; min-width: 0; }
+.remove-place { width: 44px; flex: none; border: 1px solid rgba(255, 255, 255, .2); border-radius: var(--radius-sm); background: transparent; font-size: 18px; }
+.personal-empty { font-size: 12px; color: rgba(255, 255, 255, .85); }
+.history-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.history-heading .text-button { margin-top: 6px; border: 0; text-decoration: underline; padding: 6px 2px; color: #ffd9a8; }
+.history-heading .text-button:disabled { opacity: .5; text-decoration: none; }
+
+/* ---------- Đầu trang & điều hướng ---------- */
+.page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.page-header h1 { font-size: clamp(26px, 3vw, 38px); font-weight: 700; letter-spacing: -.8px; line-height: 1.15; text-shadow: 0 2px 16px rgba(0, 0, 0, .18); }
+.header-meta { width: min(100%, 360px); }
+.date-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 13px; }
+#date-now { min-height: 32px; padding: 4px 8px; border: 0; border-radius: 8px; background: transparent; text-decoration: underline; }
+#date-now:disabled { opacity: .6; text-decoration: none; }
+.day-navigation { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; gap: 6px; }
+.day-navigation > button { min-height: 44px; border: 1px solid rgba(255, 255, 255, .3); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .14); font-size: 24px; line-height: 1; }
+.day-navigation > button:disabled { opacity: .45; }
+.date-badge { position: relative; display: flex; align-items: center; min-width: 0; }
+.date-badge > .icon { position: absolute; left: 12px; width: 16px; height: 16px; color: var(--ink-soft); pointer-events: none; }
+.date-badge select { padding-left: 36px; font-weight: 600; }
+.weather-tabs { position: sticky; top: 10px; z-index: 10; display: flex; gap: 4px; width: fit-content; max-width: 100%; margin-bottom: 18px; padding: 5px; overflow-x: auto; scrollbar-width: none; border-radius: 999px; background: rgba(255, 255, 255, .9); box-shadow: var(--shadow); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.weather-tabs a { flex: none; padding: 9px 16px; border-radius: 999px; color: var(--ink-soft); font-size: 14px; font-weight: 600; text-decoration: none; }
+.weather-tabs a:hover { color: var(--ink); background: rgba(20, 47, 59, .06); }
+.weather-tabs a[aria-current="location"] { background: var(--ink); color: #fff; }
+.weather-content, .weather-group, #advice-section, #comparison-section { scroll-margin-top: 85px; }
+
+/* ---------- Trạng thái ---------- */
+.overview-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.section-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #7ee2a8; box-shadow: 0 0 0 4px rgba(126, 226, 168, .25); }
+.overview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.glass-button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; border: 1px solid rgba(255, 255, 255, .35); border-radius: 999px; background: rgba(255, 255, 255, .16); color: #fff; font-size: 14px; font-weight: 600; }
+.glass-button:hover:not(:disabled) { background: rgba(255, 255, 255, .26); }
+.glass-button:disabled { opacity: .55; }
+.glass-button[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 160, 75, .28); }
+.glass-card .glass-button { border-color: var(--line); background: var(--tile); color: var(--ink); }
+.weather-status, .notice { margin-bottom: 14px; padding: 10px 14px; border-radius: var(--radius-sm); background: var(--card); color: var(--ink); font-size: 14px; }
+.weather-status:empty, .notice:empty { display: none; }
+.weather-status[data-kind="error"] { background: #fff0e8; color: #8f3a26; border-left: 4px solid var(--bad); }
+.weather-status[data-kind="success"] { position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important; padding: 0 !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
+.notice-warn { background: var(--accent-bg); color: var(--accent-ink); border-left: 4px solid var(--accent); }
+.glass-card .notice { background: var(--tile); }
+.retry-button { margin-bottom: 14px; }
+.empty-view { display: grid; place-items: center; gap: 6px; min-height: 340px; padding: 32px 20px; border-radius: var(--radius-lg); border: 1px dashed rgba(255, 255, 255, .45); background: rgba(255, 255, 255, .08); text-align: center; }
+.empty-view h3 { font-size: 24px; font-weight: 600; }
+.empty-view p { max-width: 400px; }
+/* minmax(0,1fr): không để dải 24 giờ kéo giãn cột lưới gây tràn ngang. */
+#weather-view { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
+
+/* ---------- Khối thời tiết hiện tại (nằm thẳng trên bầu trời) ---------- */
+.current-panel, .daily-hero { position: relative; display: flex; flex-direction: column; min-height: 330px; padding: 24px 26px 18px; border-radius: var(--radius-lg); background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .22); color: #fff; }
+.current-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; }
+.current-topline h3 { font-size: inherit; font-weight: inherit; }
+.day-label { padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, .16); font-size: 12px; letter-spacing: .2px; text-transform: none; }
+.day-label:empty { display: none; }
+.current-main, .daily-main { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex: 1; margin-top: 12px; }
+.current-info { min-width: 0; }
+.location-heading h2, #daily-place { font-size: clamp(26px, 3vw, 34px); font-weight: 650; letter-spacing: -.6px; line-height: 1.2; }
+.place-line { display: flex; align-items: center; gap: 5px; font-size: 14px; }
+.temperature { display: flex; align-items: flex-start; margin: 6px 0 2px; font-size: clamp(76px, 10vw, 118px); font-weight: 300; line-height: 1; letter-spacing: -5px; text-shadow: 0 4px 24px rgba(0, 0, 0, .18); }
+.degree { margin: 8px 0 0 6px; font-size: .32em; letter-spacing: 0; font-weight: 400; }
+.condition-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 16px; }
+.condition { font-size: 20px; font-weight: 600; }
+.condition-separator { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+.weather-art, .daily-icon { width: clamp(130px, 22vw, 220px); flex: none; }
+.weather-icon { display: block; width: 100%; aspect-ratio: 1; animation: float 7s ease-in-out infinite; filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .18)); }
+.weather-icon svg, .daily-icon svg { display: block; width: 100%; height: auto; }
+.current-bottom { display: flex; justify-content: space-between; gap: 6px 14px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .22); font-size: 13px; }
+
+/* Điểm cần chú ý: một màu cam duy nhất cho cảnh báo, luôn kèm biểu tượng và chữ */
+.weather-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px; margin-top: 16px; list-style: none; }
+.highlight { display: flex; align-items: flex-start; gap: 10px; min-width: 0; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .22); border-left: 4px solid var(--accent); background: rgba(8, 20, 38, .28); }
+.highlight > .icon { width: 18px; height: 18px; margin-top: 2px; color: var(--accent); }
+.highlight-body { display: flex; flex-direction: column; min-width: 0; font-size: 13px; line-height: 1.45; }
+.highlight-body strong { font-size: 15px; font-weight: 650; }
+.highlight.is-calm { border-left-color: #7ee2a8; }
+.highlight.is-calm > .icon { color: #7ee2a8; }
+
+/* ---------- Thẻ chỉ số nhanh ---------- */
+.metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.metric, .daily-metric { display: flex; flex-direction: column; min-width: 0; padding: 16px; border-radius: var(--radius); background: var(--card); color: var(--ink); box-shadow: var(--shadow); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid transparent; }
+.metric-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.metric-label { font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+.metric-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9px; background: var(--tile); color: var(--ink-soft); }
+.metric-icon .icon { width: 17px; height: 17px; }
+.metric-value { display: flex; align-items: baseline; gap: 3px; margin: 10px 0 8px; }
+.metric-value strong { font-size: 34px; font-weight: 650; letter-spacing: -1px; line-height: 1; }
+.metric-unit { font-size: 14px; color: var(--ink-soft); }
+.humidity-track { height: 5px; margin-bottom: 8px; border-radius: 99px; background: rgba(20, 47, 59, .1); overflow: hidden; }
+#humidity-fill { display: block; height: 100%; border-radius: inherit; background: var(--rain); }
+.metric-note { margin-top: auto; font-size: 13px; color: var(--ink-faint); }
+.metric[data-alert] { border-color: var(--accent); background: var(--accent-bg); }
+.metric[data-alert] .metric-note { color: var(--accent-ink); font-weight: 650; }
+
+/* ---------- Xem theo ngày ---------- */
+.daily-range { display: flex; align-items: baseline; gap: 12px; margin-top: 8px; }
+.daily-range strong { font-size: clamp(48px, 7vw, 72px); font-weight: 300; letter-spacing: -2px; line-height: 1; }
+.daily-range span { font-size: 26px; opacity: .9; }
+.daily-range-label { font-size: 13px; margin-bottom: 6px; }
+.daily-source { margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .22); font-size: 13px; }
+.daily-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.daily-metric h3 { font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+.daily-value { margin: 8px 0 4px; font-size: 26px; font-weight: 650; }
+.daily-metric span { font-size: 13px; color: var(--ink-faint); }
+.daily-note { margin-top: 10px; font-size: 13px; }
+
+/* ---------- Thẻ kính chứa dữ liệu ---------- */
+.glass-card { padding: 22px; border-radius: var(--radius-lg); background: var(--card); color: var(--ink); box-shadow: var(--shadow); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.group-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.group-header h3, .feature-heading h3 { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 650; letter-spacing: -.3px; }
+.group-header h3 .icon { width: 22px; height: 22px; color: var(--rain); }
+.group-tabs, .view-switch, .hour-modes { display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: rgba(20, 47, 59, .07); flex-wrap: wrap; }
+.group-tabs button, .view-switch button, .hour-modes button { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px 14px; border: 0; border-radius: 9px; background: transparent; color: var(--ink-soft); font-size: 14px; font-weight: 600; }
+.group-tabs button[aria-selected="true"], .view-switch button[aria-pressed="true"], .hour-modes button[aria-pressed="true"] { background: var(--card-solid); color: var(--ink); box-shadow: 0 2px 8px rgba(8, 26, 48, .12); }
+.group-pane:focus-visible { outline-offset: 4px; }
+.section-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.section-heading h4 { font-size: 17px; font-weight: 650; }
+.dashboard-caption { font-size: 13px; color: var(--ink-soft); overflow-wrap: anywhere; }
+.dashboard-caption:empty { display: none; }
+.dashboard-footnote { margin-top: 10px; font-size: 12px; color: var(--ink-faint); }
+
+/* Theo giờ */
+.hourly-chart { width: 100%; min-height: 154px; margin: 6px 0 10px; }
+.hourly-chart svg { display: block; width: 100%; height: auto; }
+.hour-axis { fill: var(--ink-faint); font-size: 11px; font-family: var(--font); }
+.chart-gridline { stroke: rgba(20, 47, 59, .1); stroke-dasharray: 4 5; }
+.hour-curve { fill: none; stroke: var(--rain); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.hour-point { fill: #fff; stroke: var(--rain); stroke-width: 2; }
+.chart-empty { padding: 30px 0; text-align: center; color: var(--ink-faint); font-size: 13px; }
+.hourly-list { display: grid; grid-auto-flow: column; grid-auto-columns: 78px; gap: 8px; padding: 2px 2px 10px; overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: thin; }
+.hour-tile { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 4px; border: 1px solid var(--line); border-radius: 14px; background: var(--tile); color: var(--ink); scroll-snap-align: start; }
+.hour-tile:hover { border-color: rgba(20, 47, 59, .3); }
+.hour-tile[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.hour-time { font-size: 14px; font-weight: 650; }
+.hour-date { font-size: 11px; opacity: .8; }
+.hour-tile svg { width: 40px; height: 40px; margin: 2px 0; }
+.hour-symbol-missing { height: 44px; line-height: 44px; }
+.hour-main-value { font-size: 18px; font-weight: 650; }
+.hour-unit { font-size: 12px; white-space: nowrap; opacity: .85; }
+.hour-tile[data-rain="high"] .hour-unit { color: var(--rain); font-weight: 700; opacity: 1; }
+.hour-tile[data-rain="high"][aria-pressed="true"] .hour-unit { color: #a9d6ff; }
+.hourly-detail { margin-top: 10px; padding: 14px 16px; border-radius: var(--radius); background: var(--tile); }
+.hour-detail-heading { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.hour-detail-heading span { color: var(--ink-soft); font-size: 14px; }
+.hour-detail-metrics, .activity-metrics, .compare-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px 14px; }
+dt { font-size: 12px; color: var(--ink-faint); }
+dd { font-size: 15px; font-weight: 650; }
+
+/* 7 ngày */
+.forecast-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.forecast-day { display: flex; flex-direction: column; align-items: center; min-width: 0; padding: 14px 8px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--tile); text-align: center; }
+.forecast-day[data-selected="true"] { border-color: var(--accent); background: var(--accent-bg); }
+.forecast-day h4 { font-size: 15px; font-weight: 650; text-transform: capitalize; }
+.forecast-date { font-size: 12px; color: var(--ink-faint); }
+.forecast-icon { display: block; width: 52px; height: 52px; margin: 8px auto 4px; }
+.forecast-icon svg { width: 100%; height: 100%; }
+.forecast-condition { min-height: 2.8em; font-size: 12px; line-height: 1.4; color: var(--ink-soft); overflow-wrap: anywhere; }
+.forecast-temperature { display: flex; gap: 6px; justify-content: center; margin-top: 6px; font-size: 16px; font-weight: 650; }
+.forecast-temperature .low { color: var(--ink-faint); font-weight: 500; }
+.range-track { position: relative; width: 100%; height: 5px; margin: 8px 0; border-radius: 99px; background: rgba(20, 47, 59, .1); }
+.range-fill { position: absolute; top: 0; height: 100%; min-width: 6px; border-radius: inherit; background: linear-gradient(90deg, #5ca4d8, var(--accent)); }
+.rain-chance { font-size: 12px; font-weight: 600; color: var(--rain); }
+.day-open { width: 100%; min-height: 36px; margin-top: 8px; border: 1px solid var(--line); border-radius: 9px; background: var(--card-solid); font-size: 13px; font-weight: 600; }
+.day-open:hover { border-color: var(--ink-soft); }
+.forecast-chart { padding-top: 4px; }
+.chart-header { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
+.chart-legend { display: flex; gap: 14px; font-size: 13px; font-weight: 500; color: var(--ink-soft); }
+.chart-legend i { display: inline-block; width: 18px; height: 3px; margin-right: 6px; vertical-align: middle; border-radius: 2px; }
+.legend-high { background: #a4591d; }
+.legend-low { background: #3c707a; }
+#chart-graphic svg { display: block; width: 100%; height: auto; }
+
+/* Chỉ số & mặt trời */
+.weather-details-layout { display: grid; grid-template-columns: minmax(220px, 1fr) 2fr; gap: 12px; }
+.sun-card { display: flex; flex-direction: column; gap: 10px; padding: 16px; border-radius: var(--radius); background: linear-gradient(160deg, #fff6e6, #ffe9cc); color: #4a3108; }
+.sun-card-heading { display: flex; align-items: center; gap: 8px; }
+.sun-card-heading .icon { color: #c27a1a; }
+.sun-card-heading h4 { font-size: 16px; font-weight: 650; }
+.sun-times { display: flex; justify-content: space-between; gap: 10px; }
+.sun-times span { display: block; font-size: 12px; }
+.sun-times strong { font-size: 28px; font-weight: 650; }
+.sun-card .dashboard-caption, .sun-card .dashboard-footnote { color: #6a4a12; }
+.extra-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.extra-metric { display: flex; flex-direction: column; min-width: 0; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--tile); }
+.extra-heading { display: flex; align-items: center; gap: 6px; color: var(--ink-soft); }
+.extra-heading .icon { width: 17px; height: 17px; }
+.extra-heading h4 { font-size: 13px; font-weight: 600; }
+.extra-value { display: block; margin-top: 10px; font-size: 22px; font-weight: 650; overflow-wrap: anywhere; }
+.extra-metric[data-alert] { border-color: var(--accent); background: var(--accent-bg); }
+.extra-metric[data-alert] .extra-value { color: var(--accent-ink); }
+
+/* Không khí */
+.feature-badge { padding: 4px 10px; border-radius: 999px; background: rgba(20, 47, 59, .07); font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+.air-values { display: grid; grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+.air-score, .air-metric { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: 14px; border-radius: var(--radius); background: var(--tile); border: 1px solid var(--line); }
+.air-score strong { font-size: 38px; font-weight: 650; line-height: 1.1; }
+.air-score b { width: fit-content; padding: 2px 10px; border-radius: 999px; background: #e6eef1; font-size: 13px; }
+.air-score[data-band="good"] b { background: #d8f2e3; color: #1f5a3c; }
+.air-score[data-band="moderate"] b { background: #fff1c7; color: #6b4e00; }
+.air-score[data-band="sensitive"] b { background: #ffe0c2; color: #7a3f00; }
+.air-score[data-band="unhealthy"] b, .air-score[data-band="very-unhealthy"] b, .air-score[data-band="hazardous"] b { background: #ffd6d0; color: #7d1f12; }
+.air-metric span { font-size: 12px; color: var(--ink-faint); }
+.air-metric strong { font-size: 22px; font-weight: 650; }
+.air-note { font-size: 12px; color: var(--ink-faint); }
+.source-details { margin-top: 8px; font-size: 13px; color: var(--ink-soft); }
+.source-details summary { cursor: pointer; font-weight: 600; }
+.source-details p { margin-top: 6px; }
+
+/* ---------- Hoạt động ngoài trời ---------- */
+.feature-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.feature-illustration { flex: none; }
+.advice-location { font-size: 13px; color: var(--ink-soft); }
+.activity-planner { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 14px; border-radius: var(--radius); background: var(--tile); }
+.glass-card select, .glass-card input[type="search"] { border-color: rgba(20, 47, 59, .2); }
+#activity-status { margin: 12px 0 0; }
+.activity-hour-detail { margin-top: 12px; padding: 16px; border-radius: var(--radius); border: 1px solid var(--line); border-left: 5px solid var(--good); background: var(--card-solid); }
+.activity-hour-detail[data-level="caution"] { border-left-color: var(--accent); }
+.activity-hour-detail[data-level="blocked"] { border-left-color: var(--bad); }
+.activity-result-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.activity-result-heading h4 { font-size: 18px; font-weight: 650; }
+.slot-level { padding: 3px 10px; border-radius: 999px; background: #d8f2e3; color: #1f5a3c; font-size: 13px; font-weight: 650; }
+[data-level="caution"] > .slot-level, [data-level="caution"] .activity-result-heading .slot-level { background: #fff1c7; color: #6b4e00; }
+[data-level="blocked"] > .slot-level, [data-level="blocked"] .activity-result-heading .slot-level { background: #ffd6d0; color: #7d1f12; }
+.activity-condition { margin: 6px 0 12px; color: var(--ink-soft); }
+.activity-metrics { margin-bottom: 12px; }
+.hour-notes { display: grid; gap: 4px; margin: 0 0 12px; padding-left: 18px; font-size: 14px; }
+.activity-comparison h5 { margin: 4px 0 8px; font-size: 14px; font-weight: 650; }
+.activity-levels { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; }
+.activity-levels li { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; }
+.activity-levels li[data-selected="true"] { border-color: var(--ink); }
+.activity-levels li .slot-level { font-size: 12px; padding: 2px 8px; }
+.activity-levels li[data-level="caution"] .slot-level { background: #fff1c7; color: #6b4e00; }
+.activity-levels li[data-level="blocked"] .slot-level { background: #ffd6d0; color: #7d1f12; }
+.activity-result-note { margin-top: 10px; font-size: 12px; color: var(--ink-faint); }
+.planner-current, .advice-method { margin-top: 12px; padding: 12px 14px; border-radius: var(--radius); background: var(--tile); font-size: 14px; }
+.planner-current summary, .advice-method summary { cursor: pointer; font-weight: 650; }
+.current-advice { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 10px; }
+.advice-card { padding: 12px; border-radius: 12px; background: var(--card-solid); border-left: 4px solid var(--accent); }
+.advice-card h5 { font-size: 14px; font-weight: 650; margin-bottom: 4px; }
+.advice-card p { font-size: 13px; color: var(--ink-soft); }
+.advice-method p { margin-top: 6px; color: var(--ink-soft); }
+
+/* ---------- So sánh ---------- */
+.compare-input-row { display: flex; gap: 8px; }
+.compare-input-row input { flex: 1; min-width: 0; }
+.primary-button { flex: none; min-height: 44px; padding: 10px 16px; border: 0; border-radius: var(--radius-sm); background: var(--ink); color: #fff; font-weight: 650; }
+.primary-button:hover { background: #20475a; }
+.feature-status { margin: 10px 0; font-size: 13px; color: var(--ink-soft); overflow-wrap: anywhere; }
+.feature-status:empty { display: none; }
+.feature-status[data-kind="error"] { color: var(--bad); }
+.feature-status[data-kind="success"] { color: var(--good); }
+.compare-results { display: grid; gap: 6px; margin-bottom: 10px; }
+.compare-results:empty { display: none; }
+.compare-result { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--tile); text-align: left; }
+.compare-shortcuts { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 6px 0 10px; font-size: 13px; color: var(--ink-soft); }
+#compare-quick { display: flex; gap: 6px; flex-wrap: wrap; }
+.compare-choice { min-height: 36px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--card-solid); font-size: 13px; }
+.compare-choice[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: #fff; }
+.compare-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.compare-toolbar .feature-status { flex: 1; min-width: 160px; margin: 0; }
+.glass-card .text-button { border-color: var(--line); color: var(--ink); }
+.compare-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.compare-card { min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--tile); }
+.compare-label { font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: var(--ink-faint); }
+.compare-place-name { font-size: 20px; font-weight: 650; }
+.compare-region { font-size: 13px; color: var(--ink-soft); }
+.compare-weather { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0; }
+.compare-temperature { font-size: 40px; font-weight: 600; letter-spacing: -1px; }
+.compare-weather svg { width: 64px; height: 64px; }
+.compare-condition { margin-bottom: 10px; font-weight: 600; }
+.compare-time { margin-top: 10px; font-size: 12px; color: var(--ink-faint); overflow-wrap: anywhere; }
+.comparison-insight { margin-top: 12px; padding: 14px 16px; border-radius: var(--radius); background: var(--accent-bg); color: #4a2c06; }
+.insight-label { font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; }
+#compare-insights { display: grid; gap: 4px; margin-top: 6px; padding-left: 18px; }
+
+/* ---------- Chân trang ---------- */
+.site-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 22px; padding: 14px 18px; border-radius: var(--radius); background: rgba(5, 16, 32, .42); font-size: 13px; }
+.footer-brand { display: inline-flex; align-items: center; gap: 8px; }
+
+/* ---------- Màn hình vừa ---------- */
+@media (max-width: 1200px) {
+  .metrics, .daily-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .forecast-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .weather-details-layout { grid-template-columns: 1fr; }
+  .air-values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .air-score { grid-column: 1 / -1; }
+}
+@media (max-width: 960px) {
+  .app-shell { grid-template-columns: 260px minmax(0, 1fr); }
+  .main-content { padding: 22px 20px 28px; }
+  .extra-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .activity-planner { grid-template-columns: 1fr; }
+}
+
+/* ---------- Điện thoại: thanh bên thành ngăn kéo ---------- */
+@media (max-width: 760px) {
+  .app-shell { display: block; }
+  .sidebar { position: static; height: auto; overflow: visible; padding: 12px 16px; border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, .12); }
+  .brand { margin-bottom: 10px; font-size: 20px; }
+  .location-drawer > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; padding: 10px 14px; list-style: none; cursor: pointer; border: 1px solid rgba(255, 255, 255, .25); border-radius: var(--radius); background: rgba(255, 255, 255, .1); }
+  .location-drawer > summary::-webkit-details-marker { display: none; }
+  .drawer-label { display: flex; flex-direction: column; font-weight: 650; }
+  .drawer-hint { font-size: 12px; font-weight: 400; }
+  .drawer-chevron { width: 10px; height: 10px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-3px); transition: transform .2s; }
+  .location-drawer[open] > summary .drawer-chevron { transform: rotate(-135deg); }
+  .location-drawer[open] .search-panel { margin-top: 14px; }
+  .main-content { padding: 18px 16px 24px; }
+  .header-meta { width: 100%; }
+  .weather-tabs { top: 8px; width: 100%; }
+  .weather-tabs a { padding: 9px 12px; font-size: 13px; }
+  .current-panel, .daily-hero { min-height: 0; padding: 18px 16px 14px; }
+  .weather-art, .daily-icon { width: 34%; max-width: 150px; }
+  .glass-card { padding: 16px; }
+  .forecast-grid { grid-template-columns: 1fr; gap: 6px; }
+  .forecast-day { display: grid; grid-template-columns: minmax(64px, auto) 40px minmax(0, 1fr) auto; grid-template-areas: "day icon cond temp" "date icon range rain" "open open open open"; align-items: center; column-gap: 10px; padding: 10px 12px; text-align: left; }
+  .forecast-day h4 { grid-area: day; }
+  .forecast-date { grid-area: date; }
+  .forecast-icon { grid-area: icon; width: 40px; height: 40px; margin: 0; }
+  .forecast-condition { grid-area: cond; min-height: 0; }
+  .forecast-temperature { grid-area: temp; margin: 0; justify-content: flex-end; }
+  .range-track { grid-area: range; margin: 0; }
+  .rain-chance { grid-area: rain; text-align: right; }
+  .day-open { grid-area: open; }
+  .compare-cards { grid-template-columns: 1fr; }
+  .compare-input-row { flex-direction: column; }
+}
+@media (max-width: 420px) {
+  .metrics, .daily-metrics, .extra-metrics, .air-values { grid-template-columns: 1fr 1fr; }
+  .metric, .daily-metric { padding: 12px; }
+  .metric-value strong { font-size: 28px; }
+  .weather-highlights { grid-template-columns: 1fr; }
+  .page-header h1 { font-size: 26px; }
+  .temperature { font-size: 72px; letter-spacing: -3px; }
+}
+
+/* ---------- Giảm chuyển động ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

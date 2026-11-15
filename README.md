@@ -2,7 +2,7 @@
 
 > **Đồ án chuyên ngành** · **Sinh viên:** Lê Đăng Huy · **MSSV:** 110123013 · **Lớp:** DA23TTA
 
-> README mô tả phiên bản ứng dụng 2.2.0 theo mã nguồn và tài liệu hiện có. Đây là phần mềm tra cứu dữ liệu thời tiết từ dịch vụ bên ngoài, không phải hệ thống tự dự báo khí tượng.
+> README mô tả phiên bản ứng dụng 3.0.0 theo mã nguồn và tài liệu hiện có. Đây là phần mềm tra cứu dữ liệu thời tiết từ dịch vụ bên ngoài, không phải hệ thống tự dự báo khí tượng.
 
 ## Giới thiệu
 
@@ -29,7 +29,7 @@
 ## Công nghệ và dữ liệu
 
 - HTML5, CSS3, JavaScript thuần và Bootstrap 5.3.3.
-- Ứng dụng web tĩnh, phiên bản 2.2.0; máy chủ Node.js nhỏ được dùng để phục vụ ứng dụng khi chạy tại máy.
+- Ứng dụng web tĩnh, phiên bản 3.0.0; máy chủ Node.js nhỏ được dùng để phục vụ ứng dụng khi chạy tại máy.
 - Open-Meteo Geocoding API để tìm tọa độ địa điểm; Open-Meteo Forecast API để lấy dữ liệu thời tiết; Open-Meteo Air Quality API/CAMS để lấy thông tin chất lượng không khí.
 - Giao tiếp qua HTTP GET, kiểm tra trạng thái phản hồi và phân tích JSON ở phía trình duyệt.
 - Các địa điểm yêu thích và lịch sử được lưu trong trình duyệt. Ứng dụng không có backend nghiệp vụ, cơ sở dữ liệu máy chủ hay hệ thống tài khoản.

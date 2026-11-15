@@ -1,9 +1,0 @@
-/* Logo và hình minh họa chức năng cục bộ. */
-.brand-weather{display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
-.brand-weather .brand-logo{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:block;box-shadow:0 6px 18px #07171d45}
-.feature-title .feature-illustration{width:40px;height:40px;flex:0 0 40px;border-radius:12px;border:1px solid #dbe7e5;background:#f7fbfa;display:block;object-fit:contain;box-shadow:0 6px 16px #173b470c}
-.site-footer .footer-brand{display:inline-flex;align-items:center;gap:8px;min-width:0}
-.site-footer .footer-logo{width:30px;height:30px;flex:0 0 30px;border-radius:8px;display:block}
-.site-footer .footer-brand-copy{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:2px 6px}
-.site-footer b{margin-right:0}
-.sun-card-heading .icon{width:20px;height:20px;flex:0 0 20px;color:#b87e2f}
