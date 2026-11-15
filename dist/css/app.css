@@ -493,7 +493,12 @@ dd { font-size: 15px; font-weight: 650; }
   .location-drawer[open] > summary .drawer-chevron { transform: rotate(-135deg); }
   .location-drawer[open] .search-panel { margin-top: 14px; }
   .main-content { padding: 16px 16px 24px; }
-  .header-meta { flex: 1 1 100%; }
+  /* Thanh ngày luôn một hàng riêng; nút "Về hôm nay" (khi xem ngày khác) xuống hàng dưới, không bóp ô chọn ngày. */
+  .header-meta { flex: 1 1 100%; flex-wrap: wrap; }
+  .header-meta .day-navigation { flex-basis: 100%; }
+  .date-toolbar { flex: 1 1 100%; }
+  #date-now { width: 100%; }
+  .date-toolbar:has(> #date-now:disabled) { margin: -8px 0 0; } /* nút ẩn: bù khoảng cách hàng thay vì khoảng cách cột */
   .overview-actions { width: 100%; }
   .overview-actions .glass-button { flex: 1; justify-content: center; }
   /* 5 mục chia đều, vừa một hàng 320–760 px thay vì bị cắt "So s…". */
@@ -511,6 +516,10 @@ dd { font-size: 15px; font-weight: 650; }
   .input-wrap .search-input { padding-left: 36px; padding-right: 8px; }
   .search-input::placeholder { font-size: 14px; }
   .search-row .search-button { padding: 10px 10px; }
+  /* Ô chọn ngày đủ chỗ cho "Hôm nay · 16/11/2026": nút ‹ › hẹp hơn, đệm và chữ nhỏ lại một chút. */
+  .day-navigation { grid-template-columns: 40px minmax(0, 1fr) 40px; gap: 4px; }
+  .date-badge > .icon { left: 9px; }
+  .date-badge select { padding-left: 31px; padding-right: 6px; font-size: 14px; }
 }
 @media (max-width: 420px) {
   .metric, .daily-metric { min-height: 140px; padding: 12px; }
