@@ -336,7 +336,7 @@ async function main(){
       for(const img of check.imgs){
         assert.ok(img.nw>0,`Image naturalWidth=0 (${img.src}) at ${width}`);
         assert.ok(img.wAttr&&img.hAttr,`Image missing width/height (${img.src}) at ${width}`);
-        assert.ok(img.src.includes('?v=2.1.2'),`Image version query (${img.src}) at ${width}`);
+        assert.ok(img.src.includes('?v=2.2.0'),`Image version query (${img.src}) at ${width}`);
         assert.equal(img.clipped,false,`Image clipped (${img.src}) at ${width}`);
       }
     }

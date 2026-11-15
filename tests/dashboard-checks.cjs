@@ -28,6 +28,16 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     assert.equal(await page.locator('#details-period').count(),0);
     await page.locator('#weather-date').selectOption('');
   });
+  await test('49b Điểm cần chú ý: hiện hôm nay, ẩn khi xem ngày khác; ô Cảm nhận nổi rồi trả chữ gốc',async()=>{
+    const d=data();d.current.apparent_temperature=29;d.hourly.precipitation_probability[17]=70;await show(d);
+    const list=page.locator('#weather-highlights'),feels=page.locator('.metric:has(#feels-like)');
+    assert.equal(await list.isVisible(),true);assert.match(await list.innerText(),/Có thể mưa lúc 17:00/);assert.match(await list.innerText(),/nóng hơn 4°/);
+    assert.equal(await feels.getAttribute('data-alert'),'');assert.match(await feels.innerText(),/Nóng hơn thực tế 4°/);
+    assert.equal(await page.locator('.hour-tile[data-rain="high"]').count(),1);
+    await page.locator('#weather-date').selectOption('2026-10-12');assert.equal(await list.isVisible(),false);
+    await page.locator('#weather-date').selectOption('');assert.equal(await list.isVisible(),true);
+    await show(data());assert.equal(await feels.getAttribute('data-alert'),null);assert.match(await feels.innerText(),/Nhiệt độ cảm nhận ngoài trời/);assert.match(await list.innerText(),/khá yên/);
+  });
   await test('50 Dữ liệu bổ sung thiếu, sai đơn vị, gián đoạn không làm mất thời tiết lõi',async()=>{
     await page.locator('#tab-hourly-section').click();const d=data();d.hourly.temperature_2m[17]=null;d.current.visibility=null;d.daily.sunrise.fill(null);await show(d);
     assert.equal(await page.locator('#hourly-chart .hour-curve').count(),2);assert.equal(await page.locator('.hour-main-value').nth(2).innerText(),'—');assert.match(await page.locator('[data-extra="visibility"]').innerText(),/Chưa có dữ liệu/);assert.equal(await page.locator('#sunrise-time').innerText(),'Chưa có');

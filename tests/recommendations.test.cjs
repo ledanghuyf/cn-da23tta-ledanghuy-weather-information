@@ -32,6 +32,17 @@ test('Chỉ số bổ sung đúng miền và hướng gió khớp góc',()=>{
   for(const [angle,name] of [[0,'Bắc'],[90,'Đông'],[180,'Nam'],[270,'Tây'],[360,'Bắc']])assert.equal(context.MayDashboardData.direction(angle),name);
   assert.equal(context.MayDashboardData.direction(null),null);
 });
+test('Điểm cần chú ý: mưa, cảm nhận lệch, UV, gió giật; yên khi không có gì; không kết luận khi thiếu dữ liệu',()=>{
+  const h=d=>Array.from(context.MayDashboardData.highlights(d),i=>i.title);
+  let d=fixture();assert.deepEqual(h(d),['12 giờ tới khá yên']);
+  d.hourly.precipitation_probability[17]=70;d.current.apparent_temperature=33;d.hourly.uv_index[16]=8.4;
+  d.current_units.wind_gusts_10m='km/h';d.current.wind_gusts_10m=45;
+  assert.deepEqual(h(d),['Có thể mưa lúc 17:00','Cảm giác nóng hơn 8°','UV rất cao (8,4)']);
+  d.current.precipitation=1.2;assert.equal(h(d)[0],'Đang có mưa');
+  d=fixture();d.hourly_units.precipitation_probability='mm';assert.deepEqual(h(d),[]);
+  assert.equal(context.MayDashboardData.feelsGap(27.4,34.5),8);assert.equal(context.MayDashboardData.feelsGap(29.6,31),0);assert.equal(context.MayDashboardData.feelsGap(20,16.6),-3);
+  assert.equal(context.MayDashboardData.uvLevel(5.9),'Trung bình');assert.equal(context.MayDashboardData.uvLevel(11),'Cực cao');
+});
 test('Chọn ngày khác lấy đúng ngày ngoài 24h và hỗ trợ ngày cuối dự báo',()=>{
   const d=fixture();
   for(const day of ['2026-10-10','2026-10-12','2026-10-15']){

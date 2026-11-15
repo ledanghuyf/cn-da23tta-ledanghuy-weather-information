@@ -59,7 +59,32 @@ globalThis.MayDashboardData = (() => {
   }
   const direction = degrees => Number.isFinite(degrees) && degrees >= 0 && degrees <= 360
     ? ["Bắc", "Đông Bắc", "Đông", "Đông Nam", "Nam", "Tây Nam", "Tây", "Tây Bắc"][Math.round(degrees / 45) % 8] : null;
-  return { specs, value, hours, sun, direction };
+  // Thang UV của WHO.
+  const uvLevel = n => n < 3 ? "Thấp" : n < 6 ? "Trung bình" : n < 8 ? "Cao" : n < 11 ? "Rất cao" : "Cực cao";
+  const num = n => String(Math.round(n * 10) / 10).replace(".", ",");
+  // Lệch theo số đã làm tròn như trên thẻ (27° / 35° → 8°); trả 0 khi dưới 3° (không đáng nhấn).
+  const feelsGap = (temp, feels) => {
+    const gap = temp === null || feels === null ? 0 : Math.round(feels) - Math.round(temp);
+    return Math.abs(gap) >= 3 ? gap : 0;
+  };
+  // Tối đa 3 điểm cần chú ý trong 12 giờ tới, xếp theo mức ảnh hưởng; [] nếu thiếu dữ liệu để kết luận.
+  function highlights(data) {
+    const now = key => value(data, "current", key), next = hours(data).slice(0, 12), items = [];
+    const rainNow = now("precipitation"), rainHour = next.find(r => r.precipitation_probability >= 50);
+    if (rainNow > 0) items.push({ icon: "i-rain", title: "Đang có mưa", text: `${num(rainNow)} mm trong khoảng dữ liệu hiện tại · nhớ mang ô` });
+    else if (rainHour) items.push({ icon: "i-rain", title: `Có thể mưa lúc ${rainHour.time.slice(11)}`, text: `Khả năng ${num(rainHour.precipitation_probability)}% · nên mang ô` });
+    const temp = now("temperature_2m"), feels = now("apparent_temperature");
+    const gap = feelsGap(temp, feels);
+    if (gap) items.push({ icon: "i-temp", title: `Cảm giác ${gap > 0 ? "nóng" : "lạnh"} hơn ${Math.abs(gap)}°`, text: `Nhiệt độ ${num(temp)}° nhưng cảm nhận ${num(feels)}°` });
+    const uv = [{ time: "", uv_index: now("uv_index") }, ...next].filter(r => r.uv_index !== null).sort((a, b) => b.uv_index - a.uv_index)[0];
+    if (uv?.uv_index >= 6) items.push({ icon: "i-sun", title: `UV ${uvLevel(uv.uv_index).toLowerCase()} (${num(uv.uv_index)})`, text: uv.time ? `Mạnh nhất lúc ${uv.time.slice(11)} · che nắng khi ra ngoài` : "Đang ở mức này · che nắng khi ra ngoài" });
+    const gust = now("wind_gusts_10m");
+    if (gust >= 40) items.push({ icon: "i-wind", title: `Gió giật ${num(gust)} km/h`, text: "Cẩn thận khi đi xe máy, tránh đứng dưới cây" });
+    if (!items.length && next.length && next.every(r => r.precipitation_probability !== null && r.precipitation_probability < 30))
+      return [{ icon: "i-sun", title: "12 giờ tới khá yên", text: "Ít khả năng mưa, không có chỉ số đáng lo", calm: true }];
+    return items.slice(0, 3);
+  }
+  return { specs, value, hours, sun, direction, uvLevel, feelsGap, highlights };
 })();
 
 (() => {
@@ -130,6 +155,7 @@ globalThis.MayDashboardData = (() => {
     const spec = dataTools.specs[mode];
     $("hourly-list").replaceChildren(...rows.map(row => {
       const card = node("button", "hour-tile"); card.type = "button"; card.dataset.time = row.time;
+      if (row.precipitation_probability >= 50) card.dataset.rain = "high";
       card.setAttribute("aria-label", `Xem dự báo ${stampLabel(row.time)}`); card.setAttribute("aria-pressed", "false");
       card.append(node("span", "hour-time", row.time.slice(11)), node("span", "hour-date", `${row.time.slice(8, 10)}/${row.time.slice(5, 7)}`));
       if (row.code !== null && row.day !== null) card.append(weatherGraphic(row.code, row.day)); else card.append(node("span", "hour-symbol-missing", "—"));
@@ -156,6 +182,7 @@ globalThis.MayDashboardData = (() => {
       let text = metricText(key, n);
       if (n !== null && key === "visibility") text = `${formatNumber(n / 1000)} km`;
       if (n !== null && key === "wind_direction_10m") text = `${dataTools.direction(n)} · ${formatNumber(n)}°`;
+      if (n !== null && key === "uv_index") { text = `${formatNumber(n)} · ${dataTools.uvLevel(n)}`; if (n >= 6) card.dataset.alert = "true"; }
       card.append(heading, node("strong", "extra-value", text), node("span", "extra-note visually-hidden", `Hiện tại · ${source.current.time.slice(11)} ${source.current.time.slice(8, 10)}/${source.current.time.slice(5, 7)}`));
       return card;
     }));
@@ -170,10 +197,26 @@ globalThis.MayDashboardData = (() => {
       card.querySelector(".day-open")?.remove(); card.append(button);
     });
   }
+  function renderHighlights() {
+    // Khi chọn ngày khác, daily-view.js ẩn cả #current-panel (chứa dải này) nên không cần kiểm tra ngày ở đây.
+    const list = $("weather-highlights"), items = dataTools.highlights(source);
+    list.hidden = !items.length;
+    list.replaceChildren(...items.map(item => {
+      const li = node("li", item.calm ? "highlight is-calm" : "highlight");
+      const icon = svgElement("svg", { class: "icon", width: "18", height: "18", "aria-hidden": "true" }); icon.append(svgElement("use", { href: `#${item.icon}` }));
+      const body = node("span", "highlight-body"); body.append(node("strong", "", item.title), node("span", "", item.text));
+      li.append(icon, body); return li;
+    }));
+    const feels = $("feels-like").closest(".metric"), note = feels.querySelector(".metric-note");
+    note.dataset.base ??= note.textContent;
+    const gap = dataTools.feelsGap(dataTools.value(source, "current", "temperature_2m"), dataTools.value(source, "current", "apparent_temperature"));
+    feels.toggleAttribute("data-alert", gap !== 0);
+    note.textContent = gap ? `${gap > 0 ? "Nóng" : "Lạnh"} hơn thực tế ${Math.abs(gap)}°` : note.dataset.base;
+  }
   function render(data, date = "") {
     source = data; selectedDate = date; selectedHour = "";
     $("hourly-section").hidden = false; $("details-section").hidden = false;
-    renderHours(); renderDetails(); wireDayCards();
+    renderHighlights(); renderHours(); renderDetails(); wireDayCards();
   }
   function onLoading() {
     window.MayLocation?.cancel("Đã chuyển sang địa điểm bạn chọn.");
