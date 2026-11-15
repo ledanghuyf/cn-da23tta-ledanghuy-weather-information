@@ -7,3 +7,6 @@ test-results/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Anh/ket qua do bo kiem thu tu tao
+docs/evidence*/

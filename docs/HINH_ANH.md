@@ -28,4 +28,4 @@ Tất cả là SVG cục bộ, không tải ảnh từ dịch vụ ngoài. Mọi
 - Mọi `<img>` có `naturalWidth > 0`, khai báo `width`/`height`, không bị cắt (`clipped: false`).
 - Mọi `<svg>` có `width`/`height`; mọi `<use>` trỏ tới `<symbol>` cục bộ tồn tại trong DOM và có kích thước vẽ khác 0 khi hiển thị.
 - Không tràn ngang (`scrollWidth <= innerWidth`) ở mọi độ rộng từ 320 px đến 1440 px.
-- Ảnh chụp trước và sau khi đồng bộ giao diện được lưu tại `docs/evidence-ui-sync/`. Chưa kiểm chứng trên điện thoại vật lý và Safari iOS.
+- Chưa kiểm chứng trên điện thoại vật lý và Safari iOS.

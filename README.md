@@ -75,11 +75,11 @@ Website tĩnh đã triển khai tại liên kết ở trên. Khi cần cập nh�
 
 ## Tài liệu dự án
 
-- [`docs/BAO_CAO_CHUYEN_NGANH.md`](docs/BAO_CAO_CHUYEN_NGANH.md) — báo cáo mô tả phân tích, thiết kế, dữ liệu, kiểm thử và giới hạn.
-- [`docs/DOI_CHIEU_DE_CUONG_03_11.md`](docs/DOI_CHIEU_DE_CUONG_03_11.md) — đối chiếu chức năng với đề cương và phạm vi.
-- [`docs/DOI_CHIEU_CHUC_NANG_05-11-2026.md`](docs/DOI_CHIEU_CHUC_NANG_05-11-2026.md) — đối chiếu cập nhật chức năng giao diện.
+- [`docs/DOI_CHIEU_CHUC_NANG_05-11-2026.md`](docs/DOI_CHIEU_CHUC_NANG_05-11-2026.md) — đối chiếu chức năng website với đề cương.
+- [`docs/HINH_ANH.md`](docs/HINH_ANH.md) — logo, biểu tượng và hình minh họa.
 - [`docs/MO_TREN_DIEN_THOAI.md`](docs/MO_TREN_DIEN_THOAI.md) — hướng dẫn mở website trên điện thoại.
-- [`docs/`](docs/) — hướng dẫn sử dụng, thiết kế và minh chứng kiểm thử.
+
+Ảnh minh chứng kiểm thử (`docs/evidence-*/`) do `npm test` tự tạo lại, không lưu trong repo.
 
 Kết quả kiểm thử và ảnh chụp trong tài liệu phản ánh môi trường, thời điểm kiểm tra được ghi trong từng tài liệu; không thay cho xác nhận trên mọi thiết bị hoặc nghiệm thu của giảng viên. Phần nhận xét, chữ ký và xác nhận theo mẫu của khoa cần được bổ sung theo quy định học vụ.
 
