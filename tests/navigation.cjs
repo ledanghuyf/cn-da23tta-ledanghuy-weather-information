@@ -39,6 +39,13 @@ const server=http.createServer((req,res)=>{const p=new URL(req.url,'http://local
     await page.locator('#location-input').focus();await page.keyboard.press('Escape');assert.equal(await page.locator('#location-drawer').evaluate(el=>el.open),false);
     checks.push(`Drawer opens and closes ${width}`);
    }
+   // Máy giảm chuyển động (như Windows tắt Animation effects): mặc định tắt; bấm "Hiệu ứng" thì bật và tải lại vẫn nhớ.
+   assert.equal(await page.locator('#motion-toggle').getAttribute('aria-pressed'),'false');
+   await page.locator('#motion-toggle').click();await page.reload();
+   await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');
+   assert.equal(await page.locator('#motion-toggle').getAttribute('aria-pressed'),'true');
+   assert.notEqual(await page.locator('.weather-icon').evaluate(el=>getComputedStyle(el).animationName),'none');
+   checks.push(`Motion toggle remembered ${width}`);
    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await page.close();
   }
   assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'results.json'),JSON.stringify({date:new Date().toISOString(),status:'PASS',checks,errors},null,2));console.log(`PASS ${checks.length} navigation/drawer checks with live API`);

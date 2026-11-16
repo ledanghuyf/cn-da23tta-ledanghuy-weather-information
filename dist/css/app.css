@@ -568,6 +568,9 @@ dd { font-size: 15px; font-weight: 650; }
   .date-toolbar:has(> #date-now:disabled) { margin: -8px 0 0; } /* nút ẩn: bù khoảng cách hàng thay vì khoảng cách cột */
   .overview-actions { width: 100%; }
   .overview-actions .glass-button { flex: 1; justify-content: center; }
+  /* Điện thoại: nút Hiệu ứng chỉ còn biểu tượng (tên vẫn có cho trình đọc màn hình) để hai nút kia đủ chỗ. */
+  .overview-actions .motion-toggle { flex: none; width: 48px; padding: 8px; }
+  .motion-toggle > span { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
   /* 5 mục chia đều, vừa một hàng 320–760 px thay vì bị cắt "So s…". */
   .weather-tabs { top: 8px; width: 100%; }
   .weather-tabs a { flex: 1 1 auto; padding: 8px 4px; font-size: 12.5px; text-align: center; }
@@ -647,7 +650,12 @@ body[data-phase="night"]:not([data-weather="rain"]):not([data-weather="storm"]) 
   .weather-tabs a, .group-tabs button, .view-switch button, .hour-modes button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
 }
 
-/* ---------- Giảm chuyển động ---------- */
+/* ---------- Giảm chuyển động ----------
+   Mặc định theo cài đặt "giảm chuyển động" của máy (Windows: Animation effects). Nút "Hiệu ứng" ghi
+   html[data-motion="on"|"off"] khi người xem tự chọn, ghi đè cài đặt của máy (usability.js). */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  html:not([data-motion="on"]) *, html:not([data-motion="on"]) *::before, html:not([data-motion="on"]) *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+.motion-toggle[aria-pressed="false"] { opacity: .8; }
+.motion-toggle[aria-pressed="false"] > .icon { opacity: .6; }

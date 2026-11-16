@@ -30,6 +30,7 @@
     <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
     <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 8a8 8 0 0 0-14-2L3 9m0-6v6h6M4 16a8 8 0 0 0 14 2l3-3m0 6v-6h-6"/></symbol>
+    <symbol id="i-motion" viewBox="0 0 24 24"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1"/><circle cx="12" cy="12" r="2.5"/></symbol>
     <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3C9 7 5 11 5 15a7 7 0 0 0 14 0c0-4-4-8-7-12Z"/><path d="M8.5 15a3.5 3.5 0 0 0 3.5 3.5"/></symbol>
     <symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8h12a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h6a3 3 0 1 1-3 3"/></symbol>
     <symbol id="i-temp" viewBox="0 0 24 24"><path d="M9 14V5a3 3 0 0 1 6 0v9a5 5 0 1 1-6 0Z"/><path d="M12 8v10m6-12h3m-3 4h2"/></symbol>
@@ -122,7 +123,7 @@
           <div class="date-toolbar"><label for="weather-date" class="visually-hidden">Xem ngày</label><button id="date-now" type="button" disabled>Về hôm nay</button></div>
           <div class="day-navigation"><button id="date-prev" type="button" aria-label="Xem ngày trước" disabled>‹</button><span class="date-badge"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-calendar"/></svg><select id="weather-date" disabled><option value="">Đang tải…</option></select><span id="page-date" class="visually-hidden"></span></span><button id="date-next" type="button" aria-label="Xem ngày tiếp theo" disabled>›</button></div>
         </div>
-        <div class="overview-actions"><button id="save-location" class="glass-button" type="button" aria-pressed="false" disabled>☆ Lưu yêu thích</button><button id="refresh-button" class="glass-button" type="button" disabled><svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-refresh"/></svg><span>Cập nhật</span></button></div>
+        <div class="overview-actions"><button id="save-location" class="glass-button" type="button" aria-pressed="false" disabled>☆ Lưu yêu thích</button><button id="refresh-button" class="glass-button" type="button" disabled><svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-refresh"/></svg><span>Cập nhật</span></button><button id="motion-toggle" class="glass-button motion-toggle" type="button" aria-pressed="true" title="Bật/tắt hiệu ứng động (mưa rơi, nắng, mây trôi)"><svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-motion"/></svg><span>Hiệu ứng</span></button></div>
       </header>
       <nav class="weather-tabs" aria-label="Các mục trên trang"><a href="#weather-content" aria-current="location">Tổng quan</a><a href="#forecast-group">Dự báo</a><a href="#conditions-group">Chỉ số</a><a href="#advice-section">Hoạt động</a></nav>
 

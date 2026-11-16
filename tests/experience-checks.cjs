@@ -43,6 +43,17 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     assert.ok(Math.max(...heights)-Math.min(...heights)<2);
     await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.locator('.weather-icon').evaluate(el=>getComputedStyle(el).animationName),'none');
   });
+  // Trang này đã bật "chặn lưu trữ" từ kiểm thử trước: chỉ kiểm tra bật/tắt trong phiên; phần nhớ qua tải lại ở navigation.cjs.
+  await test('37b Nút Hiệu ứng: mặc định theo máy, người xem tự bật/tắt (kể cả khi trình duyệt chặn lưu trữ)',async()=>{
+    const anim=()=>page.locator('.weather-icon').evaluate(el=>getComputedStyle(el).animationName);
+    const pressed=()=>page.locator('#motion-toggle').getAttribute('aria-pressed');
+    await page.emulateMedia({reducedMotion:'reduce'});await page.reload();await ready();
+    assert.equal(await pressed(),'false');assert.equal(await anim(),'none');           // máy giảm chuyển động → mặc định tắt
+    await page.locator('#motion-toggle').click();assert.equal(await pressed(),'true');assert.notEqual(await anim(),'none');
+    await page.emulateMedia({reducedMotion:'no-preference'});
+    await page.locator('#motion-toggle').click();assert.equal(await pressed(),'false');assert.equal(await anim(),'none'); // tự tắt dù máy cho phép
+    await page.reload();await ready();assert.equal(await pressed(),'true');           // không lưu được → lại theo máy
+  });
   await test('38 Chỉ đánh giá sau khi tự chọn giờ và hoạt động; không có thẻ gợi ý sẵn',async()=>{
     const d=fixture(baseFixture);d.hourly.apparent_temperature.fill(29);
     await page.locator('#activity-select').selectOption('');await show(d);

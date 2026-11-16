@@ -65,6 +65,25 @@
   // Chiều sâu 3D: ghi vị trí chuột (-0.5..0.5) và độ cuộn (0..1) vào biến CSS; các lớp trời/biểu tượng
   // dịch theo độ sâu riêng (xem app.css). Tối đa một lần mỗi khung hình; tắt khi người dùng chọn giảm chuyển động.
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  // Hiệu ứng động: mặc định theo cài đặt giảm chuyển động của máy; nút "Hiệu ứng" cho người xem tự bật/tắt, nhớ trên trình duyệt.
+  const MOTION_KEY = 'may.motion.v1', motionButton = document.getElementById('motion-toggle');
+  let motionMemory = null; // dùng khi trình duyệt chặn lưu trữ
+  const savedMotion = () => { try { return localStorage.getItem(MOTION_KEY) ?? motionMemory; } catch { return motionMemory; } };
+  const motionOn = () => { const saved = savedMotion(); return saved ? saved === 'on' : !still.matches; };
+  function applyMotion() {
+    const saved = savedMotion();
+    if (saved) document.documentElement.dataset.motion = saved; else delete document.documentElement.dataset.motion;
+    const on = motionOn();
+    motionButton.setAttribute('aria-pressed', String(on));
+    motionButton.title = on ? 'Hiệu ứng động đang bật. Bấm để tắt.' : 'Hiệu ứng động đang tắt. Bấm để bật.';
+  }
+  motionButton.addEventListener('click', () => {
+    motionMemory = motionOn() ? 'off' : 'on';
+    try { localStorage.setItem(MOTION_KEY, motionMemory); } catch {}
+    applyMotion();
+  });
+  still.addEventListener('change', applyMotion);
+  applyMotion();
   const depthTargets = ['.sky', '#current-panel', '#daily-view'].map(selector => document.querySelector(selector));
   let frame = 0, mx = 0, my = 0;
   const paint = () => {
@@ -72,7 +91,7 @@
     const sy = Math.min(1, window.scrollY / window.innerHeight);
     for (const el of depthTargets) { el.style.setProperty('--mx', mx.toFixed(3)); el.style.setProperty('--my', my.toFixed(3)); el.style.setProperty('--sy', sy.toFixed(3)); }
   };
-  const queueDepth = () => { if (!frame && !still.matches) frame = requestAnimationFrame(paint); };
+  const queueDepth = () => { if (!frame && motionOn()) frame = requestAnimationFrame(paint); };
   window.addEventListener('pointermove', event => {
     if (event.pointerType !== 'mouse') return;
     mx = event.clientX / window.innerWidth - .5; my = event.clientY / window.innerHeight - .5; queueDepth();
