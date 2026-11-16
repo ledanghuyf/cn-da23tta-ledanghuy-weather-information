@@ -85,8 +85,8 @@ body[data-weather="storm"] .sky-rain::after { animation-duration: .36s; }
 .sky::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 0%, rgba(225, 230, 255, .55), rgba(225, 230, 255, .12) 60%); opacity: 0; }
 body[data-weather="storm"] .sky::after { animation: lightning 9s linear infinite; }
 
-/* Nắng ban ngày: mặt trời có lõi sáng + quầng ấm nhiều lớp ở góc trên phải, tia nắng xoay rất chậm.
-   Lõi nằm sau thanh trên cùng (nền tối) nên không làm giảm độ tương phản của chữ. */
+/* Nắng ban ngày: quầng nắng ấm ở góc trên phải và vệt nắng xoay rất chậm (không vẽ đĩa mặt trời trên trời —
+   mặt trời duy nhất là biểu tượng giữa màn hình). Nguồn sáng nằm sau thanh trên cùng nên không làm giảm tương phản của chữ. */
 /* Tâm tia nắng trùng tâm mặt trời: lấp ló ở góc trên phải (cách mép phải 2vmax, cao hơn mép trên 1vmax). */
 .sky-rays { top: -66vmax; right: -63vmax; width: 130vmax; height: 130vmax; opacity: 0; transition: opacity .6s;
   background: repeating-conic-gradient(from 0deg, rgba(255, 244, 210, .16) 0deg 2.5deg, transparent 2.5deg 11deg);
@@ -96,7 +96,8 @@ body[data-weather="sunny"]:not([data-phase="night"]) .sky-rays { opacity: .55; }
 body[data-weather="partly"]:not([data-phase="night"]) .sky-rays { opacity: .3; }
 body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow {
   inset: -46vmax -43vmax auto auto; width: 90vmax; height: 90vmax;
-  background: radial-gradient(circle, rgba(255, 252, 235, .95) 0 2.6vmax, rgba(255, 238, 180, .6) 3.6vmax, rgba(255, 220, 140, .26) 9vmax, rgba(255, 205, 120, .1) 20vmax, transparent 44vmax);
+  /* Chỉ có một mặt trời (biểu tượng giữa màn hình): trên trời chỉ là quầng nắng ấm lan tỏa, không có lõi/đĩa mặt trời. */
+  background: radial-gradient(circle, rgba(255, 238, 180, .34) 0, rgba(255, 226, 150, .18) 10vmax, rgba(255, 210, 130, .07) 24vmax, transparent 44vmax);
 }
 /* Nắng ban ngày sinh động như cảnh mưa: hạt nắng lấp lánh bay lên, mây trắng mỏng trôi, quầng nắng xoay quanh biểu tượng.
    Mọi lớp sáng phủ lên nền cộng lại tối đa ~8% độ trắng để chữ trắng vẫn ≥ 4.5:1 (nền #0c63c7 → #1068d2). */
@@ -114,7 +115,7 @@ body[data-weather="sunny"]:not([data-phase="night"]) .sky-rays { opacity: .5; }
 body[data-weather="sunny"]:not([data-phase="night"]) .weather-art::before { opacity: 1; animation: sun-rays 30s linear infinite; }
 body[data-weather="partly"]:not([data-phase="night"]) .weather-art::before { opacity: .55; animation: sun-rays 40s linear infinite; }
 @media (max-width: 760px) {
-  /* Điện thoại: đưa mặt trời vào khung nhìn (góc trên phải, sau thanh địa điểm) để tia nắng tỏa xuống màn hình. */
+  /* Điện thoại: đưa nguồn nắng vào khung nhìn (góc trên phải, sau thanh địa điểm) để vệt nắng tỏa xuống màn hình. */
   body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow { inset: calc(64px - 45vmax) calc(12vw - 45vmax) auto auto; }
   body[data-weather="sunny"]:not([data-phase="night"]) .sky-rays, body[data-weather="partly"]:not([data-phase="night"]) .sky-rays { top: calc(64px - 65vmax); right: calc(12vw - 65vmax); }
 }
