@@ -147,8 +147,9 @@ test('Thời gian lỗi, trùng hoặc thiếu giờ không ghép sai khung',()=
   d.current.time='2026-10-09T14:15';d.hourly.time.fill('2026-10-09T15:00');assert.equal(advice.chooseSlots(d).slots.length,0);
 });
 test('Ngày/đêm tách khỏi mưa/mây/giông; mã không biết có giao diện mặc định',()=>{
-  for(const [code,weather] of [[0,'sunny'],[1,'sunny'],[2,'cloudy'],[3,'cloudy'],[61,'rain'],[95,'storm'],[97,'storm']]){
-    for(const day of [0,1]){const t=theme.select({weather_code:code,is_day:day});assert.equal(t.weather,weather);assert.equal(t.phase,day?'day':'night');}
+  // [mã, chủ đề ban đêm, chủ đề ban ngày]: mã 2 ban ngày là "Nhiều nắng" (nền xanh), ban đêm vẫn là mây.
+  for(const [code,night,day1] of [[0,'sunny','sunny'],[1,'sunny','sunny'],[2,'cloudy','sunny'],[3,'cloudy','cloudy'],[61,'rain','rain'],[95,'storm','storm'],[97,'storm','storm']]){
+    for(const day of [0,1]){const t=theme.select({weather_code:code,is_day:day});assert.equal(t.weather,day?day1:night);assert.equal(t.phase,day?'day':'night');}
   }
   assert.equal(theme.select(null).scene,'default');assert.equal(theme.select({weather_code:999,is_day:1}).weather,'default');
 });

@@ -6,7 +6,7 @@ globalThis.MayTheme = (() => {
     const code = current.weather_code;
     const weather = config.stormCodes.includes(code) ? "storm"
       : config.rainCodes.includes(code) ? "rain"
-      : [0, 1].includes(code) ? "sunny"
+      : [0, 1].includes(code) || (current.is_day === 1 && config.sunnyDayCodes.includes(code)) ? "sunny"
       : [2, 3, 45, 48, 71, 73, 75, 77, 85, 86].includes(code) ? "cloudy" : "default";
     const phase = current.is_day === 0 ? "night" : "day";
     return { weather, phase, scene: phase === "night" ? "night" : weather === "sunny" ? "day" : weather };

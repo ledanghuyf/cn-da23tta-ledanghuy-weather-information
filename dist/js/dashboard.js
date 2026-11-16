@@ -107,7 +107,7 @@ globalThis.MayDashboardData = (() => {
     $("hourly-detail").hidden = !row;
     if (!row) { $("hourly-detail").replaceChildren(); return; }
     const head = node("div", "hour-detail-heading");
-    head.append(node("strong", "", `Dự báo ${stampLabel(row.time)}`), node("span", "", row.code === null ? "Chưa có mô tả thời tiết" : describeWeather(row.code).label));
+    head.append(node("strong", "", `Dự báo ${stampLabel(row.time)}`), node("span", "", row.code === null ? "Chưa có mô tả thời tiết" : describeWeather(row.code, row.day === 0 ? 0 : 1).label));
     const metrics = node("dl", "hour-detail-metrics");
     for (const key of ["temperature_2m", "apparent_temperature", "relative_humidity_2m", "precipitation_probability", "precipitation", "wind_speed_10m", "uv_index"]) {
       const item = node("div", ""); item.append(node("dt", "", dataTools.specs[key][0]), node("dd", "", metricText(key, row[key]))); metrics.append(item);

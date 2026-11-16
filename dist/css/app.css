@@ -16,7 +16,7 @@
   --font: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
-body[data-weather="sunny"]  { --sky-top: #1559a3; --sky-bottom: #2a72bf; --glow: rgba(255, 228, 150, .26); }
+body[data-weather="sunny"]  { --sky-top: #0f6fd8; --sky-bottom: #1673e6; --glow: rgba(255, 228, 150, .26); }
 body[data-weather="cloudy"] { --sky-top: #334a5f; --sky-bottom: #536a80; --glow: rgba(255, 255, 255, .10); }
 body[data-weather="rain"]   { --sky-top: #1f3346; --sky-bottom: #3d5870; --glow: rgba(160, 200, 230, .10); }
 body[data-weather="storm"]  { --sky-top: #141526; --sky-bottom: #35334d; --glow: rgba(170, 150, 230, .14); }
@@ -259,7 +259,8 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .weather-art { order: 3; width: 72px; margin: 2px 0; }
 .condition-line { order: 4; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .condition { font-size: 21px; font-weight: 500; }
-#today-range { font-size: 17px; font-weight: 500; }
+/* "C:32°  T:26°": hai số cùng cỡ, font-weight 500, căn giữa ngay dưới dòng tình trạng (giống iPhone). */
+.high-low { font-size: 17px; font-weight: 500; text-align: center; white-space: pre; }
 .condition-separator { display: none; }
 .weather-icon { display: block; width: 100%; aspect-ratio: 1; animation: float 7s ease-in-out infinite; filter: drop-shadow(0 8px 16px rgba(0, 0, 0, .2)); }
 .weather-icon svg, .daily-icon svg { display: block; width: 100%; height: auto; }
@@ -388,8 +389,6 @@ dd { font-size: 15px; font-weight: 650; }
 /* Xem theo ngày */
 .daily-range { display: flex; align-items: baseline; justify-content: center; gap: 12px; margin-top: 6px; }
 .daily-range strong { font-size: clamp(56px, 8vw, 84px); font-weight: 200; letter-spacing: -2px; line-height: 1; }
-.daily-range span { font-size: 26px; font-weight: 300; }
-.daily-range-label { font-size: 13px; margin-bottom: 4px; }
 .daily-icon { width: 80px; margin-top: 6px; }
 .daily-source { margin-top: 10px; font-size: 12px; }
 .daily-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }

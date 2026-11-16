@@ -11,6 +11,18 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
       await page.locator('#current-panel').screenshot({path:path.join(evidence,`theme-${weather}.png`)});
     }
   });
+  await test('36b Ban ngày mã 0/1/2 hiện "Nhiều nắng", mặt trời, nền xanh; C/T làm tròn kiểu iPhone',async()=>{
+    for(const [code,isDay,label,symbol,weather] of [[0,1,'Nhiều nắng','clear','sunny'],[1,1,'Nhiều nắng','clear','sunny'],[2,1,'Nhiều nắng','clear','sunny'],[3,1,'Nhiều mây','cloudy','cloudy'],[2,0,'Mây rải rác','night-cloud','cloudy']]){
+      const d=fixture(baseFixture);d.current.weather_code=code;d.current.is_day=isDay;d.daily.temperature_2m_max[0]=31.6;d.daily.temperature_2m_min[0]=25.7;await show(d);
+      assert.equal(await page.locator('#condition').innerText(),label,`nhãn mã ${code}, is_day=${isDay}`);
+      assert.equal(await page.locator('#weather-icon use').getAttribute('href'),`#${symbol}`);
+      assert.equal(await page.locator('body').getAttribute('data-weather'),weather);
+      assert.equal(await page.locator('#today-range [aria-hidden="true"]').innerText(),'C:32°  T:26°');
+      assert.equal(await page.locator('#today-range .visually-hidden').textContent(),'Cao nhất 32 độ, thấp nhất 26 độ');
+    }
+    const d=fixture(baseFixture);d.current.weather_code=2;d.current.is_day=1;await show(d);
+    await page.locator('#current-panel').screenshot({path:path.join(evidence,'theme-nhieu-nang.png')});
+  });
   await test('37 Ban đêm vẫn có mưa/mây/giông; giảm chuyển động và bố cục ổn định',async()=>{
     await page.setViewportSize({width:1440,height:1000});const heights=[];
     for(const [code,weather,symbol] of [[0,'sunny','moon'],[3,'cloudy','night-cloud'],[61,'rain','night-rain'],[95,'storm','storm']]){
@@ -124,7 +136,7 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     await page.locator('#weather-date').selectOption('2026-10-11');
     assert.equal(await page.locator('#daily-view').isVisible(),true);assert.equal(await page.locator('#current-panel').isVisible(),false);
     assert.equal(await page.locator('#current-metrics').isVisible(),false);assert.equal(await page.locator('#advice-current-block').isVisible(),false);
-    assert.equal(await page.locator('#daily-high').innerText(),'31°C');assert.equal(await page.locator('#daily-low').innerText(),'24°C');
+    assert.equal(await page.locator('#daily-high').innerText(),'31°');assert.equal(await page.locator('#daily-hilo [aria-hidden="true"]').innerText(),'C:31°  T:24°');
     assert.equal(await page.locator('[data-metric="wind_speed_10m_max"] .daily-value').innerText(),'12 km/h');
     assert.equal(await page.locator('[data-metric="precipitation_sum"] .daily-value').innerText(),'2 mm');
     assert.equal(await page.locator('[data-metric="uv_index_max"] .daily-value').innerText(),'3');

@@ -369,7 +369,9 @@ async function main(){
     const data=response.data,index=3;
     await livePage.locator('#weather-date').selectOption(data.daily.time[index]);
     const f=value=>new Intl.NumberFormat('vi-VN',{maximumFractionDigits:1}).format(value);
-    assert.equal(await livePage.locator('#daily-high').innerText(),f(data.daily.temperature_2m_max[index])+'°C');
+    const r=value=>f(Math.round(value));
+    assert.equal(await livePage.locator('#daily-high').innerText(),r(data.daily.temperature_2m_max[index])+'°');
+    assert.equal(await livePage.locator('#daily-hilo [aria-hidden="true"]').innerText(),`C:${r(data.daily.temperature_2m_max[index])}°  T:${r(data.daily.temperature_2m_min[index])}°`);
     assert.equal(await livePage.locator('[data-metric="wind_speed_10m_max"] .daily-value').innerText(),f(data.daily.wind_speed_10m_max[index])+' km/h');
     assert.equal(await livePage.locator('[data-metric="uv_index_max"] .daily-value').innerText(),f(data.daily.uv_index_max[index]));
     await livePage.locator('#daily-view').screenshot({path:path.join(evidence,'du-bao-ngay-api-that.png')});

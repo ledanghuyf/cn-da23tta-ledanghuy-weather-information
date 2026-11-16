@@ -51,15 +51,26 @@ function regionLabel(location) {
 }
 
 function describeWeather(code, isDay = 1) {
+  if (isDay !== 0 && MayWeatherConfig.sunnyDayCodes.includes(code)) return { label: "Nhiều nắng", icon: "☀️" };
   const [label, icon] = WEATHER_CODES[code] || ["Chưa có mô tả", "☁️"];
   return { label, icon: isDay === 0 && code === 0 ? "🌙" : icon };
+}
+
+// "C:32°  T:26°" (cao trước, thấp sau, làm tròn, không chữ C); trình đọc màn hình nghe câu đầy đủ.
+function highLowNodes(max, min) {
+  const high = formatNumber(max, true), low = formatNumber(min, true);
+  const visual = document.createElement("span"), spoken = document.createElement("span");
+  visual.setAttribute("aria-hidden", "true"); visual.textContent = `C:${high}°  T:${low}°`;
+  spoken.className = "visually-hidden"; spoken.textContent = `Cao nhất ${high} độ, thấp nhất ${low} độ`;
+  return [visual, spoken];
 }
 
 // Biểu tượng SVG cục bộ: không phụ thuộc font emoji hoặc dịch vụ ảnh bên ngoài.
 function weatherSymbol(code, isDay = 1) {
   if (!Object.hasOwn(WEATHER_CODES, code)) return "unknown";
-  if (code === 0) return isDay ? "clear" : "moon";
-  if ([1, 2].includes(code)) return isDay ? "partly-cloudy" : "night-cloud";
+  if (isDay && MayWeatherConfig.sunnyDayCodes.includes(code)) return "clear";
+  if (code === 0) return "moon";
+  if ([1, 2].includes(code)) return "night-cloud";
   if ([45, 48].includes(code)) return "fog";
   if ([71, 73, 75, 77, 85, 86].includes(code)) return "snow";
   if ([95, 96, 97, 99].includes(code)) return "storm";
@@ -360,7 +371,7 @@ function renderWeather(location, data) {
   $("wind").textContent = formatNumber(current.wind_speed_10m);
   $("feels-like").textContent = formatNumber(current.apparent_temperature, true);
   $("precipitation").textContent = formatNumber(current.precipitation);
-  $("today-range").textContent = `Hôm nay: ${formatNumber(data.daily.temperature_2m_min[0], true)}° / ${formatNumber(data.daily.temperature_2m_max[0], true)}°`;
+  $("today-range").replaceChildren(...highLowNodes(data.daily.temperature_2m_max[0], data.daily.temperature_2m_min[0]));
   // ISO từ API đã theo timezone của địa điểm; không chuyển bằng múi giờ máy người xem.
   const [date, time] = String(current.time || "").split("T");
   const [year, month, day] = (date || "").split("-");

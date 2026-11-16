@@ -32,8 +32,9 @@
     $("daily-place").textContent = state.location.name;
     $("daily-region").textContent = regionLabel(state.location);
     $("daily-date").textContent = fullDate(selectedDate);
-    $("daily-high").textContent = `${formatNumber(daily.temperature_2m_max[index])}°C`;
-    $("daily-low").textContent = `${formatNumber(daily.temperature_2m_min[index])}°C`;
+    // Dòng chính: nhiệt độ cao nhất (số nguyên); ngay dưới là "C:[Max]°  T:[Min]°" cùng cỡ chữ.
+    $("daily-high").textContent = `${formatNumber(daily.temperature_2m_max[index], true)}°`;
+    $("daily-hilo").replaceChildren(...highLowNodes(daily.temperature_2m_max[index], daily.temperature_2m_min[index]));
     $("daily-condition").textContent = describeWeather(daily.weather_code[index]).label;
     $("daily-icon").replaceChildren(weatherGraphic(daily.weather_code[index], 1));
     // Đây là biểu trưng cả ngày, không khẳng định một giờ tương lai là ban ngày.
