@@ -236,6 +236,9 @@ async function searchLocations(rawQuery) {
       throw new Error("Dịch vụ trả về địa điểm thiếu thông tin tọa độ. Vui lòng thử lại.");
     }
     state.results = valid.filter(inVietnam);
+    // Gõ đúng tên tỉnh: đưa tỉnh lỵ lên đầu (dịch vụ không có tên tỉnh), trừ khi kết quả đã có nơi đó (cách < ~5 km).
+    const province = MayVietnam.province(query);
+    if (province && !state.results.some(r => Math.abs(r.latitude - province.latitude) < .05 && Math.abs(r.longitude - province.longitude) < .05)) state.results.unshift(province);
     renderSearchResults();
     setStatus("search-status", state.results.length
       ? `Tìm thấy ${state.results.length} địa điểm. Chọn nơi bạn muốn xem.`

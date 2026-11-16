@@ -93,6 +93,13 @@ async function main(){
   });
   await test('03 Từ chối tên trống và một ký tự',async()=>{for(const value of ['',' ','a']){await search(value);assert.match(await page.locator('#search-status').innerText(),/2 đến 120/);assert.equal(await page.locator('#location-input').getAttribute('aria-invalid'),'true');}});
   await test('04 Không tìm thấy địa điểm',async()=>{geocoding=r=>json(r,{});await search('khongtontai');assert.match(await page.locator('#search-status').innerText(),/Không tìm thấy/);});
+  await test('04c Gõ tên tỉnh dịch vụ không có (Gia Lai, nghe an) vẫn ra tỉnh lỵ',async()=>{
+    geocoding=r=>json(r,{});
+    for(const [query,town,province] of [['Gia Lai','Pleiku','Gia Lai'],['nghe an','Vinh','Nghệ An']]){
+      await search(query);assert.match(await page.locator('#search-status').innerText(),/Tìm thấy 1 địa điểm/);
+      assert.match(await page.locator('.result-button').first().innerText(),new RegExp(`${town}[\\s\\S]*${province}`));
+    }
+  });
   await test('04b Chỉ hiện địa điểm ở Việt Nam và yêu cầu dịch vụ lọc countryCode=VN',async()=>{
     const tokyo={name:'Tokyo',admin1:'Tokyo',country:'Nhật Bản',country_code:'JP',latitude:35.6895,longitude:139.6917};let asked;
     geocoding=r=>{asked=new URL(r.request().url());return json(r,{results:[locations[0],tokyo]});};

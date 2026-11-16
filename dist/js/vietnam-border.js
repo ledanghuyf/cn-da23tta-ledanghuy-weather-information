@@ -48,5 +48,33 @@ globalThis.MayVietnam = (() => {
     if (AREAS.some(([s, n, w, e]) => latitude >= s && latitude <= n && longitude >= w && longitude <= e)) return true;
     return RINGS.some(ring => inside(ring, longitude, latitude) || distanceKm(ring, longitude, latitude) <= BUFFER_KM);
   }
-  return { contains };
+  // Geocoding API chỉ có thành phố/thị xã/xã, không có tên tỉnh: gõ "Nghệ An", "Gia Lai", "Quảng Nam"… không ra kết quả.
+  // Bảng 63 tỉnh, thành (theo ranh giới trước 7/2025) → tỉnh lỵ để vẫn xem được thời tiết khi gõ tên tỉnh.
+  const PROVINCES = [["An Giang","Long Xuyên",10.3864,105.4351],["Bà Rịa - Vũng Tàu","Vũng Tàu",10.346,107.0843],["Bắc Giang","Bắc Giang",21.2731,106.1946],["Bắc Kạn","Bắc Kạn",22.147,105.8348],
+    ["Bạc Liêu","Bạc Liêu",9.2941,105.7278],["Bắc Ninh","Bắc Ninh",21.1861,106.0763],["Bến Tre","Bến Tre",10.2434,106.3756],["Bình Định","Quy Nhơn",13.7765,109.2237],
+    ["Bình Dương","Thủ Dầu Một",10.9804,106.6519],["Bình Phước","Đồng Xoài",11.5349,106.8832],["Bình Thuận","Phan Thiết",10.9333,108.1],["Cà Mau","Cà Mau",9.1769,105.15],
+    ["Cần Thơ","Cần Thơ",10.0452,105.7469],["Cao Bằng","Cao Bằng",22.6657,106.2522],["Đà Nẵng","Đà Nẵng",16.0678,108.2208],["Đắk Lắk","Buôn Ma Thuột",12.6667,108.05],
+    ["Đắk Nông","Gia Nghĩa",12.0042,107.6907],["Điện Biên","Điện Biên Phủ",21.386,103.023],["Đồng Nai","Biên Hòa",10.9574,106.8427],["Đồng Tháp","Cao Lãnh",10.4602,105.6329],
+    ["Gia Lai","Pleiku",13.9833,108],["Hà Giang","Hà Giang",22.8233,104.9836],["Hà Nam","Phủ Lý",20.5411,105.9139],["Hà Nội","Hà Nội",21.0245,105.84117],
+    ["Hà Tĩnh","Hà Tĩnh",18.3428,105.9057],["Hải Dương","Hải Dương",20.9373,106.3146],["Hải Phòng","Hải Phòng",20.8449,106.6881],["Hậu Giang","Vị Thanh",9.7845,105.4701],
+    ["Hòa Bình","Hòa Bình",20.8171,105.3376],["Hưng Yên","Hưng Yên",20.6464,106.0511],["Khánh Hòa","Nha Trang",12.2388,109.1967],["Kiên Giang","Rạch Giá",10.0125,105.0809],
+    ["Kon Tum","Kon Tum",14.3497,108.0005],["Lai Châu","Lai Châu",22.3964,103.4582],["Lâm Đồng","Đà Lạt",11.9404,108.4583],["Lạng Sơn","Lạng Sơn",21.8537,106.7615],
+    ["Lào Cai","Lào Cai",22.4856,103.9707],["Long An","Tân An",10.5357,106.4136],["Nam Định","Nam Định",20.4337,106.1771],["Nghệ An","Vinh",18.6733,105.6922],
+    ["Ninh Bình","Ninh Bình",20.2506,105.9745],["Ninh Thuận","Phan Rang - Tháp Chàm",11.5643,108.9886],["Phú Thọ","Việt Trì",21.3227,105.4019],["Phú Yên","Tuy Hòa",13.0955,109.3209],
+    ["Quảng Bình","Đồng Hới",17.4689,106.6223],["Quảng Nam","Tam Kỳ",15.5736,108.474],["Quảng Ngãi","Quảng Ngãi",15.1214,108.8044],["Quảng Ninh","Hạ Long",20.9517,107.0806],
+    ["Quảng Trị","Đông Hà",16.8163,107.1003],["Sóc Trăng","Sóc Trăng",9.6025,105.9739],["Sơn La","Sơn La",21.327,103.9141],["Tây Ninh","Tây Ninh",11.31,106.0983],
+    ["Thái Bình","Thái Bình",20.4463,106.3366],["Thái Nguyên","Thái Nguyên",21.5928,105.8442],["Thanh Hóa","Thanh Hóa",19.8075,105.7764],["Thừa Thiên Huế","Huế",16.4637,107.5909],
+    ["Tiền Giang","Mỹ Tho",10.36,106.36],["Hồ Chí Minh","TP. Hồ Chí Minh",10.82302,106.62965],["Trà Vinh","Trà Vinh",9.9347,106.3453],["Tuyên Quang","Tuyên Quang",21.8233,105.2142],
+    ["Vĩnh Long","Vĩnh Long",10.2537,105.9722],["Vĩnh Phúc","Vĩnh Yên",21.3089,105.6049],["Yên Bái","Yên Bái",21.7051,104.8702]];
+  const ALIASES = { "hue": "Thừa Thiên Huế", "tphcm": "Hồ Chí Minh", "tp hcm": "Hồ Chí Minh", "hcm": "Hồ Chí Minh", "sai gon": "Hồ Chí Minh", "brvt": "Bà Rịa - Vũng Tàu", "ba ria": "Bà Rịa - Vũng Tàu" };
+  // Không dấu, chữ thường, bỏ dấu câu và tiền tố "tỉnh"/"thành phố"/"tp" để "tinh nghe an" = "Nghệ An".
+  const key = text => String(text).normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/gi, "d").toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ").trim().replace(/^(tinh|thanh pho|tp)\s+(?=\S)/, "");
+  const byKey = new Map(PROVINCES.map(p => [key(p[0]), p]));
+  for (const [alias, name] of Object.entries(ALIASES)) byKey.set(alias, byKey.get(key(name)));
+  function province(query) {
+    const p = byKey.get(key(query));
+    return p ? { name: p[1], admin1: p[0], country: "Việt Nam", country_code: "VN", latitude: p[2], longitude: p[3] } : null;
+  }
+  return { contains, province };
 })();

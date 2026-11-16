@@ -164,4 +164,8 @@ test('Ranh giới Việt Nam: nhận cả miền Bắc, biên giới, đảo; lo
   for(const [name,lat,lon] of [['Viêng Chăn',17.97,102.6],['Luang Prabang',19.89,102.13],['Savannakhet',16.55,104.75],['Phonsavan',19.45,103.2],['Phnôm Pênh',11.56,104.92],['Kampot',10.61,104.18],['Bangkok',13.75,100.5],['Nam Ninh',22.82,108.32],['Côn Minh',25.04,102.7],['Hải Nam',19.2,109.7],['Paris',48.85,2.35]])
     assert.equal(vn.contains(lat,lon),false,`${name} phải ngoài Việt Nam`);
   assert.equal(vn.contains(NaN,106),false);
+  // Tên tỉnh (có/không dấu, có tiền tố, tên gọi khác) → tỉnh lỵ; tên thành phố thường để dịch vụ tìm.
+  for(const [query,town] of [['Nghệ An','Vinh'],['nghe an','Vinh'],['Tỉnh Gia Lai','Pleiku'],['Quảng Nam','Tam Kỳ'],['dak lak','Buôn Ma Thuột'],['Bà Rịa - Vũng Tàu','Vũng Tàu'],['TP HCM','TP. Hồ Chí Minh'],['Sài Gòn','TP. Hồ Chí Minh'],['Thừa Thiên Huế','Huế']])
+    assert.equal(vn.province(query)?.name,town,query);
+  for(const query of ['Paris','Vinh','An',''])assert.equal(vn.province(query),null,query);
 });
