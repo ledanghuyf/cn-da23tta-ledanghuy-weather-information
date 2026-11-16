@@ -48,7 +48,8 @@ globalThis.MayAdvice = (() => {
       const value = (key, unit) => Array.isArray(hourly[key]) && hourly[key].length === hourly.time.length
         ? number(data, "hourly", key, unit, index) : null;
       const row = { time, stamp, feels: value("apparent_temperature", "°C"), rain: value("precipitation_probability", "%"),
-        wind: value("wind_speed_10m", "km/h"), code: value("weather_code", "wmo code"), day: value("is_day", ""), uv: value("uv_index", "") };
+        wind: value("wind_speed_10m", "km/h"), code: value("weather_code", "wmo code"), day: value("is_day", ""), uv: value("uv_index", ""),
+        sun: globalThis.MayTheme ? MayTheme.ratio(value("sunshine_duration", "s") ?? NaN, 3600) : NaN };
       row.valid = Number.isFinite(stamp) && !seen.has(stamp) && row.feels !== null && row.rain !== null && row.rain >= 0 && row.rain <= 100 &&
         row.wind !== null && row.wind >= 0 && Number.isInteger(row.code) && [0, 1].includes(row.day);
       if (Number.isFinite(stamp)) seen.add(stamp);
@@ -119,7 +120,7 @@ globalThis.MayAdvice = (() => {
       const rain = Math.max(start.rain, end.rain), wind = Math.max(start.wind, end.wind);
       const uv = start.uv !== null && end.uv !== null ? Math.max(start.uv, end.uv) : null;
       const facts = { rain, wind, uv, uvPeak: uv ?? start.uv ?? end.uv,
-        minFeels: Math.min(start.feels, end.feels), maxFeels: Math.max(start.feels, end.feels), codes: [start.code, end.code] };
+        minFeels: Math.min(start.feels, end.feels), maxFeels: Math.max(start.feels, end.feels), codes: [start.code, end.code], suns: [start.sun, end.sun] };
       const slot = { start: start.time, end: end.time, stamp: start.stamp, ...facts, ...assess(facts, profile),
         score: rain + Math.max(Math.abs(start.feels - profile.idealFeelsLike), Math.abs(end.feels - profile.idealFeelsLike)) * 2 + wind + (uv ?? profile.maxUV) };
       allSlots.push(slot);
@@ -154,7 +155,7 @@ globalThis.MayAdvice = (() => {
   const levelLabel = (level, uv) => level === "favorable" && uv === null ? "Có thể phù hợp" : levelLabels[level];
   const slotLabel = slot => `${slot.start.slice(11)}–${slot.end.slice(11)} · ${slot.start.slice(8, 10)}/${slot.start.slice(5, 7)}`;
   function renderAssessment(detail, slot, profile) {
-    const conditions = [...new Set(slot.codes.map(code => describeWeather(code).label))].join(" / ");
+    const conditions = [...new Set(slot.codes.map((code, i) => describeWeather(code, 1, slot.suns?.[i] ?? NaN).label))].join(" / ");
     const feels = slot.minFeels === slot.maxFeels ? fmt(slot.minFeels) : `${fmt(slot.minFeels)}–${fmt(slot.maxFeels)}`;
     const heading = element("div", "activity-result-heading");
     heading.append(element("h4", "", `${profile.label} · ${slotLabel(slot)}`), element("span", "slot-level", levelLabel(slot.level, slot.uv)));

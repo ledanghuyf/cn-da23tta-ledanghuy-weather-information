@@ -151,5 +151,8 @@ test('Ngày/đêm tách khỏi mưa/mây/giông; mã không biết có giao di�
   for(const [code,night,day1] of [[0,'sunny','sunny'],[1,'sunny','sunny'],[2,'cloudy','sunny'],[3,'cloudy','cloudy'],[61,'rain','rain'],[95,'storm','storm'],[97,'storm','storm']]){
     for(const day of [0,1]){const t=theme.select({weather_code:code,is_day:day});assert.equal(t.weather,day?day1:night);assert.equal(t.phase,day?'day':'night');}
   }
+  // Ban ngày mã 3 dùng thời gian nắng: ≥50% nắng, 20–50% nắng xen mây, <20% (hoặc không có dữ liệu) nhiều mây; ban đêm và mưa không đổi.
+  for(const [code,day,sec,weather] of [[3,1,800,'sunny'],[3,1,450,'sunny'],[3,1,300,'partly'],[3,1,100,'cloudy'],[3,1,undefined,'cloudy'],[3,1,1200,'cloudy'],[3,0,800,'cloudy'],[61,1,800,'rain'],[95,1,800,'storm']])
+    assert.equal(theme.select({weather_code:code,is_day:day,sunshine_duration:sec,interval:900}).weather,weather,`mã ${code} ngày ${day} nắng ${sec}`);
   assert.equal(theme.select(null).scene,'default');assert.equal(theme.select({weather_code:999,is_day:1}).weather,'default');
 });

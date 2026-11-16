@@ -50,8 +50,16 @@ function regionLabel(location) {
   return [...new Set([location.admin1, location.country].filter(Boolean))].join(", ");
 }
 
-function describeWeather(code, isDay = 1) {
-  if (isDay !== 0 && MayWeatherConfig.sunnyDayCodes.includes(code)) return { label: "Nhiều nắng", icon: "☀️" };
+// Trạng thái trời ban ngày (xem MayTheme.sky): nắng / nắng xen mây / nhiều mây.
+const SKY_STATES = {
+  sunny: { label: "Nhiều nắng", icon: "☀️", symbol: "clear" },
+  partly: { label: "Nắng xen mây", icon: "⛅", symbol: "partly-cloudy" },
+  cloudy: { label: "Nhiều mây", icon: "☁️", symbol: "cloudy" },
+};
+// sun: tỉ lệ thời gian có nắng 0–1 (NaN nếu không có dữ liệu).
+function describeWeather(code, isDay = 1, sun = NaN) {
+  const state = SKY_STATES[MayTheme.sky(code, isDay === 0 ? 0 : 1, sun)];
+  if (state) return { label: state.label, icon: state.icon };
   const [label, icon] = WEATHER_CODES[code] || ["Chưa có mô tả", "☁️"];
   return { label, icon: isDay === 0 && code === 0 ? "🌙" : icon };
 }
@@ -66,9 +74,10 @@ function highLowNodes(max, min) {
 }
 
 // Biểu tượng SVG cục bộ: không phụ thuộc font emoji hoặc dịch vụ ảnh bên ngoài.
-function weatherSymbol(code, isDay = 1) {
+function weatherSymbol(code, isDay = 1, sun = NaN) {
   if (!Object.hasOwn(WEATHER_CODES, code)) return "unknown";
-  if (isDay && MayWeatherConfig.sunnyDayCodes.includes(code)) return "clear";
+  const state = SKY_STATES[MayTheme.sky(code, isDay ? 1 : 0, sun)];
+  if (state) return state.symbol;
   if (code === 0) return "moon";
   if ([1, 2].includes(code)) return "night-cloud";
   if ([45, 48].includes(code)) return "fog";
@@ -85,9 +94,9 @@ function svgElement(tag, attributes = {}) {
   return element;
 }
 
-function weatherGraphic(code, isDay = 1) {
+function weatherGraphic(code, isDay = 1, sun = NaN) {
   const svg = svgElement("svg", { viewBox: "0 0 160 160", width: "160", height: "160", "aria-hidden": "true", focusable: "false" });
-  svg.append(svgElement("use", { href: `#${weatherSymbol(code, isDay)}` }));
+  svg.append(svgElement("use", { href: `#${weatherSymbol(code, isDay, sun)}` }));
   return svg;
 }
 
@@ -279,12 +288,12 @@ function forecastURL(location, includeHourly = false) {
   const url = new URL(API.forecast);
   url.search = new URLSearchParams({
     latitude: String(location.latitude), longitude: String(location.longitude),
-    current: "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,precipitation_probability,uv_index,cloud_cover,surface_pressure,visibility,wind_direction_10m,wind_gusts_10m",
-    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max,precipitation_sum,sunrise,sunset,daylight_duration",
+    current: "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,precipitation_probability,uv_index,cloud_cover,surface_pressure,visibility,wind_direction_10m,wind_gusts_10m,sunshine_duration",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max,precipitation_sum,sunrise,sunset,daylight_duration,sunshine_duration",
     temperature_unit: "celsius", wind_speed_unit: "kmh", precipitation_unit: "mm",
     timezone: "auto", forecast_days: "7",
   });
-  if (includeHourly) url.searchParams.set("hourly", "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,is_day,uv_index");
+  if (includeHourly) url.searchParams.set("hourly", "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,is_day,uv_index,sunshine_duration");
   return url;
 }
 
@@ -358,12 +367,13 @@ async function loadWeather(location) {
 // 6. Tách phần hiển thị khỏi phần gọi API để dễ đọc và sửa.
 function renderWeather(location, data) {
   const current = data.current;
-  const weather = describeWeather(current.weather_code, current.is_day);
+  const sun = MayTheme.ratio(current.sunshine_duration, current.interval); // 15 phút gần nhất
+  const weather = describeWeather(current.weather_code, current.is_day, sun);
   $("place-name").textContent = location.name;
   $("place-region").textContent = regionLabel(location);
   $("temperature").textContent = formatNumber(current.temperature_2m, true);
   $("condition").textContent = weather.label;
-  $("weather-icon").replaceChildren(weatherGraphic(current.weather_code, current.is_day));
+  $("weather-icon").replaceChildren(weatherGraphic(current.weather_code, current.is_day, sun));
   MayTheme.apply(current);
   $("day-label").textContent = current.is_day === 0 ? "Ban đêm" : "Ban ngày";
   $("humidity").textContent = formatNumber(current.relative_humidity_2m, true);
@@ -397,7 +407,8 @@ function renderForecast(daily) {
   const rangeSpan = Math.max(1, rangeHigh - rangeLow);
   daily.time.slice(0, 7).forEach((isoDate, index) => {
     const date = new Date(`${isoDate}T12:00:00Z`);
-    const condition = describeWeather(daily.weather_code[index]);
+    const sun = MayTheme.ratio(daily.sunshine_duration?.[index], daily.daylight_duration?.[index]);
+    const condition = describeWeather(daily.weather_code[index], 1, sun);
     const article = document.createElement("article");
     article.className = "forecast-day";
     const heading = document.createElement("h4");
@@ -407,7 +418,7 @@ function renderForecast(daily) {
     dateLabel.textContent = `${isoDate.slice(8, 10)}/${isoDate.slice(5, 7)}`;
     const icon = document.createElement("span");
     icon.className = "forecast-icon";
-    icon.append(weatherGraphic(daily.weather_code[index]));
+    icon.append(weatherGraphic(daily.weather_code[index], 1, sun));
     icon.setAttribute("role", "img");
     icon.setAttribute("aria-label", condition.label);
     icon.title = condition.label;

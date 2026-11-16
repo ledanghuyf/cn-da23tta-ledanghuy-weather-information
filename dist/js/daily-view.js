@@ -35,10 +35,12 @@
     // Dòng chính: nhiệt độ cao nhất (số nguyên); ngay dưới là "C:[Max]°  T:[Min]°" cùng cỡ chữ.
     $("daily-high").textContent = `${formatNumber(daily.temperature_2m_max[index], true)}°`;
     $("daily-hilo").replaceChildren(...highLowNodes(daily.temperature_2m_max[index], daily.temperature_2m_min[index]));
-    $("daily-condition").textContent = describeWeather(daily.weather_code[index]).label;
-    $("daily-icon").replaceChildren(weatherGraphic(daily.weather_code[index], 1));
+    // Tỉ lệ nắng của cả ngày = thời gian có nắng / độ dài ban ngày.
+    const sun = MayTheme.ratio(daily.sunshine_duration?.[index], daily.daylight_duration?.[index]);
+    $("daily-condition").textContent = describeWeather(daily.weather_code[index], 1, sun).label;
+    $("daily-icon").replaceChildren(weatherGraphic(daily.weather_code[index], 1, sun));
     // Đây là biểu trưng cả ngày, không khẳng định một giờ tương lai là ban ngày.
-    MayTheme.apply({ weather_code: daily.weather_code[index], is_day: 1 });
+    MayTheme.apply({ weather_code: daily.weather_code[index], is_day: 1, sunshine_duration: daily.sunshine_duration?.[index], interval: daily.daylight_duration?.[index] });
     $("daily-source").textContent = `Nguồn: Open-Meteo · cập nhật lúc ${data.current.time.slice(11)} ${data.current.time.slice(8, 10)}/${data.current.time.slice(5, 7)} · giờ địa phương`;
     const specs = [
       ["Xác suất mưa", "precipitation_probability_max", "%", "Cao nhất trong ngày", 100],

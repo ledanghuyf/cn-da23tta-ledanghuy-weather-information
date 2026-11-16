@@ -17,9 +17,10 @@
   color-scheme: light;
 }
 body[data-weather="sunny"]  { --sky-top: #0f6fd8; --sky-bottom: #1673e6; --glow: rgba(255, 228, 150, .26); }
-body[data-weather="cloudy"] { --sky-top: #334a5f; --sky-bottom: #536a80; --glow: rgba(255, 255, 255, .10); }
-body[data-weather="rain"]   { --sky-top: #1f3346; --sky-bottom: #3d5870; --glow: rgba(160, 200, 230, .10); }
-body[data-weather="storm"]  { --sky-top: #141526; --sky-bottom: #35334d; --glow: rgba(170, 150, 230, .14); }
+body[data-weather="partly"] { --sky-top: #1d62b0; --sky-bottom: #3a76b8; --glow: rgba(255, 228, 150, .16); } /* nắng xen mây */
+body[data-weather="cloudy"] { --sky-top: #3d4b59; --sky-bottom: #5f6d7a; --glow: rgba(255, 255, 255, .10); } /* xám trung tính */
+body[data-weather="rain"]   { --sky-top: #0e3350; --sky-bottom: #245a7e; --glow: rgba(120, 190, 240, .12); } /* xanh biển sẫm */
+body[data-weather="storm"]  { --sky-top: #130f27; --sky-bottom: #3b2e60; --glow: rgba(170, 150, 230, .16); } /* tím đêm giông */
 body[data-phase="night"]    { --sky-top: #08122b; --sky-bottom: #1f3463; --glow: rgba(255, 236, 180, .16); }
 body[data-phase="night"][data-weather="rain"],
 body[data-phase="night"][data-weather="storm"] { --sky-top: #070d1c; --sky-bottom: #1d2840; }
@@ -56,6 +57,7 @@ body[data-phase="night"][data-weather="rain"] .sky-stars, body[data-phase="night
 .cloud-a { top: 6%; left: -30%; }
 .cloud-b { top: 38%; left: -60%; animation-duration: 95s; animation-delay: -40s; }
 body[data-weather="cloudy"] .sky-cloud, body[data-weather="rain"] .sky-cloud { opacity: .22; }
+body[data-weather="partly"] .sky-cloud { opacity: .18; }
 body[data-weather="storm"] .sky-cloud { opacity: .16; }
 /* Mưa: hai lớp hạt (xa: nhỏ, chậm, mờ; gần: dài, nhanh, rõ) rơi nghiêng theo gió.
    Mỗi hạt là một elip rất hẹp nên tự mờ ở hai đầu; vị trí lệch nhau trong ô lặp để không thành sọc đều. */
@@ -91,6 +93,7 @@ body[data-weather="storm"] .sky::after { animation: lightning 9s linear infinite
   -webkit-mask-image: radial-gradient(circle, #000 4%, rgba(0, 0, 0, .5) 22%, transparent 48%); mask-image: radial-gradient(circle, #000 4%, rgba(0, 0, 0, .5) 22%, transparent 48%);
   animation: sun-rays 160s linear infinite; }
 body[data-weather="sunny"]:not([data-phase="night"]) .sky-rays { opacity: .55; }
+body[data-weather="partly"]:not([data-phase="night"]) .sky-rays { opacity: .3; }
 body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow {
   inset: -46vmax -43vmax auto auto; width: 90vmax; height: 90vmax;
   background: radial-gradient(circle, rgba(255, 252, 235, .95) 0 2.6vmax, rgba(255, 238, 180, .6) 3.6vmax, rgba(255, 220, 140, .26) 9vmax, rgba(255, 205, 120, .1) 20vmax, transparent 44vmax);
@@ -256,9 +259,16 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .place-line { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 14px; }
 .temperature { order: 2; display: flex; align-items: flex-start; margin: 2px 0 0 .3em; font-size: clamp(92px, 11vw, 136px); font-weight: 200; line-height: 1; letter-spacing: -4px; text-shadow: 0 4px 24px rgba(0, 0, 0, .16); }
 .degree { margin: 10px 0 0 4px; font-size: .3em; letter-spacing: 0; font-weight: 300; }
-.weather-art { order: 3; width: 72px; margin: 2px 0; }
+.weather-art { order: 3; width: 96px; margin: 0; }
 .condition-line { order: 4; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.condition { font-size: 21px; font-weight: 500; }
+.condition { font-size: 24px; font-weight: 600; text-shadow: 0 2px 12px rgba(0, 0, 0, .18); }
+/* Gạch màu dưới tên tình trạng: nhìn là biết nắng / mây / mưa / giông (luôn đi kèm chữ, không chỉ dựa vào màu). */
+.current-panel .condition::after, .daily-hero .condition::after { content: ""; display: block; width: 36px; height: 3px; margin: 6px auto 4px; border-radius: 3px; background: var(--weather-accent, rgba(255, 255, 255, .5)); }
+body[data-weather="sunny"]  { --weather-accent: #ffd166; }
+body[data-weather="partly"] { --weather-accent: #ffe29a; }
+body[data-weather="cloudy"] { --weather-accent: #d5dde5; }
+body[data-weather="rain"]   { --weather-accent: #6cc4ff; }
+body[data-weather="storm"]  { --weather-accent: #c9a7ff; }
 /* "C:32°  T:26°": hai số cùng cỡ, font-weight 500, căn giữa ngay dưới dòng tình trạng (giống iPhone). */
 .high-low { font-size: 17px; font-weight: 500; text-align: center; white-space: pre; }
 .condition-separator { display: none; }
@@ -266,7 +276,7 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .weather-icon svg, .daily-icon svg { display: block; width: 100%; height: auto; }
 .current-bottom { display: flex; justify-content: center; gap: 4px 14px; flex-wrap: wrap; margin-top: 12px; font-size: 12px; }
 
-/* Điểm cần chú ý: thẻ tóm tắt ngay dưới khối hiện tại; một màu cam duy nhất, luôn kèm biểu tượng và chữ */
+/* Điểm cần chú ý: thẻ tóm tắt ngay dưới khối hiện tại; màu theo loại cảnh báo, luôn kèm biểu tượng và chữ */
 .weather-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; width: min(100%, 720px); margin-top: 16px; list-style: none; text-align: left; }
 .highlight { display: flex; align-items: flex-start; gap: 10px; min-width: 0; padding: 11px 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .16); border-left: 4px solid var(--accent); background: rgba(6, 18, 36, .32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
 .highlight > .icon { width: 18px; height: 18px; margin-top: 2px; color: var(--accent); }
@@ -274,6 +284,16 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .highlight-body strong { font-size: 15px; font-weight: 650; }
 .highlight.is-calm { border-left-color: #7ee2a8; }
 .highlight.is-calm > .icon { color: #7ee2a8; }
+.highlight[data-kind] { border-left-color: var(--kind); }
+.highlight[data-kind] > .icon { color: var(--kind); }
+.highlight[data-kind="storm"] { --kind: #ff7a7a; background: rgba(90, 16, 34, .48); border-color: rgba(255, 122, 122, .45); }
+.highlight[data-kind="rain"]  { --kind: #6cc4ff; }
+.highlight[data-kind="heat"]  { --kind: #ff9a4d; }
+.highlight[data-kind="uv"]    { --kind: #ffd166; }
+.highlight[data-kind="cold"]  { --kind: #9fd8ff; }
+.highlight[data-kind="wind"]  { --kind: #8fe3cf; }
+.highlight[data-kind="air"]   { --kind: #c9a7ff; }
+.highlight[data-kind="calm"]  { --kind: #7ee2a8; }
 
 /* ---------- Thẻ kính mờ: nền tối trong suốt, chữ trắng ---------- */
 .glass-card, .metric, .daily-metric {

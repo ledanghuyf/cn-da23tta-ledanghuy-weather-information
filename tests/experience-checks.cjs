@@ -12,16 +12,24 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     }
   });
   await test('36b Ban ngày mã 0/1/2 hiện "Nhiều nắng", mặt trời, nền xanh; C/T làm tròn kiểu iPhone',async()=>{
-    for(const [code,isDay,label,symbol,weather] of [[0,1,'Nhiều nắng','clear','sunny'],[1,1,'Nhiều nắng','clear','sunny'],[2,1,'Nhiều nắng','clear','sunny'],[3,1,'Nhiều mây','cloudy','cloudy'],[2,0,'Mây rải rác','night-cloud','cloudy']]){
-      const d=fixture(baseFixture);d.current.weather_code=code;d.current.is_day=isDay;d.daily.temperature_2m_max[0]=31.6;d.daily.temperature_2m_min[0]=25.7;await show(d);
+    // [mã, ban ngày, giây nắng trong 15 phút gần nhất (null = không có), nhãn, biểu tượng, nền]
+    for(const [code,isDay,sunSec,label,symbol,weather] of [[0,1,null,'Nhiều nắng','clear','sunny'],[1,1,null,'Nhiều nắng','clear','sunny'],[2,1,null,'Nhiều nắng','clear','sunny'],[3,1,null,'Nhiều mây','cloudy','cloudy'],[2,0,null,'Mây rải rác','night-cloud','cloudy'],
+      [3,1,800,'Nhiều nắng','clear','sunny'],[3,1,300,'Nắng xen mây','partly-cloudy','partly'],[3,1,60,'Nhiều mây','cloudy','cloudy'],[3,0,800,'Nhiều mây','night-cloud','cloudy'],[61,1,800,'Mưa nhẹ','rain','rain']]){
+      const d=fixture(baseFixture);d.current.weather_code=code;d.current.is_day=isDay;d.daily.temperature_2m_max[0]=31.6;d.daily.temperature_2m_min[0]=25.7;
+      if(sunSec!==null){d.current.sunshine_duration=sunSec;d.current.interval=900;}await show(d);
       assert.equal(await page.locator('#condition').innerText(),label,`nhãn mã ${code}, is_day=${isDay}`);
       assert.equal(await page.locator('#weather-icon use').getAttribute('href'),`#${symbol}`);
       assert.equal(await page.locator('body').getAttribute('data-weather'),weather);
       assert.equal(await page.locator('#today-range [aria-hidden="true"]').innerText(),'C:32°  T:26°');
       assert.equal(await page.locator('#today-range .visually-hidden').textContent(),'Cao nhất 32 độ, thấp nhất 26 độ');
     }
-    const d=fixture(baseFixture);d.current.weather_code=2;d.current.is_day=1;await show(d);
+    // Dự báo 7 ngày: ngày mã 3 nhưng nắng ≥ 50% thời gian ban ngày hiện "Nhiều nắng"; nắng ít vẫn "Nhiều mây".
+    const d=fixture(baseFixture);d.current.weather_code=2;d.current.is_day=1;
+    d.daily.weather_code=[2,3,3,3,61,95,0];d.daily.daylight_duration=Array(7).fill(40000);d.daily.sunshine_duration=[30000,30000,12000,2000,5000,1000,36000];await show(d);
+    assert.deepEqual(await page.locator('.forecast-condition').allInnerTexts(),['Nhiều nắng','Nhiều nắng','Nắng xen mây','Nhiều mây','Mưa nhẹ','Dông','Nhiều nắng']);
     await page.locator('#current-panel').screenshot({path:path.join(evidence,'theme-nhieu-nang.png')});
+    d.current.weather_code=3;d.current.sunshine_duration=300;d.current.interval=900;await show(d);
+    await page.locator('#current-panel').screenshot({path:path.join(evidence,'theme-nang-xen-may.png')});
   });
   await test('37 Ban đêm vẫn có mưa/mây/giông; giảm chuyển động và bố cục ổn định',async()=>{
     await page.setViewportSize({width:1440,height:1000});const heights=[];
