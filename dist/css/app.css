@@ -16,7 +16,7 @@
   --font: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   color-scheme: light;
 }
-body[data-weather="sunny"]  { --sky-top: #0f6fd8; --sky-bottom: #1673e6; --glow: rgba(255, 228, 150, .26); }
+body[data-weather="sunny"]  { --sky-top: #0c63c7; --sky-bottom: #1068d2; --glow: rgba(255, 228, 150, .26); }
 body[data-weather="partly"] { --sky-top: #1d62b0; --sky-bottom: #3a76b8; --glow: rgba(255, 228, 150, .16); } /* nắng xen mây */
 body[data-weather="cloudy"] { --sky-top: #3d4b59; --sky-bottom: #5f6d7a; --glow: rgba(255, 255, 255, .10); } /* xám trung tính */
 body[data-weather="rain"]   { --sky-top: #0e3350; --sky-bottom: #245a7e; --glow: rgba(120, 190, 240, .12); } /* xanh biển sẫm */
@@ -98,6 +98,27 @@ body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow {
   inset: -46vmax -43vmax auto auto; width: 90vmax; height: 90vmax;
   background: radial-gradient(circle, rgba(255, 252, 235, .95) 0 2.6vmax, rgba(255, 238, 180, .6) 3.6vmax, rgba(255, 220, 140, .26) 9vmax, rgba(255, 205, 120, .1) 20vmax, transparent 44vmax);
 }
+/* Nắng ban ngày sinh động như cảnh mưa: hạt nắng lấp lánh bay lên, mây trắng mỏng trôi, quầng nắng xoay quanh biểu tượng.
+   Mọi lớp sáng phủ lên nền cộng lại tối đa ~8% độ trắng để chữ trắng vẫn ≥ 4.5:1 (nền #0c63c7 → #1068d2). */
+body[data-weather="sunny"]:not([data-phase="night"]) .sky-stars { inset: 0; opacity: 1;
+  background-image: radial-gradient(4px 4px at 12% 20%, rgba(255, 244, 200, .5), transparent), radial-gradient(7px 7px at 34% 64%, rgba(255, 236, 170, .22), transparent),
+    radial-gradient(3px 3px at 58% 38%, rgba(255, 250, 225, .55), transparent), radial-gradient(9px 9px at 76% 82%, rgba(255, 232, 160, .16), transparent),
+    radial-gradient(3px 3px at 90% 12%, rgba(255, 250, 225, .5), transparent), radial-gradient(6px 6px at 22% 92%, rgba(255, 240, 190, .24), transparent),
+    radial-gradient(2.5px 2.5px at 66% 6%, rgba(255, 252, 235, .6), transparent);
+  background-size: 300px 460px; animation: sun-motes 26s linear infinite; }
+body[data-weather="sunny"]:not([data-phase="night"]) .sky-cloud { opacity: .14; }
+body[data-weather="sunny"]:not([data-phase="night"]) .sky-rays { opacity: .5; }
+.weather-art::before { content: ""; position: absolute; inset: -42%; z-index: -1; border-radius: 50%; opacity: 0; pointer-events: none; transition: opacity .6s;
+  background: radial-gradient(circle, rgba(255, 224, 140, .5) 0 20%, rgba(255, 214, 120, .2) 38%, transparent 62%), repeating-conic-gradient(rgba(255, 240, 200, .32) 0 5deg, transparent 5deg 22.5deg);
+  -webkit-mask-image: radial-gradient(circle, #000 26%, transparent 66%); mask-image: radial-gradient(circle, #000 26%, transparent 66%); }
+body[data-weather="sunny"]:not([data-phase="night"]) .weather-art::before { opacity: 1; animation: sun-rays 30s linear infinite; }
+body[data-weather="partly"]:not([data-phase="night"]) .weather-art::before { opacity: .55; animation: sun-rays 40s linear infinite; }
+@media (max-width: 760px) {
+  /* Điện thoại: đưa mặt trời vào khung nhìn (góc trên phải, sau thanh địa điểm) để tia nắng tỏa xuống màn hình. */
+  body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow { inset: calc(64px - 45vmax) calc(12vw - 45vmax) auto auto; }
+  body[data-weather="sunny"]:not([data-phase="night"]) .sky-rays, body[data-weather="partly"]:not([data-phase="night"]) .sky-rays { top: calc(64px - 65vmax); right: calc(12vw - 65vmax); }
+}
+@keyframes sun-motes { to { background-position: 0 -460px; } }
 @keyframes drift { to { transform: translateX(170vw); } }
 @keyframes rain-far { to { background-position: 0 170px; } }
 @keyframes rain-near { to { background-position: 0 260px; } }
@@ -259,7 +280,7 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .place-line { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 14px; }
 .temperature { order: 2; display: flex; align-items: flex-start; margin: 2px 0 0 .3em; font-size: clamp(92px, 11vw, 136px); font-weight: 200; line-height: 1; letter-spacing: -4px; text-shadow: 0 4px 24px rgba(0, 0, 0, .16); }
 .degree { margin: 10px 0 0 4px; font-size: .3em; letter-spacing: 0; font-weight: 300; }
-.weather-art { order: 3; width: 96px; margin: 0; }
+.weather-art { order: 3; position: relative; width: 96px; margin: 0; }
 .condition-line { order: 4; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .condition { font-size: 24px; font-weight: 600; text-shadow: 0 2px 12px rgba(0, 0, 0, .18); }
 /* Gạch màu dưới tên tình trạng: nhìn là biết nắng / mây / mưa / giông (luôn đi kèm chữ, không chỉ dựa vào màu). */
