@@ -10,7 +10,8 @@
     "start": "node scripts/serve.cjs",
     "test:live": "node --test tests/live-data.test.cjs && node tests/live-browser.cjs",
     "test:launch": "node --test tests/launch.test.cjs",
-    "test:mobile": "node scripts/verify-mobile.cjs"
+    "test:mobile": "node scripts/verify-mobile.cjs",
+    "verify:live": "node scripts/verify-live-ui.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

@@ -156,3 +156,12 @@ test('Ngày/đêm tách khỏi mưa/mây/giông; mã không biết có giao di�
     assert.equal(theme.select({weather_code:code,is_day:day,sunshine_duration:sec,interval:900}).weather,weather,`mã ${code} ngày ${day} nắng ${sec}`);
   assert.equal(theme.select(null).scene,'default');assert.equal(theme.select({weather_code:999,is_day:1}).weather,'default');
 });
+test('Ranh giới Việt Nam: nhận cả miền Bắc, biên giới, đảo; loại Lào, Campuchia, Thái Lan, Trung Quốc',()=>{
+  vm.runInContext(fs.readFileSync(path.join(__dirname,'../dist/js/vietnam-border.js'),'utf8'),context);
+  const vn=context.MayVietnam;
+  for(const [name,lat,lon] of [['Hà Nội',21.0245,105.84],['Sa Pa',22.34,103.84],['Lũng Cú',23.36,105.32],['A Pa Chải',22.4,102.15],['Móng Cái',21.53,107.97],['Vinh',18.67,105.69],['Mũi Cà Mau',8.6,104.72],['Phú Quốc',10.22,103.96],['Côn Đảo',8.68,106.61],['Lao Bảo',16.62,106.6],['Mộc Bài',11.07,106.18],['Châu Đốc',10.7,105.12],['Hà Tiên',10.38,104.48],['Bạch Long Vĩ',20.13,107.72],['Thổ Chu',9.29,103.47],['Lý Sơn',15.38,109.12],['Hoàng Sa',16.5,112],['Trường Sa',8.65,111.92]])
+    assert.equal(vn.contains(lat,lon),true,`${name} phải thuộc Việt Nam`);
+  for(const [name,lat,lon] of [['Viêng Chăn',17.97,102.6],['Luang Prabang',19.89,102.13],['Savannakhet',16.55,104.75],['Phonsavan',19.45,103.2],['Phnôm Pênh',11.56,104.92],['Kampot',10.61,104.18],['Bangkok',13.75,100.5],['Nam Ninh',22.82,108.32],['Côn Minh',25.04,102.7],['Hải Nam',19.2,109.7],['Paris',48.85,2.35]])
+    assert.equal(vn.contains(lat,lon),false,`${name} phải ngoài Việt Nam`);
+  assert.equal(vn.contains(NaN,106),false);
+});

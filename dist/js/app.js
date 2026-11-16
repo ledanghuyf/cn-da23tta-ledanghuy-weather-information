@@ -321,14 +321,14 @@ async function loadWeather(location) {
   setStatus("weather-status", `Đang tải thời tiết ${location.name}…`);
   const url = forecastURL(location, true);
   try {
+    // Tọa độ từ GPS/link chia sẻ có thể ở nước ngoài: kiểm tra theo ranh giới Việt Nam trước khi gọi API.
+    // (Không dùng múi giờ: Open-Meteo gán Asia/Bangkok cho cả miền Bắc nên Hà Nội, Sa Pa, Vinh từng bị từ chối nhầm.)
+    if (location.vietnamOnly && !MayVietnam.contains(location.latitude, location.longitude)) {
+      throw Object.assign(new Error("Vị trí này nằm ngoài Việt Nam. Ứng dụng chỉ hỗ trợ địa điểm ở Việt Nam, hãy tìm một nơi bằng tên."), { outside: true });
+    }
     const data = await fetchJSON(url, controller.signal);
     if (controller.signal.aborted) return null;
     validateWeather(data);
-    // Tọa độ từ GPS/link chia sẻ có thể ở nước ngoài: chỉ nhận khi múi giờ của điểm đó là của Việt Nam.
-    // shortcut: dựa vào múi giờ Open-Meteo gán; vài đảo xa bờ có thể bị gán múi giờ khác — khi cần thì đổi sang kiểm tra biên giới.
-    if (location.vietnamOnly && !["Asia/Ho_Chi_Minh", "Asia/Saigon"].includes(data.timezone)) {
-      throw Object.assign(new Error("Vị trí này nằm ngoài Việt Nam. Ứng dụng chỉ hỗ trợ địa điểm ở Việt Nam, hãy tìm một nơi bằng tên."), { outside: true });
-    }
     if (!isSameLocation(location, state.location)) delete $("activity-date").dataset.userPicked;
     state.location = location;
     state.weather = data;

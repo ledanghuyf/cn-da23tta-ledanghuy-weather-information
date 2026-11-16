@@ -11,6 +11,14 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     assert.equal(await page.locator('#retry-button').isVisible(),false);assert.equal(await page.locator('#locate-help').isVisible(),false);
     setForecast(route=>json(route,baseFixture));await page.locator('#refresh-button').click();await ready();
   });
+  await test('53c Miền Bắc (API gán múi giờ Asia/Bangkok) vẫn được nhận khi định vị',async()=>{
+    // Open-Meteo trả Asia/Bangkok cho Hà Nội, Sa Pa, Vinh…; trước đây kiểm tra theo múi giờ nên bị từ chối nhầm.
+    const north=structuredClone(baseFixture);north.timezone='Asia/Bangkok';setForecast(route=>json(route,north));
+    await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>ok({coords:{latitude:21.0245,longitude:105.84117,accuracy:20}})}}));
+    await page.locator('#locate-button').click();await ready();await page.waitForFunction(()=>document.getElementById('locate-status').textContent.includes('Đã tải thời tiết'));
+    assert.equal(await page.locator('#place-name').innerText(),'Vị trí của bạn');assert.doesNotMatch(await page.locator('#weather-status').innerText(),/ngoài Việt Nam/);
+    setForecast(route=>json(route,baseFixture));await page.locator('.quick-button').first().click().catch(async()=>{await page.locator('#location-drawer>summary').click();await page.locator('.quick-button').first().click();});await ready();
+  });
   await test('53 Định vị phân biệt bị chặn, không có tọa độ, hết giờ; thử lại lấy vị trí mới',async()=>{
     for(const [code,kind,text] of [[1,'denied','chưa cho phép'],[2,'unavailable','lỗi 2'],[3,'timeout','lỗi 3']]){
       await mock(code);await page.locator('#locate-button').click();assert.equal(await page.locator('#locate-status').getAttribute('data-error'),kind);assert.ok((await page.locator('#locate-status').innerText()).includes(text));
