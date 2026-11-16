@@ -11,7 +11,8 @@
     "test:live": "node --test tests/live-data.test.cjs && node tests/live-browser.cjs",
     "test:launch": "node --test tests/launch.test.cjs",
     "test:mobile": "node scripts/verify-mobile.cjs",
-    "verify:live": "node scripts/verify-live-ui.cjs"
+    "verify:live": "node scripts/verify-live-ui.cjs",
+    "audit:errors": "node scripts/audit-errors.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

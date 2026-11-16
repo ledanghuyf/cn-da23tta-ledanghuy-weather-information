@@ -186,7 +186,7 @@ async function fetchJSON(url, signal) {
     if (!response.ok) {
       throw new Error(response.status === 429
         ? "Dịch vụ đang giới hạn số lần tra cứu. Vui lòng thử lại sau."
-        : "Dịch vụ thời tiết chưa phản hồi thành công. Vui lòng thử lại.");
+        : "Dịch vụ chưa phản hồi thành công. Vui lòng thử lại."); // dùng chung cho tìm địa điểm, thời tiết, không khí
     }
     const data = await response.json();
     if (!data || typeof data !== "object" || Array.isArray(data)) {
@@ -245,7 +245,7 @@ async function searchLocations(rawQuery) {
       : "Không tìm thấy địa điểm ở Việt Nam. Thử tên tỉnh, thành khác hoặc gõ không dấu.");
     return state.results;
   } catch (error) {
-    if (!controller.signal.aborted) setStatus("search-status", error.message, "error");
+    if (!controller.signal.aborted) setStatus("search-status", `Chưa tìm được địa điểm. ${error.message}`, "error");
     return [];
   } finally {
     if (state.searchController === controller) $("search-button").disabled = false;

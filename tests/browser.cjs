@@ -258,6 +258,8 @@ async function main(){
     for(const width of [320,360,390,430,768,1024,1440]){
       await page.setViewportSize({width,height:900});
       await page.evaluate(()=>{for(const img of document.querySelectorAll('img'))img.scrollIntoView();window.scrollTo(0,0);});
+      // Ảnh loading="lazy" tải không đồng bộ: chờ tải xong (ảnh hỏng vẫn "complete" với naturalWidth=0 nên vẫn bị bắt).
+      await page.waitForFunction(()=>[...document.images].every(img=>img.complete),null,{timeout:10000});
       const check=await page.evaluate(()=>{
         const imgs=[...document.querySelectorAll('img')].map(img=>{
           const r=img.getBoundingClientRect(),p=img.parentElement.getBoundingClientRect();
