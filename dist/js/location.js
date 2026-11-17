@@ -58,10 +58,12 @@
       const accuracy = Number.isFinite(coords.accuracy) ? Math.max(1, Math.round(coords.accuracy)) : null;
       status.dataset.accuracy = accuracy === null ? "" : String(accuracy);
       $("locate-cancel").hidden = true; label.textContent = "Đang tải thời tiết…";
-      status.textContent = "Đã nhận được vị trí gần bạn. Đang tải thời tiết…";
+      status.textContent = "Đã nhận được vị trí gần bạn. Đang xác định tên nơi và tải thời tiết…";
+      const place = await nameCoordinates(latitude, longitude);
+      if (token !== serial) return; // đã hủy trong lúc tra tên
       try {
         ownWeatherStart = true;
-        const pending = loadWeather({ name: "Vị trí của bạn", admin1: `${latitude.toFixed(5)}°, ${longitude.toFixed(5)}°`, country: "", latitude, longitude, vietnamOnly: true });
+        const pending = loadWeather({ ...place, vietnamOnly: true });
         ownWeatherStart = false;
         const weather = await pending;
         if (token !== serial) return;

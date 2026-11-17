@@ -76,5 +76,28 @@ globalThis.MayVietnam = (() => {
     const p = byKey.get(key(query));
     return p ? { name: p[1], admin1: p[0], country: "Việt Nam", country_code: "VN", latitude: p[2], longitude: p[3] } : null;
   }
-  return { contains, province };
+  // Tỉnh lỵ gần nhất: tên dự phòng khi không tra được tên xã/phường (không bao giờ hiện tọa độ thô).
+  function nearest(lat, lon) {
+    let best = null, bestD = Infinity;
+    for (const p of PROVINCES) {
+      const d = (p[2] - lat) ** 2 + ((p[3] - lon) * Math.cos(lat * Math.PI / 180)) ** 2;
+      if (d < bestD) { bestD = d; best = p; }
+    }
+    return best && { name: `Gần ${best[1]}`, admin1: best[0], country: "Việt Nam", country_code: "VN", latitude: lat, longitude: lon };
+  }
+  // "X. đông hải" → "Xã đông hải", "TP.HCM" → "Thành phố HCM": Nominatim cần tên cấp hành chính đầy đủ.
+  const ABBR = { tp: "Thành phố", tx: "Thị xã", tt: "Thị trấn", x: "Xã", p: "Phường", h: "Huyện", q: "Quận" };
+  const expand = query => String(query).replace(/(^|[\s,(])(tp|tx|tt|x|p|h|q)\.\s*/gi, (_, lead, k) => `${lead}${ABBR[k.toLowerCase()]} `).replace(/\s+/g, " ").trim();
+  // Kết quả Nominatim → địa điểm của ứng dụng. Tiêu đề: tên nơi (tìm kiếm) hoặc xã/phường/thị trấn → quận/huyện (định vị);
+  // dòng phụ: huyện/thị xã/thành phố, tỉnh. Ngoài Việt Nam hoặc thiếu tọa độ → null.
+  const LOCAL = ["village", "suburb", "quarter", "town", "city_district", "county", "city", "state"];
+  function fromOSM(item, reverse = false) {
+    const a = item?.address || {}, latitude = Number(item?.lat), longitude = Number(item?.lon);
+    if (String(a.country_code || "").toLowerCase() !== "vn" || !Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+    const name = String((reverse ? LOCAL.map(k => a[k]).find(Boolean) : item.name || String(item.display_name || "").split(",")[0]) || "").trim();
+    if (!name) return null;
+    const admin1 = [...new Set(["town", "county", "city", "state"].map(k => a[k]).filter(v => v && v !== name))].join(", ");
+    return { name, admin1, country: admin1 ? "" : "Việt Nam", country_code: "VN", latitude, longitude };
+  }
+  return { contains, province, nearest, expand, fromOSM };
 })();

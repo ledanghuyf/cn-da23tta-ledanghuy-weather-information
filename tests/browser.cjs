@@ -31,7 +31,7 @@ const server = http.createServer((req,res)=>{
   });
 });
 let browser, context, page, base;
-let forecast, geocoding;
+let forecast, geocoding, nominatim = r => r.abort(); // mặc định: Nominatim bị chặn (như một số mạng ở Việt Nam) → dùng Open-Meteo
 const errors = [];
 const json = (route, value, status=200) => route.fulfill({status,contentType:'application/json',body:JSON.stringify(value)});
 async function ready(){await page.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');}
@@ -69,6 +69,7 @@ async function main(){
   page.on('pageerror',e=>errors.push(e.message));
   await context.route('https://api.open-meteo.com/**',r=>forecast(r));
   await context.route('https://geocoding-api.open-meteo.com/**',r=>geocoding(r));
+  await context.route('https://nominatim.openstreetmap.org/**',r=>nominatim(r));
   await test('01 Tải mặc định và đối chiếu giá trị JSON',async()=>{
     await reset();assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');
     assert.equal(await page.locator('#temperature').innerText(),'30');assert.equal(await page.locator('#humidity').innerText(),'78');
@@ -99,6 +100,20 @@ async function main(){
       await search(query);assert.match(await page.locator('#search-status').innerText(),/Tìm thấy 1 địa điểm/);
       assert.match(await page.locator('.result-button').first().innerText(),new RegExp(`${town}[\\s\\S]*${province}`));
     }
+  });
+  await test('04d Nominatim: "X. đông hải" thành "Xã đông hải", đủ các xã cùng tên kèm huyện/tỉnh, bỏ nơi ngoài Việt Nam',async()=>{
+    let asked;const osm=(name,county,state,lat,lon,cc='vn')=>({lat:String(lat),lon:String(lon),name,display_name:name+', '+county,address:{village:name,county,state,country_code:cc}});
+    nominatim=r=>{asked=new URL(r.request().url());return json(r,[osm('Xã Đông Hải','Huyện Đầm Dơi','Tỉnh Cà Mau',8.97,105.38),osm('Xã Đông Hải','Huyện Duyên Hải','Tỉnh Trà Vinh',9.6,106.5),osm('Ban Dong Hai','Muang X','Savannakhet',16.5,104.7,'la')]);};
+    await search('X. đông hải');
+    assert.equal(asked.searchParams.get('q'),'Xã đông hải');assert.equal(asked.searchParams.get('countrycodes'),'vn');assert.equal(asked.searchParams.get('accept-language'),'vi');
+    assert.deepEqual(await page.locator('.result-name').allInnerTexts(),['Xã Đông Hải','Xã Đông Hải']);
+    assert.match(await page.locator('.result-region').first().innerText(),/Huyện Đầm Dơi, Tỉnh Cà Mau/);
+    let lat;forecast=r=>{lat=new URL(r.request().url()).searchParams.get('latitude');return json(r,fixture);};
+    await page.locator('.result-button').nth(1).click();await ready();
+    assert.equal(await page.locator('#place-name').innerText(),'Xã Đông Hải');assert.equal(lat,'9.6');
+    // Nominatim lỗi hoặc rỗng → vẫn tìm qua Open-Meteo
+    nominatim=r=>json(r,[]);geocoding=r=>json(r,{results:locations});await search('Ha');assert.ok(await page.locator('.result-button').count()>0);
+    nominatim=r=>r.abort();forecast=r=>json(r,fixture);
   });
   await test('04b Chỉ hiện địa điểm ở Việt Nam và yêu cầu dịch vụ lọc countryCode=VN',async()=>{
     const tokyo={name:'Tokyo',admin1:'Tokyo',country:'Nhật Bản',country_code:'JP',latitude:35.6895,longitude:139.6917};let asked;

@@ -184,3 +184,19 @@ test('Gợi ý trang phục: nóng/UV, đêm không chống nắng, mưa, dông,
   assert.deepEqual(o({wind_speed_10m:60}),['mild','wind']);
   assert.deepEqual(o({temperature_2m:null}),[]);
 });
+test('Nominatim: chuẩn hóa viết tắt, đổi kết quả sang địa điểm, tên tỉnh lỵ gần nhất khi không tra được',()=>{
+  const vn=context.MayVietnam;
+  for(const [raw,want] of [['X. đông hải','Xã đông hải'],['x.đông hải','Xã đông hải'],['P.1, Q.3','Phường 1, Quận 3'],['TT. Cái Nhum','Thị trấn Cái Nhum'],['H. Đầm Dơi','Huyện Đầm Dơi'],['TP. Huế','Thành phố Huế'],['tx.Bình Minh','Thị xã Bình Minh'],['xa dong hai','xa dong hai'],['Hồ Chí Minh','Hồ Chí Minh']])
+    assert.equal(vn.expand(raw),want,raw);
+  const commune={lat:'8.97',lon:'105.38',name:'Xã Đông Hải',address:{village:'Xã Đông Hải',county:'Huyện Đầm Dơi',state:'Tỉnh Cà Mau',country_code:'vn'}};
+  assert.deepEqual({...vn.fromOSM(commune)},{name:'Xã Đông Hải',admin1:'Huyện Đầm Dơi, Tỉnh Cà Mau',country:'',country_code:'VN',latitude:8.97,longitude:105.38});
+  assert.equal(vn.fromOSM({...commune,address:{...commune.address,country_code:'la'}}),null);
+  assert.equal(vn.fromOSM({...commune,lat:'x'}),null);
+  // Định vị: tiêu đề lấy cấp xã/phường, không lấy tên đường; thiếu xã thì lấy huyện
+  const rev={name:'Đường 1',address:{road:'Đường 1',quarter:'Phường 4',city:'Thành phố Vĩnh Long',state:'Tỉnh Vĩnh Long',country_code:'vn'},lat:10.25,lon:105.97};
+  assert.equal(vn.fromOSM(rev,true).name,'Phường 4');assert.equal(vn.fromOSM(rev,true).admin1,'Thành phố Vĩnh Long, Tỉnh Vĩnh Long');
+  assert.equal(vn.fromOSM({...rev,address:{county:'Huyện Đầm Dơi',state:'Tỉnh Cà Mau',country_code:'vn'}},true).name,'Huyện Đầm Dơi');
+  assert.equal(vn.fromOSM({lat:1,lon:1,address:{country_code:'vn'}},true),null);
+  assert.equal(vn.nearest(10.2538,105.9722).name,'Gần Vĩnh Long');assert.equal(vn.nearest(21.03,105.85).name,'Gần Hà Nội');
+  assert.equal(vn.nearest(8.97,105.38).latitude,8.97);
+});

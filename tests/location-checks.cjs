@@ -16,8 +16,19 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     const north=structuredClone(baseFixture);north.timezone='Asia/Bangkok';setForecast(route=>json(route,north));
     await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>ok({coords:{latitude:21.0245,longitude:105.84117,accuracy:20}})}}));
     await page.locator('#locate-button').click();await ready();await page.waitForFunction(()=>document.getElementById('locate-status').textContent.includes('Đã tải thời tiết'));
-    assert.equal(await page.locator('#place-name').innerText(),'Vị trí của bạn');assert.doesNotMatch(await page.locator('#weather-status').innerText(),/ngoài Việt Nam/);
+    assert.equal(await page.locator('#place-name').innerText(),'Gần Hà Nội');assert.doesNotMatch(await page.locator('#weather-status').innerText(),/ngoài Việt Nam/);
     setForecast(route=>json(route,baseFixture));await page.locator('.quick-button').first().click().catch(async()=>{await page.locator('#location-drawer>summary').click();await page.locator('.quick-button').first().click();});await ready();
+  });
+  await test('53d Gần tôi: tiêu đề là phường/xã từ Nominatim, dòng phụ thành phố/huyện, tỉnh; không hiện tọa độ',async()=>{
+    let asked;const pattern='https://nominatim.openstreetmap.org/**';
+    await page.route(pattern,r=>{asked=new URL(r.request().url());return json(r,{lat:'10.2531',lon:'105.9721',name:'Đường Phạm Thái Bường',address:{road:'Đường Phạm Thái Bường',quarter:'Phường 4',city:'Thành phố Vĩnh Long',state:'Tỉnh Vĩnh Long',country_code:'vn'}});});
+    await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>ok({coords:{latitude:10.253789,longitude:105.972218,accuracy:20}})}}));
+    await page.locator('#locate-button').click();await ready();await page.waitForFunction(()=>document.getElementById('locate-status').textContent.includes('Đã tải thời tiết'));
+    assert.equal(asked.pathname,'/reverse');assert.equal(asked.searchParams.get('zoom'),'18');assert.equal(asked.searchParams.get('accept-language'),'vi');
+    assert.equal(await page.locator('#place-name').innerText(),'Phường 4');
+    assert.equal(await page.locator('#place-region').innerText(),'Thành phố Vĩnh Long, Tỉnh Vĩnh Long');
+    await page.unroute(pattern);
+    await page.locator('.quick-button').first().click().catch(async()=>{await page.locator('#location-drawer>summary').click();await page.locator('.quick-button').first().click();});await ready();
   });
   await test('53 Định vị phân biệt bị chặn, không có tọa độ, hết giờ; thử lại lấy vị trí mới',async()=>{
     for(const [code,kind,text] of [[1,'denied','chưa cho phép'],[2,'unavailable','lỗi 2'],[3,'timeout','lỗi 3']]){

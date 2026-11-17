@@ -54,7 +54,7 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:(_,fail)=>fail({code:1})}}));
     await page.locator('#locate-button').click();assert.match(await page.locator('#locate-status').innerText(),/chưa cho phép/);assert.equal(await page.locator('#locate-button').isEnabled(),true);
     await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>ok({coords:{latitude:10.253789,longitude:105.972218}})}}));
-    await page.locator('#locate-button').click();await ready();assert.equal(await page.locator('#place-name').innerText(),'Vị trí của bạn');assert.match(await page.locator('#place-region').innerText(),/10,?\.25/);
+    await page.locator('#locate-button').click();await page.waitForFunction(()=>document.getElementById('locate-status').textContent.includes('Đã tải thời tiết'));await ready();assert.equal(await page.locator('#place-name').innerText(),'Gần Vĩnh Long');assert.doesNotMatch(await page.locator('#place-region').innerText(),/\d/); // Nominatim bị chặn → tỉnh lỵ gần nhất, không hiện tọa độ
     await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>{window.lateGeo=ok;}}}));
     await page.locator('#locate-button').click();await page.locator('.quick-button').nth(1).click();await ready();
     await page.evaluate(()=>window.lateGeo({coords:{latitude:10,longitude:106}}));assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');

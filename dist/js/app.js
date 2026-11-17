@@ -2,6 +2,7 @@
 
 // 1. Cấu hình: không lưu khóa API hay dữ liệu thời tiết giả trong mã nguồn.
 const API = {
+  nominatim: "https://nominatim.openstreetmap.org", // OSM: có đến cấp xã/phường; dữ liệu © OpenStreetMap (ODbL)
   geocoding: "https://geocoding-api.open-meteo.com/v1/search",
   forecast: "https://api.open-meteo.com/v1/forecast",
 };
@@ -174,13 +175,14 @@ function validateWeather(data) {
 }
 
 // 3. Gửi HTTP GET, kiểm tra mã trạng thái, đọc JSON và giới hạn thời gian chờ.
-async function fetchJSON(url, signal) {
+// array: dịch vụ trả về mảng (Nominatim); timeout ngắn hơn khi còn nguồn dự phòng.
+async function fetchJSON(url, signal, { array = false, timeout = 15000 } = {}) {
   const controller = new AbortController();
   let timedOut = false;
   const abort = () => controller.abort();
   if (signal.aborted) controller.abort();
   signal.addEventListener("abort", abort, { once: true });
-  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, 15000);
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, timeout);
   try {
     const response = await fetch(url, { signal: controller.signal });
     if (!response.ok) {
@@ -189,10 +191,10 @@ async function fetchJSON(url, signal) {
         : "Dịch vụ chưa phản hồi thành công. Vui lòng thử lại."); // dùng chung cho tìm địa điểm, thời tiết, không khí
     }
     const data = await response.json();
-    if (!data || typeof data !== "object" || Array.isArray(data)) {
+    if (!data || typeof data !== "object" || Array.isArray(data) !== array) {
       throw new Error("Dữ liệu trả về chưa đúng cấu trúc. Vui lòng thử lại.");
     }
-    if (data.error) throw new Error("Dịch vụ không thể xử lý yêu cầu này.");
+    if (!array && data.error) throw new Error("Dịch vụ không thể xử lý yêu cầu này.");
     return data;
   } catch (error) {
     if (signal.aborted) throw error;
@@ -224,18 +226,8 @@ async function searchLocations(rawQuery) {
   $("search-button").disabled = true;
   setStatus("search-status", "Đang tìm địa điểm…");
   try {
-    const data = await fetchJSON(geocodingURL(query), controller.signal);
+    state.results = await findPlaces(query, controller.signal);
     if (controller.signal.aborted) return [];
-    if (data.results !== undefined && !Array.isArray(data.results)) {
-      throw new Error("Danh sách địa điểm trả về không hợp lệ. Vui lòng thử lại.");
-    }
-    const valid = Array.isArray(data.results) ? data.results.filter((item) => {
-      try { validateLocation(item); return true; } catch { return false; }
-    }) : [];
-    if (data.results?.length && !valid.length) {
-      throw new Error("Dịch vụ trả về địa điểm thiếu thông tin tọa độ. Vui lòng thử lại.");
-    }
-    state.results = valid.filter(inVietnam);
     // Gõ đúng tên tỉnh: đưa tỉnh lỵ lên đầu (dịch vụ không có tên tỉnh), trừ khi kết quả đã có nơi đó (cách < ~5 km).
     const province = MayVietnam.province(query);
     if (province && !state.results.some(r => Math.abs(r.latitude - province.latitude) < .05 && Math.abs(r.longitude - province.longitude) < .05)) state.results.unshift(province);
@@ -250,6 +242,58 @@ async function searchLocations(rawQuery) {
   } finally {
     if (state.searchController === controller) $("search-button").disabled = false;
   }
+}
+
+// Nominatim (OSM) tìm được đến xã/phường, có dấu hoặc không dấu. Lỗi, bị chặn hay không có kết quả → Open-Meteo như trước.
+async function findPlaces(query, signal) {
+  try {
+    const places = await searchNominatim(query, signal);
+    if (places.length) return places;
+  } catch (error) {
+    if (signal.aborted) throw error;
+  }
+  return searchOpenMeteo(query, signal);
+}
+
+let lastNominatim = 0;
+// Chờ đủ 1 giây giữa hai lần gọi (chính sách Nominatim), không gọi khi đã hủy.
+async function nominatimJSON(path, params, signal) {
+  const wait = lastNominatim + 1000 - Date.now();
+  if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+  if (signal.aborted) throw new DOMException("Đã hủy", "AbortError");
+  lastNominatim = Date.now();
+  const url = new URL(`${API.nominatim}/${path}`);
+  url.search = new URLSearchParams({ format: "json", addressdetails: "1", "accept-language": "vi", ...params });
+  return fetchJSON(url, signal, { array: path === "search", timeout: 8000 });
+}
+
+async function searchNominatim(query, signal) {
+  const data = await nominatimJSON("search", { countrycodes: "vn", limit: "8", q: MayVietnam.expand(query) }, signal);
+  return data.map(item => MayVietnam.fromOSM(item)).filter(Boolean);
+}
+
+// Tên xã/phường cho tọa độ định vị (giữ tọa độ GPS gốc). Không tra được → "Gần <tỉnh lỵ>"; không bao giờ hiện tọa độ thô.
+async function nameCoordinates(latitude, longitude) {
+  try {
+    const data = await nominatimJSON("reverse", { lat: String(latitude), lon: String(longitude), zoom: "18" }, new AbortController().signal);
+    const place = MayVietnam.fromOSM({ ...data, lat: latitude, lon: longitude }, true);
+    if (place) return place;
+  } catch { /* bị chặn hoặc lỗi mạng: dùng tỉnh lỵ gần nhất */ }
+  return MayVietnam.nearest(latitude, longitude);
+}
+
+async function searchOpenMeteo(query, signal) {
+  const data = await fetchJSON(geocodingURL(query), signal);
+  if (data.results !== undefined && !Array.isArray(data.results)) {
+    throw new Error("Danh sách địa điểm trả về không hợp lệ. Vui lòng thử lại.");
+  }
+  const valid = Array.isArray(data.results) ? data.results.filter((item) => {
+    try { validateLocation(item); return true; } catch { return false; }
+  }) : [];
+  if (data.results?.length && !valid.length) {
+    throw new Error("Dịch vụ trả về địa điểm thiếu thông tin tọa độ. Vui lòng thử lại.");
+  }
+  return valid.filter(inVietnam);
 }
 
 // Ứng dụng chỉ hỗ trợ địa điểm ở Việt Nam: nhờ dịch vụ lọc sẵn (countryCode) và tự kiểm tra lại từng kết quả.
