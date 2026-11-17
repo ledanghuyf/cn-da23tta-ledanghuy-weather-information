@@ -38,6 +38,31 @@ globalThis.MayAdvice = (() => {
     if (uv !== null && uv >= cfg.highUV) add("uv", "Ưu tiên bóng râm, mang mũ", `Chỉ số UV ${fmt(uv)}, đạt ngưỡng tham khảo ${cfg.highUV}.`);
     return items;
   }
+  // Gợi ý trang phục theo thời tiết hiện tại. Ngưỡng theo yêu cầu đề tài: nóng ≥ 31°C hoặc UV ≥ 6, mưa ≥ 50% hoặc mã mưa/giông, lạnh < 22°C.
+  // Thiếu nhiệt độ thì không kết luận (trả []). Ban đêm không gợi ý chống nắng.
+  function outfitAdvice(data) {
+    const code = data?.current?.weather_code, night = data?.current?.is_day === 0;
+    const temp = number(data, "current", "temperature_2m", "°C");
+    const rain = number(data, "current", "precipitation_probability", "%");
+    const wind = number(data, "current", "wind_speed_10m", "km/h");
+    const uv = number(data, "current", "uv_index", "");
+    if (temp === null) return [];
+    const groups = [];
+    const wet = cfg.rainCodes.includes(code) || cfg.stormCodes.includes(code) || (rain !== null && rain >= 50);
+    if (!night && (temp >= 31 || (uv !== null && uv >= cfg.highUV)))
+      groups.push({ id: "sun", icon: "i-sun", title: "Trời nắng nóng", tips: ["Mặc áo khoác chống nắng", "Thoa kem chống nắng (SPF 50+)", "Đeo bao tay, kính râm", "Mang theo ô/mũ rộng vành và uống đủ nước"] });
+    else if (night && temp >= 31)
+      groups.push({ id: "sun", icon: "i-temp", title: "Trời oi nóng", tips: ["Mặc đồ thoáng mát, thấm hút mồ hôi", "Uống đủ nước"] });
+    if (wet)
+      groups.push({ id: "rain", icon: "i-rain", title: cfg.stormCodes.includes(code) ? "Có mưa dông" : "Có thể mưa", tips: ["Mang theo áo mưa hoặc ô", "Đi giày dép chống trượt, chống nước", "Chú ý đường trơn trượt và hạn chế ra ngoài nếu có dông sét"] });
+    if (temp < 22)
+      groups.push({ id: "cold", icon: "i-temp", title: "Trời se lạnh", tips: ["Mặc áo ấm hoặc áo khoác gió", "Giữ ấm cổ và tay chân khi ra ngoài sáng sớm hoặc tối muộn"] });
+    if (!groups.length)
+      groups.push({ id: "mild", icon: "i-sun", title: "Thời tiết dễ chịu", tips: ["Trang phục thoáng mát, thời tiết lý tưởng để dạo phố hoặc tập thể dục ngoài trời"] });
+    if (wind !== null && wind >= cfg.strongWind)
+      groups.push({ id: "wind", icon: "i-wind", title: "Gió mạnh", tips: [`Gió ${fmt(wind)} km/h: mặc áo khoác gió, giữ chắc mũ và cẩn thận khi đi xe máy`] });
+    return groups;
+  }
   function hourlyRows(data) {
     const hourly = data?.hourly;
     if (!Array.isArray(hourly?.time)) return [];
@@ -256,5 +281,5 @@ globalThis.MayAdvice = (() => {
       + (profile.stopRainCodes ? " Mưa vừa cũng nằm trong nhóm nên hoãn đạp xe." : "")
       + " Giông và mưa lớn áp dụng mức không khuyến nghị cho cả ba hoạt động. Các ngưỡng là tiêu chí tham khảo của ứng dụng.";
   }
-  return { currentAdvice, hourlyRows, chooseSlots, localStamp, render };
+  return { currentAdvice, outfitAdvice, hourlyRows, chooseSlots, localStamp, render };
 })();

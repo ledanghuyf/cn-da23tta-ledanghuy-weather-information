@@ -65,6 +65,7 @@ const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); c
   check('Hết lỗi, tìm lại: có kết quả', (await page.locator('.result-button').count()) > 0, await text('#search-status'));
 
   // --- Cập nhật thời tiết khi lỗi ---
+  await page.mouse.click(5, 880); // bấm ra ngoài để đóng danh sách kết quả tìm (đang che nút Cập nhật ở góc thẻ chính)
   for (const [f, re, label] of [['offline', /Không kết nối được|Internet/, 'mất mạng'], [500, /chưa phản hồi thành công/, 'lỗi 500'], [429, /giới hạn/, 'lỗi 429'], ['badjson', /định dạng/, 'JSON hỏng'], ['html', /định dạng/, 'trả về trang HTML'], ['empty', /chưa đầy đủ|không hợp lệ/, 'dữ liệu rỗng'], ['nocurrent', /chưa đầy đủ|không hợp lệ/, 'thiếu dữ liệu hiện tại'], ['badunit', /chưa đầy đủ|không hợp lệ/, 'sai đơn vị (°F)'], ['slow', /quá nhiều thời gian/, 'chậm >15 giây']]) {
     fault.wx = f; const t1 = Date.now(); await page.click('#refresh-button'); await idle();
     const st = await text('#weather-status');

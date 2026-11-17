@@ -88,7 +88,10 @@
       $(field === "favorites" ? "favorite-list" : "history-list").replaceChildren(fragment);
     }
     const active = saved.favorites.some(item => keyOf(item) === keyOf(state.location));
-    $("save-location").textContent = active ? "★ Đã yêu thích" : "☆ Lưu yêu thích";
+    // Nút chỉ còn biểu tượng: đổi ngôi sao + tên đọc cho trình đọc màn hình + gợi ý khi rê chuột.
+    $("save-location").querySelector(".action-icon").textContent = active ? "★" : "☆";
+    $("save-location").querySelector(".action-label").textContent = active ? "Đã yêu thích" : "Lưu yêu thích";
+    $("save-location").title = active ? "Bỏ khỏi yêu thích" : "Lưu yêu thích";
     $("save-location").setAttribute("aria-pressed", String(active));
     $("clear-history").disabled = !saved.history.length;
     if (focusedKey && focusedList) {

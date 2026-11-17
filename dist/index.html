@@ -116,16 +116,17 @@
     </aside>
 
     <main class="main-content">
-      <!-- Một hàng gọn: chọn ngày + lưu/cập nhật; tiêu đề trang chỉ dành cho trình đọc màn hình vì tên nơi đã là tiêu đề nhìn thấy. -->
+      <!-- Cụm điều khiển kính mờ: chọn ngày + các mục; tiêu đề trang chỉ dành cho trình đọc màn hình vì tên nơi đã là tiêu đề nhìn thấy. -->
+      <div class="control-bar">
       <header class="page-header">
         <h1 class="visually-hidden"><span id="page-title-text">Thời tiết hôm nay</span></h1>
         <div class="header-meta">
           <div class="date-toolbar"><label for="weather-date" class="visually-hidden">Xem ngày</label><button id="date-now" type="button" disabled>Về hôm nay</button></div>
           <div class="day-navigation"><button id="date-prev" type="button" aria-label="Xem ngày trước" disabled>‹</button><span class="date-badge"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-calendar"/></svg><select id="weather-date" disabled><option value="">Đang tải…</option></select><span id="page-date" class="visually-hidden"></span></span><button id="date-next" type="button" aria-label="Xem ngày tiếp theo" disabled>›</button></div>
         </div>
-        <div class="overview-actions"><button id="save-location" class="glass-button" type="button" aria-pressed="false" disabled>☆ Lưu yêu thích</button><button id="refresh-button" class="glass-button" type="button" disabled><svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-refresh"/></svg><span>Cập nhật</span></button><button id="motion-toggle" class="glass-button motion-toggle" type="button" aria-pressed="true" title="Bật/tắt hiệu ứng động (mưa rơi, nắng, mây trôi)"><svg class="icon" width="15" height="15" aria-hidden="true"><use href="#i-motion"/></svg><span>Hiệu ứng</span></button></div>
       </header>
       <nav class="weather-tabs" aria-label="Các mục trên trang"><a href="#weather-content" aria-current="location">Tổng quan</a><a href="#forecast-group">Dự báo</a><a href="#conditions-group">Chỉ số</a><a href="#advice-section">Hoạt động</a></nav>
+      </div>
 
       <section id="weather-content" class="weather-content" aria-labelledby="place-name" aria-busy="true">
         <p id="saved-status" class="notice" role="status" aria-live="polite"></p>
@@ -134,7 +135,11 @@
         <div id="weather-status" class="weather-status" role="status" aria-live="polite">Đang tải thời tiết Vĩnh Long…</div>
         <button id="retry-button" class="glass-button retry-button" type="button" hidden>Thử tải lại <span aria-hidden="true">↻</span></button>
 
-        <div id="weather-view" hidden>
+        <div id="weather-view" class="bento" hidden>
+          <div class="bento-main">
+          <div class="hero-card">
+          <!-- Nút phụ thu gọn thành biểu tượng ở góc phải khối chính; chữ vẫn có cho trình đọc màn hình, rê chuột hiện gợi ý. -->
+          <div class="overview-actions" role="group" aria-label="Thao tác với địa điểm"><button id="save-location" class="icon-button" type="button" aria-pressed="false" title="Lưu yêu thích" disabled><span class="action-icon" aria-hidden="true">☆</span><span class="action-label">Lưu yêu thích</span></button><button id="refresh-button" class="icon-button" type="button" title="Cập nhật dữ liệu mới nhất" disabled><svg class="icon" width="18" height="18" aria-hidden="true"><use href="#i-refresh"/></svg><span class="action-label">Cập nhật</span></button><button id="motion-toggle" class="icon-button motion-toggle" type="button" aria-pressed="true" title="Bật/tắt hiệu ứng động (mưa rơi, nắng, mây trôi)"><svg class="icon" width="18" height="18" aria-hidden="true"><use href="#i-motion"/></svg><span class="action-label">Hiệu ứng</span></button></div>
           <section id="current-panel" class="current-panel" data-scene="day" aria-labelledby="current-title">
             <div class="current-topline"><h3 id="current-title">Thời tiết hiện tại</h3><span id="day-label" class="day-label"></span></div>
             <div class="current-main">
@@ -159,6 +164,13 @@
             <div id="daily-metrics" class="daily-metrics"></div>
             <p class="daily-note">Dự báo tổng quan trong ngày.</p>
           </section>
+          </div>
+
+          <section id="outfit-card" class="outfit-card glass-card" aria-labelledby="outfit-title" hidden>
+            <h3 id="outfit-title" class="outfit-title"><svg class="icon" width="20" height="20" aria-hidden="true"><use href="#i-sun"/></svg>Lời khuyên &amp; trang phục</h3>
+            <ul id="outfit-list" class="outfit-list"></ul>
+          </section>
+          </div>
 
           <section id="forecast-group" class="weather-group glass-card" aria-labelledby="forecast-group-title">
             <div class="group-header"><h3 id="forecast-group-title"><svg class="icon" width="22" height="22" aria-hidden="true"><use href="#i-calendar"/></svg>Dự báo thời tiết</h3><div class="group-tabs" role="tablist" aria-label="Dự báo thời tiết"><button type="button" role="tab" id="tab-hourly-section" aria-controls="pane-hourly-section" aria-selected="true" tabindex="0">Theo giờ</button><button type="button" role="tab" id="tab-forecast-section" aria-controls="pane-forecast-section" aria-selected="false" tabindex="-1">7 ngày</button></div></div>

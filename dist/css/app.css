@@ -245,7 +245,6 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
   .locate-dropdown { left: auto; right: 0; }
   .personal-dropdown { left: auto; right: 0; width: 330px; }
   .personal-dropdown > .personal-caption:first-child { margin-top: 0; }
-  .weather-tabs { top: 76px; }
 }
 @media (min-width: 761px) and (max-width: 1180px) {
   /* Thanh hẹp: nút chỉ còn biểu tượng, chữ vẫn là tên đọc cho trình đọc màn hình. */
@@ -276,7 +275,6 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .weather-content, .weather-group, #advice-section { scroll-margin-top: 85px; }
 
 /* ---------- Trạng thái ---------- */
-.overview-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 /* Nền kính tối: chữ trắng vẫn rõ khi nằm trên vùng tia nắng sáng. */
 .glass-button { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 999px; background: rgba(6, 18, 36, .34); color: #fff; font-size: 14px; font-weight: 600; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .glass-button:hover:not(:disabled) { background: rgba(6, 18, 36, .5); }
@@ -566,11 +564,6 @@ dd { font-size: 15px; font-weight: 650; }
   .date-toolbar { flex: 1 1 100%; }
   #date-now { width: 100%; }
   .date-toolbar:has(> #date-now:disabled) { margin: -8px 0 0; } /* nút ẩn: bù khoảng cách hàng thay vì khoảng cách cột */
-  .overview-actions { width: 100%; }
-  .overview-actions .glass-button { flex: 1; justify-content: center; }
-  /* Điện thoại: nút Hiệu ứng chỉ còn biểu tượng (tên vẫn có cho trình đọc màn hình) để hai nút kia đủ chỗ. */
-  .overview-actions .motion-toggle { flex: none; width: 48px; padding: 8px; }
-  .motion-toggle > span { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
   /* 5 mục chia đều, vừa một hàng 320–760 px thay vì bị cắt "So s…". */
   .weather-tabs { top: 8px; width: 100%; }
   .weather-tabs a { flex: 1 1 auto; padding: 8px 4px; font-size: 12.5px; text-align: center; }
@@ -596,6 +589,85 @@ dd { font-size: 15px; font-weight: 650; }
   .metric-value strong { font-size: 32px; }
   .weather-highlights { grid-template-columns: 1fr; }
   .temperature { font-size: 88px; }
+}
+
+/* ==========================================================================
+   Bố cục 4.0: một khung 1100 px căn giữa; máy tính dạng Bento, điện thoại/máy tính bảng một cột.
+   ========================================================================== */
+.main-content { max-width: 1100px; padding: 16px 16px 28px; }
+
+/* Cụm điều khiển kính mờ (chọn ngày + các mục), căn giữa cùng trục với nội dung. */
+.weather-tabs { background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .18); border-radius: 16px; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.weather-tabs a { border-radius: 12px; }
+@media (min-width: 761px) {
+  .sidebar { padding: 10px max(16px, calc((100% - 1100px) / 2 + 16px)); }
+  /* Hàng 1: tìm kiếm, Gần tôi, Bản đồ, Đã lưu; hàng 2: dải chip tỉnh thành phổ biến ngay dưới ô tìm kiếm. */
+  .drawer-body { flex-wrap: wrap; row-gap: 8px; }
+  .personal-section { margin-left: auto; }
+  .quick-section { order: 5; flex: 1 1 100%; }
+  .quick-locations { -webkit-mask-image: none; mask-image: none; padding-right: 0; }
+  .quick-button { min-height: 34px; padding: 6px 12px; font-size: 13px; }
+  html { scroll-padding-top: 124px; }
+  .weather-content, .weather-group, #advice-section { scroll-margin-top: 124px; }
+  .control-bar { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 12px; width: fit-content; max-width: 100%; margin: 0 auto 16px; padding: 8px;
+    border: 1px solid rgba(255, 255, 255, .18); border-radius: 16px; background: rgba(255, 255, 255, .12); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  .control-bar .page-header { margin: 0; }
+  .control-bar .header-meta { flex: 0 1 340px; }
+  .control-bar .weather-tabs { position: static; margin: 0; border: 0; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (max-width: 760px) {
+  .control-bar { display: contents; } /* điện thoại: thanh ngày và dải mục xếp dọc, dải mục vẫn dính đầu màn hình khi cuộn */
+  /* Dải chip tỉnh thành cuộn ngang, ẩn thanh cuộn. */
+  .quick-locations { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
+  .quick-locations::-webkit-scrollbar, .weather-tabs::-webkit-scrollbar, .hour-modes::-webkit-scrollbar { display: none; }
+  .quick-button { flex: none; width: auto; min-height: 44px; padding: 8px 14px; border-radius: 999px; white-space: nowrap; scroll-snap-align: start; }
+}
+
+/* Khối nhiệt độ chính là một thẻ; nút phụ thành biểu tượng tròn ở góc phải (có gợi ý khi rê chuột). */
+.hero-card { position: relative; overflow: clip; /* vầng nắng xoay không đẩy trang tràn ngang */ padding: 14px 16px 16px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 22px; background: rgba(6, 18, 36, .16); }
+.overview-actions { display: flex; justify-content: flex-end; gap: 6px; margin-bottom: 4px; }
+.icon-button { display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 1px solid rgba(255, 255, 255, .3); border-radius: 50%; background: rgba(6, 18, 36, .34); color: #fff; font-size: 19px; line-height: 1; }
+.icon-button:hover:not(:disabled) { background: rgba(6, 18, 36, .55); }
+.icon-button:disabled { opacity: .55; }
+.icon-button[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 160, 75, .28); }
+.icon-button .icon { width: 18px; height: 18px; }
+.action-label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+@media (min-width: 421px) {
+  /* Đủ rộng: nút nằm cùng hàng với dòng "Thời tiết hiện tại" (dòng này dạt trái để nhường chỗ). */
+  .overview-actions { position: absolute; top: 12px; right: 12px; z-index: 2; margin: 0; }
+  .hero-card .current-topline { justify-content: flex-start; min-height: 40px; padding-right: 140px; }
+}
+@media (pointer: coarse) { .icon-button { width: 44px; height: 44px; } }
+
+/* Thẻ Lời khuyên & trang phục: mỗi nhóm một màu, luôn có biểu tượng và chữ. */
+body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời tiết hiện tại, không áp cho ngày khác */
+.outfit-title { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--ink-soft); }
+.outfit-title .icon { width: 18px; height: 18px; color: #ffd166; }
+.outfit-list { display: grid; gap: 10px; list-style: none; }
+.outfit-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 14px; border-left: 4px solid var(--kind, var(--accent)); background: rgba(255, 255, 255, .08); }
+.outfit-item > .icon { margin-top: 2px; color: var(--kind, var(--accent)); }
+.outfit-item strong { display: block; margin-bottom: 4px; font-size: 15px; }
+.outfit-item ul { padding-left: 18px; font-size: 14px; line-height: 1.55; }
+.outfit-item[data-kind="sun"]  { --kind: #ffd166; }
+.outfit-item[data-kind="rain"] { --kind: #6cc4ff; }
+.outfit-item[data-kind="cold"] { --kind: #9fd8ff; }
+.outfit-item[data-kind="wind"] { --kind: #8fe3cf; }
+.outfit-item[data-kind="mild"] { --kind: #7ee2a8; }
+
+/* Máy tính: Bento — trái: khối nhiệt độ + trang phục; phải: dự báo; hàng 2: chỉ số nhanh 2×2 + chỉ số chi tiết; hàng 3: hoạt động.
+   Mỗi mục điều hướng (Tổng quan, Dự báo, Chỉ số, Hoạt động) bắt đầu ở một hàng riêng để thanh mục sáng đúng khi cuộn. */
+.bento-main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+@media (min-width: 1024px) {
+  #weather-view.bento { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); /* cùng độ ưu tiên với #weather-view ở trên */ grid-template-areas: "main forecast" "metrics conditions" "advice advice"; gap: 16px; align-items: stretch; }
+  .bento-main { grid-area: main; }
+  .bento .outfit-card { flex: 1; }
+  .bento #forecast-group { grid-area: forecast; }
+  .bento #current-metrics { grid-area: metrics; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 12px; }
+  .bento #conditions-group { grid-area: conditions; }
+  .bento #advice-section { grid-area: advice; }
+  .bento .weather-details-layout { grid-template-columns: 1fr; }
+  .bento .extra-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bento .weather-highlights { grid-template-columns: 1fr; }
 }
 
 /* ---------- Hiệu ứng động (tắt hết khi người dùng chọn giảm chuyển động) ---------- */

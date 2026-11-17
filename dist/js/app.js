@@ -367,6 +367,22 @@ async function loadWeather(location) {
   }
 }
 
+// Thẻ "Lời khuyên & trang phục": mỗi nhóm (nắng, mưa, lạnh, gió, dễ chịu) một biểu tượng, tên nhóm và các gợi ý.
+function renderOutfit(data) {
+  const groups = MayAdvice.outfitAdvice(data);
+  $("outfit-card").hidden = !groups.length;
+  $("outfit-list").replaceChildren(...groups.map(group => {
+    const item = document.createElement("li"), body = document.createElement("div"), title = document.createElement("strong"), tips = document.createElement("ul");
+    item.className = "outfit-item"; item.dataset.kind = group.id;
+    const icon = svgElement("svg", { class: "icon", width: "22", height: "22", "aria-hidden": "true" });
+    icon.append(svgElement("use", { href: `#${group.icon}` }));
+    title.textContent = group.title;
+    tips.append(...group.tips.map(tip => { const li = document.createElement("li"); li.textContent = tip; return li; }));
+    body.append(title, tips); item.append(icon, body);
+    return item;
+  }));
+}
+
 // 6. Tách phần hiển thị khỏi phần gọi API để dễ đọc và sửa.
 function renderWeather(location, data) {
   const current = data.current;
@@ -385,6 +401,7 @@ function renderWeather(location, data) {
   $("feels-like").textContent = formatNumber(current.apparent_temperature, true);
   $("precipitation").textContent = formatNumber(current.precipitation);
   $("today-range").replaceChildren(...highLowNodes(data.daily.temperature_2m_max[0], data.daily.temperature_2m_min[0]));
+  renderOutfit(data);
   // ISO từ API đã theo timezone của địa điểm; không chuyển bằng múi giờ máy người xem.
   const [date, time] = String(current.time || "").split("T");
   const [year, month, day] = (date || "").split("-");

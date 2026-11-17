@@ -169,3 +169,18 @@ test('Ranh giới Việt Nam: nhận cả miền Bắc, biên giới, đảo; lo
     assert.equal(vn.province(query)?.name,town,query);
   for(const query of ['Paris','Vinh','An',''])assert.equal(vn.province(query),null,query);
 });
+test('Gợi ý trang phục: nóng/UV, đêm không chống nắng, mưa, dông, lạnh, dễ chịu, gió; thiếu nhiệt độ thì không kết luận',()=>{
+  const o=(patch)=>{const d=fixture();d.current_units.uv_index='';Object.assign(d.current,{weather_code:1,is_day:1,temperature_2m:27,precipitation_probability:10,wind_speed_10m:5,uv_index:2},patch);return Array.from(advice.outfitAdvice(d),g=>g.id);};
+  assert.deepEqual(o({}),['mild']);
+  assert.deepEqual(o({temperature_2m:31}),['sun']);
+  assert.deepEqual(o({uv_index:6}),['sun']);
+  assert.deepEqual(o({temperature_2m:33,is_day:0,uv_index:0}),['sun']);
+  const d=fixture();Object.assign(d.current,{temperature_2m:33,is_day:0,weather_code:1,precipitation_probability:0});
+  assert.ok(!JSON.stringify(advice.outfitAdvice(d)).includes('kem chống nắng'),'ban đêm không gợi ý kem chống nắng');
+  assert.deepEqual(o({precipitation_probability:50}),['rain']);
+  assert.deepEqual(o({weather_code:95,precipitation_probability:0}),['rain']);
+  assert.deepEqual(o({temperature_2m:18}),['cold']);
+  assert.deepEqual(o({temperature_2m:18,weather_code:61}),['rain','cold']);
+  assert.deepEqual(o({wind_speed_10m:60}),['mild','wind']);
+  assert.deepEqual(o({temperature_2m:null}),[]);
+});
