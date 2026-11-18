@@ -65,7 +65,7 @@ test('Gợi ý theo thời tiết: 4 mức theo nhiệt độ cảm nhận, 3 d�
   const a=(patch,rain)=>advice.outfitAdvice(make(patch,rain));const line=(r,kind)=>r.lines.find(l=>l.kind===kind).text;
   // Mức theo nhiệt độ cảm nhận (biên 19/20, 25/26, 30/31)
   for(const [feels,level] of [[19,'cold'],[20,'cool'],[25,'cool'],[26,'pleasant'],[30,'pleasant'],[31,'hot']])assert.equal(a({apparent_temperature:feels}).level,level,`cảm nhận ${feels}`);
-  let r=a({});assert.equal(r.title,'Dễ chịu · 27°');assert.equal(r.detail,'Cảm giác 27° · Độ ẩm 60%');assert.deepEqual(Array.from(r.lines,l=>[l.kind,l.icon]),[['clothes','i-shirt'],['items','i-bag'],['activity','i-walk']]);
+  let r=a({});assert.equal(r.title,'Dễ chịu · 27°');assert.equal(r.feels,27);assert.equal(a({apparent_temperature:31.4}).feels,31.4);assert.equal(r.detail,'Cảm giác 27° · Độ ẩm 60%');assert.deepEqual(Array.from(r.lines,l=>[l.kind,l.icon]),[['clothes','i-shirt'],['items','i-bag'],['activity','i-walk']]);
   assert.equal(line(r,'items'),'Không cần mang thêm gì.');assert.match(line(r,'activity'),/đi dạo.*khô ráo, phơi đồ nhanh khô/);
   assert.match(line(a({relative_humidity_2m:85}),'clothes'),/thấm hút/);assert.match(line(a({relative_humidity_2m:85}),'activity'),/Độ ẩm cao \(85%\)/);
   // Nóng ban ngày + UV cao: "Nắng nóng", nhắc che nắng, tránh 10–15 giờ; ban đêm: "Oi bức", không nhắc chống nắng

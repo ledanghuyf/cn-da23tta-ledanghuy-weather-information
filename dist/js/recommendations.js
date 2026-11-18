@@ -67,7 +67,7 @@ globalThis.MayAdvice = (() => {
     if (wind !== null && wind >= cfg.strongWind) activity += ` Gió mạnh (${fmt(wind)} km/h): cẩn thận khi đi xe máy.`;
 
     return {
-      level, title: `${label} · ${deg(temp)}`,
+      level, feels, title: `${label} · ${deg(temp)}`,
       detail: `Cảm giác ${deg(feels)}${humidity === null ? "" : ` · Độ ẩm ${fmt(humidity)}%`}`,
       lines: [
         { kind: "clothes", icon: "i-shirt", label: "Trang phục", text: clothes },

@@ -667,21 +667,46 @@ dd { font-size: 15px; font-weight: 650; }
 body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời tiết hiện tại, không áp cho ngày khác */
 .outfit-title { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--ink-soft); }
 .outfit-title .icon { width: 18px; height: 18px; color: var(--level); }
-/* Mức nhiệt (theo nhiệt độ cảm nhận): viền trái + biểu tượng cùng màu — lạnh xanh dương, mát mẻ xanh lá, dễ chịu vàng cam, nóng đỏ. */
-.outfit-card { --level: #ffb347; border-left: 4px solid var(--level); }
+/* Mức nhiệt (theo nhiệt độ cảm nhận) quyết định màu của cả khung — lạnh xanh dương, mát mẻ xanh lá, dễ chịu vàng cam, nóng đỏ:
+   viền trái, ánh màu loang từ góc, vòng sáng quanh biểu tượng, chấm trên thang. (Trình duyệt cũ không có color-mix vẫn có nền kính mặc định.) */
+.outfit-card.glass-card { --level: #ffb347; position: relative; overflow: hidden; border-left: 4px solid var(--level); box-shadow: 0 12px 32px rgba(0, 0, 0, .2), inset 0 1px 0 rgba(255, 255, 255, .08); }
+.outfit-card.glass-card { border-color: color-mix(in srgb, var(--level) 40%, transparent); border-left-color: var(--level);
+  background: radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--level) 24%, transparent), transparent 58%), rgba(10, 24, 48, .34); }
 .outfit-card[data-level="cold"] { --level: #5aaeff; }
 .outfit-card[data-level="cool"] { --level: #5fd38d; }
 .outfit-card[data-level="pleasant"] { --level: #ffb347; }
 .outfit-card[data-level="hot"] { --level: #ff6b6b; }
-.outfit-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-bottom: 12px; }
-.outfit-head strong { font-size: 20px; font-weight: 650; }
-.outfit-head strong::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; background: var(--level); vertical-align: 2px; }
-.outfit-head span { font-size: 14px; color: rgba(255, 255, 255, .8); }
-.outfit-list { display: grid; gap: 8px; list-style: none; }
-.outfit-line { display: flex; align-items: flex-start; gap: 12px; min-width: 0; padding: 11px 14px; border-radius: 14px; background: rgba(255, 255, 255, .07); }
-.outfit-line > .icon { flex: none; width: 20px; height: 20px; margin-top: 2px; color: var(--level); }
-.outfit-label { display: block; margin-bottom: 2px; font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: rgba(255, 255, 255, .65); }
+/* Đầu khung: biểu tượng nhiệt kế phát sáng + mức nhiệt (to) + thang cảm nhận */
+.outfit-head { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px 14px; margin-bottom: 14px; }
+.outfit-badge { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; color: var(--level); background: rgba(255, 255, 255, .1);
+  background: color-mix(in srgb, var(--level) 22%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--level) 50%, transparent), 0 0 22px color-mix(in srgb, var(--level) 45%, transparent); }
+.outfit-badge .icon { width: 24px; height: 24px; }
+.outfit-summary { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.outfit-summary strong { font-size: 22px; font-weight: 650; line-height: 1.2; }
+.outfit-summary span { font-size: 14px; color: rgba(255, 255, 255, .82); }
+.outfit-scale { grid-column: 1 / -1; }
+.outfit-track { position: relative; display: block; height: 6px; border-radius: 99px;
+  /* Thang 14–38°C, ranh giới đúng ngưỡng phân loại: 20° (25%), 25,5° (48%), 30,5° (69%). */
+  background: linear-gradient(90deg, #5aaeff 0%, #5aaeff 21%, #5fd38d 29%, #5fd38d 44%, #ffb347 52%, #ffb347 65%, #ff6b6b 73%, #ff6b6b 100%); }
+.outfit-track i { position: absolute; top: 50%; left: calc(var(--pos, .5) * 100%); width: 14px; height: 14px; border: 3px solid var(--level); border-radius: 50%; background: #fff;
+  transform: translate(-50%, -50%); box-shadow: 0 0 10px rgba(0, 0, 0, .35); transition: left .6s ease; }
+.outfit-ticks { position: relative; display: block; height: 14px; margin-top: 6px; font-size: 11px; letter-spacing: .3px; color: rgba(255, 255, 255, .65); }
+.outfit-ticks b { position: absolute; top: 0; font-weight: 600; white-space: nowrap; transform: translateX(-50%); } /* nhãn nằm giữa vùng màu của mức */
+.outfit-ticks b:nth-child(1) { left: 12.5%; } .outfit-ticks b:nth-child(2) { left: 36.5%; } .outfit-ticks b:nth-child(3) { left: 58.5%; } .outfit-ticks b:nth-child(4) { left: 84.5%; }
+@media (min-width: 761px) {
+  .outfit-head { grid-template-columns: auto minmax(0, 1fr) minmax(220px, 300px); }
+  .outfit-scale { grid-column: auto; }
+}
+/* 3 dòng gợi ý: biểu tượng trong vòng tròn màu, nổi nhẹ khi rê chuột */
+.outfit-list { display: grid; gap: 10px; list-style: none; }
+.outfit-line { display: flex; align-items: flex-start; gap: 12px; min-width: 0; padding: 12px 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .09); background: rgba(255, 255, 255, .07);
+  transition: transform .2s ease, background-color .2s; }
+@media (hover: hover) { .outfit-line:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .11); } }
+.outfit-line > .icon { flex: none; box-sizing: content-box; width: 18px; height: 18px; padding: 8px; border-radius: 50%; color: var(--level); background: rgba(255, 255, 255, .1);
+  background: color-mix(in srgb, var(--level) 20%, transparent); }
+.outfit-label { display: block; margin: 2px 0 3px; font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: rgba(255, 255, 255, .7); }
 .outfit-line p { font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+.outfit-source { margin-top: 12px; font-size: 12px; color: rgba(255, 255, 255, .62); }
 
 /* ==========================================================================
    Kiểu ứng dụng thời tiết trên điện thoại: khối chính nằm thẳng trên nền trời (không khung), số nhiệt độ rất lớn nét mảnh;
