@@ -42,7 +42,7 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     assert.equal(await page.locator('.hour-tile[data-rain="high"]').count(),1);
     await page.locator('#weather-date').selectOption('2026-10-12');assert.equal(await list.isVisible(),false);
     await page.locator('#weather-date').selectOption('');assert.equal(await list.isVisible(),true);
-    await show(data());assert.equal(await feels.getAttribute('data-alert'),null);assert.match(await feels.innerText(),/Nhiệt độ cảm nhận ngoài trời/);assert.match(await list.innerText(),/khá yên/);
+    await show(data());assert.equal(await feels.getAttribute('data-alert'),null);assert.match(await feels.innerText(),/Nhiệt độ cảm nhận ngoài trời/);assert.equal(await list.isVisible(),false); // không có gì đáng chú ý → ẩn hẳn
   });
   await test('50 Dữ liệu bổ sung thiếu, sai đơn vị, gián đoạn không làm mất thời tiết lõi',async()=>{
     const d=data();d.hourly.temperature_2m[17]=null;d.current.visibility=null;d.daily.sunrise.fill(null);await show(d);

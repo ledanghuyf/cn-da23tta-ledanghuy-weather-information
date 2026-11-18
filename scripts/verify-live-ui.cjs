@@ -19,6 +19,8 @@ function sky(code, day, r) {               // null = không áp dụng (đêm, m
   if (!Number.isFinite(r)) return "cloudy";
   return r >= 0.5 ? "sunny" : r >= 0.2 ? "partly" : "cloudy";
 }
+// Ban đêm: tên theo mây che phủ (<10% quang, <30% ít mây, <60% mây rải rác, còn lại nhiều mây) — viết lại độc lập để đối chiếu.
+const nightCode = (code, day, cloud) => day === 0 && code <= 3 && Number.isFinite(cloud) ? (cloud >= 60 ? 3 : cloud >= 30 ? 2 : cloud >= 10 ? 1 : 0) : code;
 function expect(code, day, r) {
   const s = sky(code, day, r);
   if (s) return { label: { sunny: "Nhiều nắng", partly: "Nắng xen mây", cloudy: "Nhiều mây" }[s], symbol: { sunny: "clear", partly: "partly-cloudy", cloudy: "cloudy" }[s], theme: s };
@@ -53,7 +55,7 @@ const airBand = v => [[50, "Tốt"], [100, "Trung bình"], [150, "Kém với nh�
     const c = wx.current, d = wx.daily, h = wx.hourly;
 
     // 1. Thời tiết hiện tại
-    const cur = expect(c.weather_code, c.is_day, ratio(c.sunshine_duration, c.interval));
+    const cur = expect(nightCode(c.weather_code, c.is_day, c.cloud_cover), c.is_day, ratio(c.sunshine_duration, c.interval));
     await eq("#place-name", name, "Tên địa điểm");
     await eq("#temperature", r0(c.temperature_2m), "Nhiệt độ hiện tại");
     await eq("#condition", cur.label, `Tình trạng (mã ${c.weather_code}, nắng ${Math.round(ratio(c.sunshine_duration, c.interval) * 100)}%)`);
@@ -96,9 +98,9 @@ const airBand = v => [[50, "Tốt"], [100, "Trung bình"], [150, "Kém với nh�
     const wantTimes = h.time.filter(t => t >= c.time).slice(0, 24);
     ok(tiles.length === 24 && tiles[0].time === wantTimes[0] && tiles.at(-1).time === wantTimes.at(-1), "Dải 24 giờ", `${tiles.length} ô ${tiles[0]?.time}→${tiles.at(-1)?.time}`, `24 ô ${wantTimes[0]}→${wantTimes.at(-1)}`);
     for (const tile of tiles) {
-      const i = h.time.indexOf(tile.time), e = expect(h.weather_code[i], h.is_day[i], ratio(h.sunshine_duration[i], 3600));
+      const i = h.time.indexOf(tile.time), e = expect(nightCode(h.weather_code[i], h.is_day[i], h.cloud_cover?.[i]), h.is_day[i], ratio(h.sunshine_duration[i], 3600));
       ok(tile.temp === `${f(h.temperature_2m[i])}°`, `Giờ ${tile.time.slice(11)} nhiệt độ`, tile.temp, `${f(h.temperature_2m[i])}°`);
-      ok(tile.unit === `Mưa ${f(h.precipitation_probability[i])}%`, `Giờ ${tile.time.slice(11)} khả năng mưa`, tile.unit, `Mưa ${f(h.precipitation_probability[i])}%`);
+      ok(tile.unit === `${f(h.precipitation_probability[i])}%`, `Giờ ${tile.time.slice(11)} khả năng mưa`, tile.unit, `${f(h.precipitation_probability[i])}%`);
       ok(tile.icon === `#${e.symbol}`, `Giờ ${tile.time.slice(11)} biểu tượng (mã ${h.weather_code[i]})`, tile.icon, `#${e.symbol}`);
     }
 

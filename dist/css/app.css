@@ -393,8 +393,11 @@ dd { font-size: 15px; font-weight: 650; }
 .hour-tile svg { width: 36px; height: 36px; margin: 2px 0; }
 .hour-symbol-missing { height: 40px; line-height: 40px; }
 .hour-main-value { font-size: 18px; font-weight: 600; }
-.hour-unit { font-size: 11px; white-space: nowrap; color: var(--ink-faint); }
-.hour-tile[data-rain="high"] .hour-unit { color: var(--rain); font-weight: 700; }
+.hour-unit { display: inline-flex; align-items: center; gap: 2px; font-size: 12.5px; font-weight: 600; white-space: nowrap; color: rgba(255, 255, 255, .6); }
+.hour-tile .hour-unit .icon { width: 11px; height: 11px; margin: 0; }
+/* Khả năng mưa: ≥ 20% xanh nhạt, ≥ 50% xanh đậm và đậm chữ — liếc là thấy giờ nào dễ mưa. */
+.hour-tile[data-rain="some"] .hour-unit { color: #9fd3ff; }
+.hour-tile[data-rain="high"] .hour-unit { color: #6cc4ff; font-weight: 750; }
 .hourly-detail { margin-top: 8px; padding: 12px 14px; border-radius: 14px; background: var(--tile); }
 .hour-detail-heading { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
 .hour-detail-heading span { color: var(--ink-soft); font-size: 14px; }
@@ -652,6 +655,7 @@ body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời 
 .outfit-item[data-kind="cold"] { --kind: #9fd8ff; }
 .outfit-item[data-kind="wind"] { --kind: #8fe3cf; }
 .outfit-item[data-kind="mild"] { --kind: #7ee2a8; }
+.outfit-item[data-kind="humid"] { --kind: #ff9a4d; }
 
 /* ==========================================================================
    Kiểu ứng dụng thời tiết trên điện thoại: khối chính nằm thẳng trên nền trời (không khung), số nhiệt độ rất lớn nét mảnh;

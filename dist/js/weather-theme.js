@@ -13,9 +13,15 @@ globalThis.MayTheme = (() => {
     if (!Number.isFinite(sun)) return "cloudy";
     return sun >= 0.5 ? "sunny" : sun >= 0.2 ? "partly" : "cloudy";
   }
+  // Ban đêm không có giờ nắng để đo: gọi tên theo tỉ lệ mây che phủ (%) của chính Open-Meteo, ngưỡng gần với
+  // cách ứng dụng điện thoại gọi tên (vd. Song Lộc 18/11 20:45: mã 2 "mây rải rác" nhưng mây 62% → "Nhiều mây").
+  function nightCode(code, isDay, cloud) {
+    if (isDay !== 0 || ![0, 1, 2, 3].includes(code) || !Number.isFinite(cloud) || cloud < 0 || cloud > 100) return code;
+    return cloud >= 60 ? 3 : cloud >= 30 ? 2 : cloud >= 10 ? 1 : 0;
+  }
   function select(current) {
     if (!current || ![0, 1].includes(current.is_day)) return { weather: "default", phase: "unknown", scene: "default" };
-    const code = current.weather_code;
+    const code = nightCode(current.weather_code, current.is_day, current.cloud_cover);
     const state = sky(code, current.is_day, ratio(current.sunshine_duration, current.interval));
     const weather = config.stormCodes.includes(code) ? "storm"
       : config.rainCodes.includes(code) ? "rain"
@@ -34,5 +40,5 @@ globalThis.MayTheme = (() => {
     panel.dataset.weather = theme.weather;
     return theme;
   }
-  return { select, apply, sky, ratio };
+  return { select, apply, sky, ratio, nightCode };
 })();

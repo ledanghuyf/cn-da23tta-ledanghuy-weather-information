@@ -38,29 +38,54 @@ globalThis.MayAdvice = (() => {
     if (uv !== null && uv >= cfg.highUV) add("uv", "Ưu tiên bóng râm, mang mũ", `Chỉ số UV ${fmt(uv)}, đạt ngưỡng tham khảo ${cfg.highUV}.`);
     return items;
   }
-  // Gợi ý trang phục theo thời tiết hiện tại. Ngưỡng theo yêu cầu đề tài: nóng ≥ 31°C hoặc UV ≥ 6, mưa ≥ 50% hoặc mã mưa/giông, lạnh < 22°C.
-  // Thiếu nhiệt độ thì không kết luận (trả []). Ban đêm không gợi ý chống nắng.
+  // Lời khuyên & trang phục: câu ngắn, nói thẳng, tiêu đề kèm đúng số liệu đang hiển thị.
+  // Ngưỡng theo đề tài: nóng ≥ 31°C hoặc UV ≥ 6; mưa ≥ 50% (giờ này hoặc 3 giờ tới) hoặc mã mưa/dông; lạnh < 22°C.
+  // Thiếu nhiệt độ thì không kết luận (trả []). Ban đêm không nhắc chống nắng.
   function outfitAdvice(data) {
-    const code = data?.current?.weather_code, night = data?.current?.is_day === 0;
+    const current = data?.current || {}, code = current.weather_code, night = current.is_day === 0;
     const temp = number(data, "current", "temperature_2m", "°C");
-    const rain = number(data, "current", "precipitation_probability", "%");
+    if (temp === null) return [];
+    const feels = number(data, "current", "apparent_temperature", "°C");
     const wind = number(data, "current", "wind_speed_10m", "km/h");
     const uv = number(data, "current", "uv_index", "");
-    if (temp === null) return [];
-    const groups = [];
-    const wet = cfg.rainCodes.includes(code) || cfg.stormCodes.includes(code) || (rain !== null && rain >= 50);
-    if (!night && (temp >= 31 || (uv !== null && uv >= cfg.highUV)))
-      groups.push({ id: "sun", icon: "i-sun", title: "Trời nắng nóng", tips: ["Mặc áo khoác chống nắng", "Thoa kem chống nắng (SPF 50+)", "Đeo bao tay, kính râm", "Mang theo ô/mũ rộng vành và uống đủ nước"] });
-    else if (night && temp >= 31)
-      groups.push({ id: "sun", icon: "i-temp", title: "Trời oi nóng", tips: ["Mặc đồ thoáng mát, thấm hút mồ hôi", "Uống đủ nước"] });
-    if (wet)
-      groups.push({ id: "rain", icon: "i-rain", title: cfg.stormCodes.includes(code) ? "Có mưa dông" : "Có thể mưa", tips: ["Mang theo áo mưa hoặc ô", "Đi giày dép chống trượt, chống nước", "Chú ý đường trơn trượt và hạn chế ra ngoài nếu có dông sét"] });
-    if (temp < 22)
-      groups.push({ id: "cold", icon: "i-temp", title: "Trời se lạnh", tips: ["Mặc áo ấm hoặc áo khoác gió", "Giữ ấm cổ và tay chân khi ra ngoài sáng sớm hoặc tối muộn"] });
-    if (!groups.length)
-      groups.push({ id: "mild", icon: "i-sun", title: "Thời tiết dễ chịu", tips: ["Trang phục thoáng mát, thời tiết lý tưởng để dạo phố hoặc tập thể dục ngoài trời"] });
-    if (wind !== null && wind >= cfg.strongWind)
-      groups.push({ id: "wind", icon: "i-wind", title: "Gió mạnh", tips: [`Gió ${fmt(wind)} km/h: mặc áo khoác gió, giữ chắc mũ và cẩn thận khi đi xe máy`] });
+    const storm = cfg.stormCodes.includes(code), raining = storm || cfg.rainCodes.includes(code);
+    // Khả năng mưa cao nhất từ giờ hiện tại đến 3 giờ tới, và giờ đạt mức đó.
+    const times = Array.isArray(data?.hourly?.time) ? data.hourly.time : [];
+    const start = times.findIndex(time => String(time).slice(0, 13) === String(current.time || "").slice(0, 13));
+    let peak = number(data, "current", "precipitation_probability", "%"), peakAt = null;
+    if (start >= 0) for (let i = start; i < Math.min(start + 4, times.length); i++) {
+      const chance = number(data, "hourly", "precipitation_probability", "%", i);
+      if (chance !== null && (peak === null || chance > peak)) { peak = chance; peakAt = i; }
+    }
+    const deg = value => `${fmt(Math.round(value))}°`, groups = [];
+    const strongUV = uv !== null && uv >= cfg.highUV;
+    if (!night && (temp >= 31 || strongUV)) {
+      groups.push({ id: "sun", icon: "i-sun", title: strongUV ? `Nắng gắt · UV ${fmt(uv)}` : `Nóng · ${deg(temp)}`, tips: [
+        "Mặc áo khoác chống nắng, đội mũ rộng vành hoặc che ô.",
+        "Thoa kem chống nắng SPF 50+; đi xe máy thì đeo thêm kính râm, bao tay.",
+        "Mang theo nước. Nắng gắt nhất khoảng 10–15 giờ.",
+      ] });
+    } else if (temp >= 31 || (feels !== null && temp >= 26 && feels - temp >= 3)) {
+      groups.push({ id: "humid", icon: "i-temp", title: `Oi bức · cảm giác như ${deg(feels ?? temp)}`, tips: ["Mặc đồ cotton hoặc vải mỏng, thoáng.", "Uống đủ nước, nhất là khi vận động."] });
+    }
+    if (raining || (peak !== null && peak >= 50)) {
+      const title = storm ? "Có dông" : raining ? "Đang mưa"
+        : peakAt !== null && peakAt > start ? `Có thể mưa lúc ${times[peakAt].slice(11, 16)} · ${fmt(peak)}%` : `Khả năng mưa ${fmt(peak)}%`;
+      const tips = ["Mang áo mưa hoặc ô.", "Đi dép quai hậu hoặc giày chống nước; đường dễ trơn."];
+      if (storm) tips.push("Có sấm sét thì vào nhà, đừng trú dưới cây cao hay cột điện.");
+      groups.push({ id: "rain", icon: "i-rain", title, tips });
+    }
+    if (temp < 22) {
+      groups.push(temp < 15
+        ? { id: "cold", icon: "i-temp", title: `Lạnh · ${deg(temp)}`, tips: ["Mặc áo ấm dày, quàng khăn, đi tất.", "Ra ngoài sáng sớm hoặc tối muộn thì đội mũ len, đeo găng tay."] }
+        : { id: "cold", icon: "i-temp", title: `Se lạnh · ${deg(temp)}`, tips: ["Mặc áo khoác mỏng hoặc áo khoác gió.", "Sáng sớm và tối muộn nhớ giữ ấm cổ và tay."] });
+    }
+    if (!groups.length) {
+      groups.push({ id: "mild", icon: night ? "i-temp" : "i-sun", title: `Dễ chịu · ${deg(temp)}`, tips: [temp < 26 ? "Mặc đồ thoáng là được, sáng sớm có thể mang thêm áo mỏng." : "Mặc đồ thoáng là được, không cần mang gì thêm."] });
+    }
+    if (wind !== null && wind >= cfg.strongWind) {
+      groups.push({ id: "wind", icon: "i-wind", title: `Gió mạnh · ${fmt(wind)} km/h`, tips: ["Mặc áo khoác gió, giữ chắc mũ.", "Đi xe máy chậm lại, nhất là khi qua cầu."] });
+    }
     return groups;
   }
   function hourlyRows(data) {

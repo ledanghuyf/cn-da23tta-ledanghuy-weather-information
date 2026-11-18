@@ -342,7 +342,7 @@ function forecastURL(location, includeHourly = false) {
     temperature_unit: "celsius", wind_speed_unit: "kmh", precipitation_unit: "mm",
     timezone: "auto", forecast_days: "7",
   });
-  if (includeHourly) url.searchParams.set("hourly", "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,is_day,uv_index,sunshine_duration");
+  if (includeHourly) url.searchParams.set("hourly", "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,is_day,uv_index,sunshine_duration,cloud_cover");
   return url;
 }
 
@@ -433,12 +433,13 @@ function renderOutfit(data) {
 function renderWeather(location, data) {
   const current = data.current;
   const sun = MayTheme.ratio(current.sunshine_duration, current.interval); // 15 phút gần nhất
-  const weather = describeWeather(current.weather_code, current.is_day, sun);
+  const code = MayTheme.nightCode(current.weather_code, current.is_day, current.cloud_cover);
+  const weather = describeWeather(code, current.is_day, sun);
   $("place-name").textContent = location.name;
   $("place-region").textContent = regionLabel(location);
   $("temperature").textContent = formatNumber(current.temperature_2m, true);
   $("condition").textContent = weather.label;
-  $("weather-icon").replaceChildren(weatherGraphic(current.weather_code, current.is_day, sun));
+  $("weather-icon").replaceChildren(weatherGraphic(code, current.is_day, sun));
   MayTheme.apply(current);
   $("day-label").textContent = current.is_day === 0 ? "Ban đêm" : "Ban ngày";
   $("humidity").textContent = formatNumber(current.relative_humidity_2m, true);

@@ -37,7 +37,8 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
       const d=fixture(baseFixture);d.current.is_day=0;d.current.weather_code=code;await show(d);
       assert.equal(await page.locator('body').getAttribute('data-phase'),'night');assert.equal(await page.locator('body').getAttribute('data-weather'),weather);
       assert.equal(await page.locator('#weather-icon use').getAttribute('href'),`#${symbol}`);
-      heights.push((await page.locator('#current-panel').boundingBox()).height);
+      // Đo phần lõi (tên, nhiệt độ, tình trạng): dải cảnh báo bên dưới chỉ hiện khi có điều đáng chú ý nên được phép đổi chiều cao.
+      heights.push((await page.locator('#current-panel .current-main').boundingBox()).height);
       await page.locator('#current-panel').screenshot({path:path.join(evidence,`theme-night-${weather}.png`)});
     }
     assert.ok(Math.max(...heights)-Math.min(...heights)<2);

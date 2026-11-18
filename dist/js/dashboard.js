@@ -42,6 +42,8 @@ globalThis.MayDashboardData = (() => {
       const row = { time, stamp, index, ...Object.fromEntries(Object.keys(specs).map(key => [key, read(key)])),
         code: extra("weather_code", "wmo code", Number.isInteger), day: extra("is_day", "", n => n === 0 || n === 1),
         sun: MayTheme.ratio(extra("sunshine_duration", "s", Number.isFinite) ?? NaN, 3600) };
+      // Ban đêm gọi tên theo mây che phủ, giống khối hiện tại (xem MayTheme.nightCode).
+      if (row.code !== null) row.code = MayTheme.nightCode(row.code, row.day, extra("cloud_cover", "%", Number.isFinite) ?? NaN);
       return [row];
     }).sort((a, b) => a.stamp - b.stamp).slice(0, 24);
   }
@@ -68,7 +70,7 @@ globalThis.MayDashboardData = (() => {
     const gap = temp === null || feels === null ? 0 : Math.round(feels) - Math.round(temp);
     return Math.abs(gap) >= 3 ? gap : 0;
   };
-  // Tối đa 3 điểm cần chú ý trong 12 giờ tới, xếp theo mức ảnh hưởng; [] nếu thiếu dữ liệu để kết luận.
+  // Tối đa 3 điểm cần chú ý trong 12 giờ tới, xếp theo mức ảnh hưởng; không có gì đáng chú ý thì [] (ẩn hẳn, không hiện ô "yên ổn").
   // air: { aqi, label } của nơi đang xem khi đã tải được chất lượng không khí (không có thì bỏ qua).
   function highlights(data, air = null) {
     const now = key => value(data, "current", key), next = hours(data).slice(0, 12), items = [];
@@ -88,8 +90,6 @@ globalThis.MayDashboardData = (() => {
     if (uv?.uv_index >= 6) items.push({ kind: "uv", icon: "i-sun", title: `UV ${uvLevel(uv.uv_index).toLowerCase()} (${num(uv.uv_index)})`, text: uv.time ? `Mạnh nhất lúc ${uv.time.slice(11)} · che nắng khi ra ngoài` : "Đang ở mức này · che nắng khi ra ngoài" });
     const gust = now("wind_gusts_10m");
     if (gust >= 40) items.push({ kind: "wind", icon: "i-wind", title: `Gió giật ${num(gust)} km/h`, text: "Cẩn thận khi đi xe máy, tránh đứng dưới cây" });
-    if (!items.length && next.length && next.every(r => r.precipitation_probability !== null && r.precipitation_probability < 30))
-      return [{ kind: "calm", icon: "i-sun", title: "12 giờ tới khá yên", text: "Ít khả năng mưa, không có chỉ số đáng lo", calm: true }];
     return items.slice(0, 3);
   }
   return { specs, value, hours, sun, direction, uvLevel, feelsGap, highlights };
@@ -163,12 +163,20 @@ globalThis.MayDashboardData = (() => {
     const spec = dataTools.specs[mode];
     $("hourly-list").replaceChildren(...rows.map(row => {
       const card = node("button", "hour-tile"); card.type = "button"; card.dataset.time = row.time;
-      if (row.precipitation_probability >= 50) card.dataset.rain = "high";
+      // Mức mưa để tô màu: ≥ 50% xanh đậm, ≥ 20% xanh, thấp hơn thì mờ (như ứng dụng điện thoại).
+      if (row.precipitation_probability >= 50) card.dataset.rain = "high"; else if (row.precipitation_probability >= 20) card.dataset.rain = "some";
       card.setAttribute("aria-label", `Xem dự báo ${stampLabel(row.time)}`); card.setAttribute("aria-pressed", "false");
       card.append(node("span", "hour-time", row.time.slice(11)), node("span", "hour-date", `${row.time.slice(8, 10)}/${row.time.slice(5, 7)}`));
       if (row.code !== null && row.day !== null) card.append(weatherGraphic(row.code, row.day, row.sun)); else card.append(node("span", "hour-symbol-missing", "—"));
       card.append(node("strong", "hour-main-value", row[mode] === null ? "—" : `${formatNumber(row[mode])}${spec[1] === "°C" ? "°" : spec[1] === "%" ? "%" : ""}`));
-      card.append(node("span", "hour-unit", mode === "wind_speed_10m" ? "km/h" : mode === "precipitation" ? "mm · giờ trước" : mode === "precipitation_probability" ? "Khả năng mưa" : row.precipitation_probability === null ? "Mưa: chưa rõ" : `Mưa ${formatNumber(row.precipitation_probability)}%`));
+      // Dòng dưới số chính: chế độ nhiệt độ → giọt nước + % khả năng mưa; các chế độ khác → chỉ đơn vị ngắn.
+      const unit = node("span", "hour-unit");
+      if (mode === "temperature_2m") {
+        const drop = svgElement("svg", { class: "icon", width: "11", height: "11", "aria-hidden": "true" }); drop.append(svgElement("use", { href: "#i-drop" }));
+        unit.append(drop, node("span", "", row.precipitation_probability === null ? "—" : `${formatNumber(row.precipitation_probability)}%`));
+        unit.setAttribute("aria-label", row.precipitation_probability === null ? "Khả năng mưa chưa rõ" : `Khả năng mưa ${formatNumber(row.precipitation_probability)}%`);
+      } else unit.textContent = { wind_speed_10m: "km/h", precipitation: "mm", precipitation_probability: "khả năng" }[mode];
+      card.append(unit);
       card.onclick = () => { selectedHour = row.time; renderHourDetail(row); };
       return card;
     }));
