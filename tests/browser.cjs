@@ -358,10 +358,11 @@ async function main(){
     const response=[...liveResponses].reverse().find(r=>new URL(r.url).searchParams.has('hourly'));
     assert.ok(response);assert.equal(response.status,200);assert.ok(response.data.hourly.time.length>=24);
     assert.equal(response.data.hourly_units.uv_index,'');assert.ok('uv_index' in response.data.current);
-    const expected=await livePage.evaluate(data=>({theme:MayTheme.select(data.current),outfit:MayAdvice.outfitAdvice(data).map(g=>g.title)}),response.data);
+    const expected=await livePage.evaluate(data=>({theme:MayTheme.select(data.current),outfit:MayAdvice.outfitAdvice(data)}),response.data);
     assert.equal(await livePage.locator('body').getAttribute('data-weather'),expected.theme.weather);
     assert.equal(await livePage.locator('body').getAttribute('data-phase'),expected.theme.phase);
-    assert.ok(expected.outfit.length);assert.deepEqual(await livePage.locator('#outfit-list .outfit-item > div > strong').allInnerTexts(),expected.outfit);
+    assert.ok(expected.outfit);assert.equal(await livePage.locator('#outfit-level').innerText(),expected.outfit.title);assert.equal(await livePage.locator('#outfit-card').getAttribute('data-level'),expected.outfit.level);
+    assert.deepEqual(await livePage.locator('#outfit-list .outfit-line p').allInnerTexts(),expected.outfit.lines.map(l=>l.text));
     assert.equal(await livePage.locator('#advice-section, #activity-select').count(),0,'đã bỏ phần hoạt động ngoài trời');
     await livePage.locator('#outfit-card').screenshot({path:path.join(evidence,'goi-y-api-that.png')});
   });

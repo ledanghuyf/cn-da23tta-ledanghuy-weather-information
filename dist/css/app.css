@@ -56,7 +56,10 @@ body[data-phase="night"][data-weather="rain"] .sky-stars, body[data-phase="night
 /* Mây: 4 lớp đám mây tích (SVG có khối, mặt dưới hơi xám) trôi ngang. Lớp xa nhỏ/mờ/chậm, lớp gần to/nhòe/nhanh;
    độ trễ âm để vừa mở trang đã có mây giữa màn hình. --cloud-light làm mây xám đi khi mưa, dông, ban đêm. */
 .sky-cloud { left: -70vmax; aspect-ratio: 2 / 1; background: url("../assets/cloud.svg") center / contain no-repeat; opacity: 0;
-  filter: blur(var(--blur, 0px)) brightness(var(--cloud-light, 1)); transition: opacity .8s, filter .8s; animation: drift var(--speed, 90s) linear infinite; will-change: transform; }
+  filter: blur(var(--blur, 0px)) brightness(var(--cloud-light, 1)); transition: opacity .8s, filter .8s; will-change: transform;
+  animation: drift var(--speed, 90s) linear infinite, billow var(--billow, 16s) ease-in-out infinite alternate; } /* trôi ngang + phồng nhẹ như mây thật */
+@keyframes billow { to { scale: 1.06 1.1; } }
+.cloud-a { --billow: 19s; } .cloud-d { --billow: 14s; } .cloud-b { --billow: 17s; } .cloud-c { --billow: 12s; }
 .cloud-a { top: 4%; width: 38vmax; --blur: 1px; --speed: 140s; animation-delay: -70s; }
 .cloud-d { top: 16%; width: 46vmax; --blur: 1.5px; --speed: 115s; animation-delay: -20s; background-image: url("../assets/cloud-wide.svg"); }
 .cloud-b { top: 30%; width: 60vmax; --blur: 3px; --speed: 85s; animation-delay: -55s; }
@@ -73,7 +76,11 @@ body[data-weather="cloudy"] { --cloud-light: .9; } /* trời u ám: mây hơi x�
 body[data-weather="cloudy"] .cloud-a { opacity: .7; } body[data-weather="cloudy"] .cloud-d { opacity: .62; }
 body[data-weather="cloudy"] .cloud-b { opacity: .52; } body[data-weather="cloudy"] .cloud-c { opacity: .4; }
 body[data-weather="cloudy"] .sky-overcast { opacity: .9; }
-body[data-weather="partly"] .cloud-a { opacity: .6; } body[data-weather="partly"] .cloud-b { opacity: .45; } body[data-weather="partly"] .cloud-c { opacity: .25; }
+/* Mây rải rác / nắng xen mây: vài đám mây tách rời ở các độ sâu, giữa các đám thấy trời (ban đêm thấy sao); ban ngày mây được nắng rọi sáng hơn. */
+body[data-weather="partly"] .cloud-a { opacity: .7; } body[data-weather="partly"] .cloud-d { opacity: .45; top: 20%; left: -40vmax; }
+body[data-weather="partly"] .cloud-b { opacity: .5; } body[data-weather="partly"] .cloud-c { opacity: .22; }
+body[data-weather="partly"]:not([data-phase="night"]) { --cloud-light: 1.06; }
+body[data-weather="partly"][data-phase="night"] .sky-stars { opacity: .6; }
 /* Mây có thể trôi ngay sau chữ: bóng chữ mềm giữ chữ trắng đọc rõ trên mây sáng. */
 .hero-card .location-heading, .hero-card .condition-line, .hero-card .current-bottom, .daily-hero { text-shadow: 0 1px 3px rgba(0, 0, 0, .35), 0 0 14px rgba(0, 0, 0, .25); }
 body[data-weather="rain"] .sky-cloud, body[data-weather="storm"] .sky-cloud { opacity: .55; --cloud-light: .62; }
@@ -104,9 +111,33 @@ body[data-weather="rain"] .sky-rain { opacity: .6; }
 body[data-weather="storm"] .sky-rain { opacity: .85; }
 body[data-weather="storm"] .sky-rain::before { animation-duration: .6s; }
 body[data-weather="storm"] .sky-rain::after { animation-duration: .36s; }
-/* Giông: thỉnh thoảng chớp sáng nhẹ — tối đa 1 lần mỗi 9 giây (an toàn với người nhạy cảm ánh sáng nhấp nháy). */
-.sky::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 0%, rgba(225, 230, 255, .55), rgba(225, 230, 255, .12) 60%); opacity: 0; }
-body[data-weather="storm"] .sky::after { animation: lightning 9s linear infinite; }
+/* Mưa phùn: chỉ hạt li ti, ngắn, rơi chậm gần như thẳng + màn sương mờ phía dưới — khác hẳn mưa thường/giông. */
+body[data-rain="drizzle"] .sky-rain { opacity: .55; transform: rotate(4deg); }
+body[data-rain="drizzle"] .sky-rain::before {
+  background-image: radial-gradient(.7px 4px at 8% 14%, rgba(225, 236, 250, .7), transparent), radial-gradient(.7px 5px at 27% 61%, rgba(225, 236, 250, .6), transparent),
+    radial-gradient(.7px 4px at 49% 28%, rgba(225, 236, 250, .65), transparent), radial-gradient(.7px 5px at 66% 83%, rgba(225, 236, 250, .6), transparent),
+    radial-gradient(.7px 4px at 83% 47%, rgba(225, 236, 250, .7), transparent), radial-gradient(.7px 4px at 38% 92%, rgba(225, 236, 250, .55), transparent);
+  background-size: 70px 90px; opacity: .9; animation-duration: 2.2s; }
+body[data-rain="drizzle"] .sky-rain::after { background: linear-gradient(to top, rgba(205, 218, 232, .22), transparent 55%); animation: none; transform: none; }
+/* Mưa to: dày, nhanh hơn. Giông: mưa to nghiêng mạnh theo gió + tia chớp. */
+body[data-rain="heavy"] .sky-rain { opacity: .8; transform: rotate(14deg); }
+body[data-rain="heavy"] .sky-rain::before { animation-duration: .6s; }
+body[data-rain="heavy"] .sky-rain::after { animation-duration: .34s; }
+body[data-weather="storm"] .sky-rain { opacity: .9; transform: rotate(18deg); }
+body[data-weather="storm"] .sky-rain::before { animation-duration: .5s; }
+body[data-weather="storm"] .sky-rain::after { animation-duration: .3s; }
+/* Giông: tia chớp rẽ nhánh (SVG có quầng) lóe lên kèm cả bầu trời sáng bừng, rồi nháy lại một lần trước khi tắt.
+   Hai tia ở hai phía, chu kỳ 9 s và 18 s lệch nhau 4,5 s nên không bao giờ trùng lúc: tối đa 2 lần nháy mỗi giây
+   (dưới ngưỡng 3 lần/giây — an toàn cho người nhạy cảm ánh sáng nhấp nháy). Tắt hiệu ứng thì không chớp. */
+.sky::before, .sky::after { content: ""; position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.sky::after { background: radial-gradient(ellipse at 70% 0%, rgba(225, 230, 255, .6), rgba(225, 230, 255, .14) 60%); }
+.sky::before { background: radial-gradient(ellipse at 20% 0%, rgba(225, 230, 255, .45), rgba(225, 230, 255, .1) 55%); }
+.sky-bolt { top: -2%; width: 16vmax; aspect-ratio: 100 / 220; background: url("../assets/bolt.svg") top center / contain no-repeat; opacity: 0;
+  filter: drop-shadow(0 0 8px rgba(210, 220, 255, .95)) drop-shadow(0 0 26px rgba(160, 175, 255, .7)); }
+.bolt-a { left: 63%; }
+.bolt-b { left: 12%; width: 11vmax; scale: -1 1; }
+body[data-weather="storm"] .sky::after, body[data-weather="storm"] .bolt-a { animation: lightning 9s linear infinite; }
+body[data-weather="storm"] .sky::before, body[data-weather="storm"] .bolt-b { animation: lightning 18s linear -3.6s infinite; }
 
 /* Nắng ban ngày: quầng nắng ấm ở góc trên phải và vệt nắng xoay rất chậm (không vẽ đĩa mặt trời trên trời —
    mặt trời duy nhất là biểu tượng giữa màn hình). Nguồn sáng nằm sau thanh trên cùng nên không làm giảm tương phản của chữ. */
@@ -173,7 +204,7 @@ body[data-weather="partly"]:not([data-phase="night"]) .weather-art::before { opa
 @keyframes rain-far { to { background-position: 0 170px; } }
 @keyframes rain-near { to { background-position: 0 260px; } }
 @keyframes sun-rays { to { transform: rotate(360deg); } }
-@keyframes lightning { 0%, 90%, 100% { opacity: 0; } 90.6% { opacity: .9; } 91.4% { opacity: .15; } 92% { opacity: .6; } 93.5% { opacity: 0; } }
+@keyframes lightning { 0%, 90%, 100% { opacity: 0; } 90.4% { opacity: 1; } 91.2% { opacity: .2; } 91.8% { opacity: .85; } 93.5% { opacity: 0; } }
 @keyframes float { 50% { transform: translateY(-8px); } }
 
 /* ---------- Khung trang ---------- */
@@ -613,18 +644,22 @@ dd { font-size: 15px; font-weight: 650; }
 /* Thẻ Lời khuyên & trang phục: mỗi nhóm một màu, luôn có biểu tượng và chữ. */
 body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời tiết hiện tại, không áp cho ngày khác */
 .outfit-title { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--ink-soft); }
-.outfit-title .icon { width: 18px; height: 18px; color: #ffd166; }
-.outfit-list { display: grid; gap: 10px; list-style: none; }
-.outfit-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 14px; border-left: 4px solid var(--kind, var(--accent)); background: rgba(255, 255, 255, .08); }
-.outfit-item > .icon { margin-top: 2px; color: var(--kind, var(--accent)); }
-.outfit-item strong { display: block; margin-bottom: 4px; font-size: 15px; }
-.outfit-item ul { padding-left: 18px; font-size: 14px; line-height: 1.55; }
-.outfit-item[data-kind="sun"]  { --kind: #ffd166; }
-.outfit-item[data-kind="rain"] { --kind: #6cc4ff; }
-.outfit-item[data-kind="cold"] { --kind: #9fd8ff; }
-.outfit-item[data-kind="wind"] { --kind: #8fe3cf; }
-.outfit-item[data-kind="mild"] { --kind: #7ee2a8; }
-.outfit-item[data-kind="humid"] { --kind: #ff9a4d; }
+.outfit-title .icon { width: 18px; height: 18px; color: var(--level); }
+/* Mức nhiệt (theo nhiệt độ cảm nhận): viền trái + biểu tượng cùng màu — lạnh xanh dương, mát mẻ xanh lá, dễ chịu vàng cam, nóng đỏ. */
+.outfit-card { --level: #ffb347; border-left: 4px solid var(--level); }
+.outfit-card[data-level="cold"] { --level: #5aaeff; }
+.outfit-card[data-level="cool"] { --level: #5fd38d; }
+.outfit-card[data-level="pleasant"] { --level: #ffb347; }
+.outfit-card[data-level="hot"] { --level: #ff6b6b; }
+.outfit-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; margin-bottom: 12px; }
+.outfit-head strong { font-size: 20px; font-weight: 650; }
+.outfit-head strong::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 8px; border-radius: 50%; background: var(--level); vertical-align: 2px; }
+.outfit-head span { font-size: 14px; color: rgba(255, 255, 255, .8); }
+.outfit-list { display: grid; gap: 8px; list-style: none; }
+.outfit-line { display: flex; align-items: flex-start; gap: 12px; min-width: 0; padding: 11px 14px; border-radius: 14px; background: rgba(255, 255, 255, .07); }
+.outfit-line > .icon { flex: none; width: 20px; height: 20px; margin-top: 2px; color: var(--level); }
+.outfit-label { display: block; margin-bottom: 2px; font-size: 12px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: rgba(255, 255, 255, .65); }
+.outfit-line p { font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
 
 /* ==========================================================================
    Kiểu ứng dụng thời tiết trên điện thoại: khối chính nằm thẳng trên nền trời (không khung), số nhiệt độ rất lớn nét mảnh;
@@ -687,7 +722,7 @@ body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời 
   .bento #forecast-group { grid-area: hourly; }
   .bento #daily-card { grid-area: daily; }
   .bento #conditions-group { grid-area: tiles; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .bento .outfit-list { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .bento .outfit-list { grid-template-columns: repeat(3, minmax(0, 1fr)); } /* máy tính: 3 dòng thành 3 cột ngang */
   .bento .forecast-day { grid-template-columns: minmax(64px, 1fr) 32px minmax(34px, auto) 34px minmax(50px, 2fr) 34px; column-gap: 8px; }
 }
 

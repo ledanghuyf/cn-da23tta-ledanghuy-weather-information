@@ -19,22 +19,27 @@ globalThis.MayTheme = (() => {
     if (isDay !== 0 || ![0, 1, 2, 3].includes(code) || !Number.isFinite(cloud) || cloud < 0 || cloud > 100) return code;
     return cloud >= 60 ? 3 : cloud >= 30 ? 2 : cloud >= 10 ? 1 : 0;
   }
+  const DRIZZLE = [51, 53, 55, 56, 57], HEAVY = [65, 67, 82];
   function select(current) {
-    if (!current || ![0, 1].includes(current.is_day)) return { weather: "default", phase: "unknown", scene: "default" };
+    if (!current || ![0, 1].includes(current.is_day)) return { weather: "default", phase: "unknown", rain: "", scene: "default" };
     const code = nightCode(current.weather_code, current.is_day, current.cloud_cover);
     const state = sky(code, current.is_day, ratio(current.sunshine_duration, current.interval));
     const weather = config.stormCodes.includes(code) ? "storm"
       : config.rainCodes.includes(code) ? "rain"
       : state ? state
-      : [0, 1].includes(code) ? "sunny"
-      : [2, 3, 45, 48, 71, 73, 75, 77, 85, 86].includes(code) ? "cloudy" : "default";
+      : code === 0 ? "sunny"
+      : [1, 2].includes(code) ? "partly" // ban đêm ít mây/mây rải rác: vài đám mây rời, vẫn thấy sao (không phủ kín như u ám)
+      : [3, 45, 48, 71, 73, 75, 77, 85, 86].includes(code) ? "cloudy" : "default";
     const phase = current.is_day === 0 ? "night" : "day";
-    return { weather, phase, scene: phase === "night" ? "night" : weather === "sunny" ? "day" : weather };
+    // Cường độ mưa cho hiệu ứng: mưa phùn (hạt li ti, sương) khác hẳn mưa to/giông (hạt dài, nghiêng, nhanh).
+    const rain = DRIZZLE.includes(code) ? "drizzle" : HEAVY.includes(code) ? "heavy" : "";
+    return { weather, phase, rain, scene: phase === "night" ? "night" : weather === "sunny" ? "day" : weather };
   }
   function apply(current = null) {
     const theme = select(current);
     document.body.dataset.weather = theme.weather;
     document.body.dataset.phase = theme.phase;
+    document.body.dataset.rain = theme.rain;
     const panel = document.getElementById("current-panel");
     panel.dataset.scene = theme.scene;
     panel.dataset.weather = theme.weather;

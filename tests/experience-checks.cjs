@@ -4,18 +4,18 @@ const path=require('node:path');
 const fixture=require('./weather-fixture.cjs');
 module.exports=async function({page,test,baseFixture,setForecast,json,ready,evidence}){
   const show=async data=>{setForecast(route=>json(route,data));await page.locator('#refresh-button').click();await ready();};
-  await test('36 Nắng nóng, lạnh, mưa, giông: thẻ trang phục có căn cứ, tiêu đề đúng số liệu',async()=>{
-    for(const [code,temp,kind,title,weather] of [[0,33,'sun','Nóng · 33°','sunny'],[3,12,'cold','Lạnh · 12°','cloudy'],[61,25,'rain','Đang mưa','rain'],[97,25,'rain','Có dông','storm']]){
+  await test('36 Nóng, lạnh, mưa, giông: thẻ trang phục đúng mức (màu viền), tiêu đề và 3 dòng có căn cứ',async()=>{
+    for(const [code,temp,level,title,items,weather] of [[0,33,'hot','Oi bức · 33°',/Không cần mang thêm gì/,'sunny'],[3,12,'cold','Lạnh · 12°',/Không cần mang thêm gì/,'cloudy'],[61,25,'cool','Mát mẻ · 25°',/Đang mưa/,'rain'],[97,25,'cool','Mát mẻ · 25°',/dông/,'storm']]){
       const d=fixture(baseFixture);d.current.weather_code=code;d.current.is_day=1;d.current.temperature_2m=temp;d.current.apparent_temperature=temp;d.current.uv_index=0;
-      await show(d);assert.equal(await page.locator(`#outfit-list [data-kind="${kind}"]`).count(),1,`mã ${code}`);
-      assert.match(await page.locator(`#outfit-list [data-kind="${kind}"] strong`).innerText(),new RegExp(title));
+      await show(d);assert.equal(await page.locator('#outfit-card').getAttribute('data-level'),level,`mã ${code}`);assert.equal(await page.locator('#outfit-level').innerText(),title);
+      assert.deepEqual(await page.locator('#outfit-list .outfit-label').allInnerTexts(),['TRANG PHỤC','VẬT DỤNG','HOẠT ĐỘNG']);assert.match(await page.locator('#outfit-list [data-kind="items"]').innerText(),items);
       assert.equal(await page.locator('body').getAttribute('data-weather'),weather);
       await page.locator('#current-panel').screenshot({path:path.join(evidence,`theme-${weather}.png`)});
     }
   });
   await test('36b Ban ngày mã 0/1/2 hiện "Nhiều nắng", mặt trời, nền xanh; C/T làm tròn kiểu iPhone',async()=>{
     // [mã, ban ngày, giây nắng trong 15 phút gần nhất (null = không có), nhãn, biểu tượng, nền]
-    for(const [code,isDay,sunSec,label,symbol,weather] of [[0,1,null,'Nhiều nắng','clear','sunny'],[1,1,null,'Nhiều nắng','clear','sunny'],[2,1,null,'Nhiều nắng','clear','sunny'],[3,1,null,'Nhiều mây','cloudy','cloudy'],[2,0,null,'Mây rải rác','night-cloud','cloudy'],
+    for(const [code,isDay,sunSec,label,symbol,weather] of [[0,1,null,'Nhiều nắng','clear','sunny'],[1,1,null,'Nhiều nắng','clear','sunny'],[2,1,null,'Nhiều nắng','clear','sunny'],[3,1,null,'Nhiều mây','cloudy','cloudy'],[2,0,null,'Mây rải rác','night-cloud','partly'],
       [3,1,800,'Nhiều nắng','clear','sunny'],[3,1,300,'Nắng xen mây','partly-cloudy','partly'],[3,1,60,'Nhiều mây','cloudy','cloudy'],[3,0,800,'Nhiều mây','night-cloud','cloudy'],[61,1,800,'Mưa nhẹ','rain','rain']]){
       const d=fixture(baseFixture);d.current.weather_code=code;d.current.is_day=isDay;d.daily.temperature_2m_max[0]=31.6;d.daily.temperature_2m_min[0]=25.7;
       if(sunSec!==null){d.current.sunshine_duration=sunSec;d.current.interval=900;}await show(d);
@@ -65,7 +65,7 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     while(!pending)await new Promise(resolve=>setTimeout(resolve,10));
     await json(pending,{},500);await ready();assert.equal(await page.locator('body').getAttribute('data-weather'),'default');assert.match(await page.locator('#weather-status').innerText(),/Đang giữ thông tin đã tải/);
     const d=fixture(baseFixture);d.current.weather_code=61;setForecast(route=>json(route,d));
-    await pick(page,1);await ready();assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');assert.equal(await page.locator('body').getAttribute('data-weather'),'rain');assert.equal(await page.locator('#outfit-list [data-kind="rain"]').count(),1);
+    await pick(page,1);await ready();assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');assert.equal(await page.locator('body').getAttribute('data-weather'),'rain');assert.match(await page.locator('#outfit-list [data-kind="items"]').innerText(),/Đang mưa/);
   });
   await test('44 Chọn ngày ở đầu trang đổi tổng quan, số liệu và gợi ý đúng ngày',async()=>{
     const d=fixture(baseFixture);

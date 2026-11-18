@@ -26,7 +26,7 @@ function expect(code, day, r) {
   if (s) return { label: { sunny: "Nhiều nắng", partly: "Nắng xen mây", cloudy: "Nhiều mây" }[s], symbol: { sunny: "clear", partly: "partly-cloudy", cloudy: "cloudy" }[s], theme: s };
   const symbol = code === 0 ? "moon" : [1, 2].includes(code) ? "night-cloud" : [45, 48].includes(code) ? "fog" : [71, 73, 75, 77, 85, 86].includes(code) ? "snow"
     : STORM.includes(code) ? "storm" : [80, 81, 82].includes(code) ? (day ? "showers" : "night-rain") : RAIN.includes(code) ? (day ? "rain" : "night-rain") : day ? "cloudy" : "night-cloud";
-  const theme = STORM.includes(code) ? "storm" : RAIN.includes(code) ? "rain" : [0, 1].includes(code) ? "sunny" : [2, 3, 45, 48, 71, 73, 75, 77, 85, 86].includes(code) ? "cloudy" : "default";
+  const theme = STORM.includes(code) ? "storm" : RAIN.includes(code) ? "rain" : code === 0 ? "sunny" : [1, 2].includes(code) ? "partly" : [3, 45, 48, 71, 73, 75, 77, 85, 86].includes(code) ? "cloudy" : "default";
   return { label: NAMES[code] || "Chưa có mô tả", symbol, theme };
 }
 const nf = new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 1 });
@@ -69,9 +69,9 @@ const airBand = v => [[50, "Tốt"], [100, "Trung bình"], [150, "Kém với nh�
     await eq("#precipitation", f(c.precipitation), "Lượng mưa");
     const [dt, tm] = c.time.split("T");
     await eq("#data-time", `Cập nhật lúc ${tm.slice(0, 5)} · ${dt.slice(8)}/${dt.slice(5, 7)}/${dt.slice(0, 4)} · giờ địa phương`, "Mốc cập nhật");
-    // Lời khuyên & trang phục: đang mưa/giông thì phải có nhóm mưa
-    const kinds = await page.locator("#outfit-list .outfit-item").evaluateAll(els => els.map(e => e.dataset.kind));
-    if (STORM.includes(c.weather_code) || RAIN.includes(c.weather_code)) ok(kinds.includes("rain"), "Gợi ý khi mưa/giông", kinds.join(","), "rain");
+    // Lời khuyên & trang phục: đang mưa/giông thì dòng Vật dụng phải nhắc áo mưa/ô
+    const items = await page.locator('#outfit-list [data-kind="items"]').innerText().catch(() => "");
+    if (STORM.includes(c.weather_code) || RAIN.includes(c.weather_code)) ok(/áo mưa|ô/.test(items), "Gợi ý khi mưa/giông", items, "nhắc áo mưa/ô");
 
     // 2. Chỉ số mở rộng hiện tại
     const ex = async (key, want, label) => eq(`[data-extra="${key}"] .extra-value`, want, label);

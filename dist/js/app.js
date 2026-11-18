@@ -379,16 +379,19 @@ async function loadWeather(location) {
 
 // Thẻ "Lời khuyên & trang phục": mỗi nhóm (nắng, mưa, lạnh, gió, dễ chịu) một biểu tượng, tên nhóm và các gợi ý.
 function renderOutfit(data) {
-  const groups = MayAdvice.outfitAdvice(data);
-  $("outfit-card").hidden = !groups.length;
-  $("outfit-list").replaceChildren(...groups.map(group => {
-    const item = document.createElement("li"), body = document.createElement("div"), title = document.createElement("strong"), tips = document.createElement("ul");
-    item.className = "outfit-item"; item.dataset.kind = group.id;
-    const icon = svgElement("svg", { class: "icon", width: "22", height: "22", "aria-hidden": "true" });
-    icon.append(svgElement("use", { href: `#${group.icon}` }));
-    title.textContent = group.title;
-    tips.append(...group.tips.map(tip => { const li = document.createElement("li"); li.textContent = tip; return li; }));
-    body.append(title, tips); item.append(icon, body);
+  const advice = MayAdvice.outfitAdvice(data);
+  $("outfit-card").hidden = !advice;
+  if (!advice) return;
+  $("outfit-card").dataset.level = advice.level; // màu viền theo mức: lạnh/mát mẻ/dễ chịu/nóng
+  $("outfit-level").textContent = advice.title;
+  $("outfit-detail").textContent = advice.detail;
+  $("outfit-list").replaceChildren(...advice.lines.map(line => {
+    const item = document.createElement("li"), body = document.createElement("div"), label = document.createElement("span"), text = document.createElement("p");
+    item.className = "outfit-line"; item.dataset.kind = line.kind;
+    const icon = svgElement("svg", { class: "icon", width: "20", height: "20", "aria-hidden": "true" });
+    icon.append(svgElement("use", { href: `#${line.icon}` }));
+    label.className = "outfit-label"; label.textContent = line.label; text.textContent = line.text;
+    body.append(label, text); item.append(icon, body);
     return item;
   }));
 }
