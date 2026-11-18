@@ -7,7 +7,7 @@ let weather=freshWeather(),air=freshAir(),airMode='ok',weatherMode='ok',weatherC
 const results=[],errors=[],api=[];let page,context,browser,url,delayResolve;
 const server=http.createServer((req,res)=>{const p=path.resolve(root,'dist','.'+(new URL(req.url,'http://x').pathname==='/'?'/index.html':new URL(req.url,'http://x').pathname));if(!p.startsWith(path.join(root,'dist')+path.sep)){res.writeHead(403).end();return}fs.readFile(p,(e,data)=>{if(e){res.writeHead(404).end();return}res.setHeader('Content-Type',({'.js':'text/javascript','.css':'text/css','.svg':'image/svg+xml','.html':'text/html; charset=utf-8'})[path.extname(p)]||'text/plain');res.end(data)})});
 const ready=async()=>{await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');if(!await page.locator('#location-drawer').evaluate(el=>el.open))await page.locator('#location-drawer>summary').click()};
-const airReady=async()=>{await page.waitForFunction(()=>document.querySelector('#air-section').getAttribute('aria-busy')==='false');await page.locator('#tab-air-section').click()};
+const airReady=async()=>{await page.waitForFunction(()=>document.querySelector('#air-section').getAttribute('aria-busy')==='false')};
 const refresh=async()=>{await page.locator('#refresh-button').click();await ready();await airReady()};
 async function test(name,fn){try{await fn();results.push({name,status:'PASS'});console.log('PASS '+name)}catch(e){results.push({name,status:'FAIL',error:e.message});console.error('FAIL '+name+' '+e.message)}}
 (async()=>{
@@ -50,10 +50,9 @@ await test('L14 Bản đồ khu vực tự mở ngay tab Google Maps vùng tổn
  await page.evaluate(()=>window.lateMap({coords:{latitude:1,longitude:1}}));assert.equal(await page.locator('#my-map-overview').isVisible(),false);assert.equal(await page.locator('#place-map').isDisabled(),false);
 });
 await test('L15 Mây và thanh nhiệt độ nằm trong từng thẻ ở mọi độ rộng',async()=>{
- await page.locator('#tab-forecast-section').click();
  for(const width of [320,390,550,600,768,1024,1440]){
   await page.setViewportSize({width,height:1000});await page.locator('#forecast-section').scrollIntoViewIfNeeded();
-  await page.locator('#tab-forecast-section').click();const bad=await page.locator('.forecast-day').evaluateAll(cards=>cards.flatMap(card=>{const c=card.getBoundingClientRect();return [...card.querySelectorAll('.forecast-icon,.range-track,.rain-chance,.forecast-temperature')].filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&(r.left<c.left||r.right>c.right+1)}).map(el=>el.className)}));
+  const bad=await page.locator('.forecast-day').evaluateAll(cards=>cards.flatMap(card=>{const c=card.getBoundingClientRect();return [...card.querySelectorAll('.forecast-icon,.range-track,.rain-chance,.forecast-temperature')].filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&(r.left<c.left||r.right>c.right+1)}).map(el=>el.className)}));
   assert.deepEqual(bad,[],String(width));
   if(width===550)await page.locator('#forecast-section').screenshot({path:path.join(out,'du-bao-550-da-sua.png')});
  }

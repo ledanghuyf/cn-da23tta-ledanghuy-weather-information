@@ -1,37 +1,6 @@
 "use strict";
-// Each group keeps its own selected view; API updates only render inside the panes.
+// Thanh mục: sáng mục đang xem khi cuộn, bấm mục thì cuộn tới đúng phần.
 (() => {
-  const groups = [...document.querySelectorAll('.weather-group')];
-  function select(group, tab, focus = false) {
-    group.querySelectorAll('[role="tab"]').forEach(button => {
-      const active = button === tab;
-      button.setAttribute('aria-selected', String(active));
-      button.tabIndex = active ? 0 : -1;
-      document.getElementById(button.getAttribute('aria-controls')).hidden = !active;
-    });
-    if (focus) tab.focus();
-  }
-  groups.forEach(group => {
-    const tabs = [...group.querySelectorAll('[role="tab"]')];
-    tabs.forEach((tab, index) => {
-      tab.addEventListener('click', () => select(group, tab));
-      tab.addEventListener('keydown', event => {
-        const target = {ArrowRight:(index + 1) % tabs.length, ArrowLeft:(index + tabs.length - 1) % tabs.length, Home:0, End:tabs.length - 1}[event.key];
-        if (target === undefined) return;
-        event.preventDefault(); select(group, tabs[target], true);
-      });
-    });
-  });
-  function revealHash() {
-    const target = document.getElementById(location.hash.slice(1));
-    const pane = target?.closest('.group-pane');
-    if (pane) {
-      select(pane.closest('.weather-group'), document.getElementById(pane.getAttribute('aria-labelledby')));
-      requestAnimationFrame(() => target.scrollIntoView({block:'start'}));
-    }
-  }
-  window.addEventListener('hashchange', revealHash);
-  revealHash();
   const links = [...document.querySelectorAll('.weather-tabs a')];
   const targets = links.map(link => document.querySelector(link.getAttribute('href')));
   let pending = false;

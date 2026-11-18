@@ -186,7 +186,7 @@ async function main(){
   });
   await test('18 Không có lỗi JavaScript chưa xử lý',async()=>assert.deepEqual(errors,[]));
   await test('22 Biểu đồ dùng đúng 7 ngày và đổi về thẻ',async()=>{
-    await reset();await page.locator('#tab-forecast-section').click();await page.locator('#chart-button').click();
+    await reset();await page.locator('#chart-button').click();
     assert.equal(await page.locator('#forecast-chart').isVisible(),true);
     assert.equal(await page.locator('#forecast-list').isVisible(),false);
     assert.equal(await page.locator('#chart-data tbody tr').count(),7);
@@ -285,7 +285,7 @@ async function main(){
         const uses=[...document.querySelectorAll('use')].map(u=>{
           const href=u.getAttribute('href')||'';
           const svg=u.closest('svg');
-          const hidden=Boolean(u.closest('[hidden]'))||Boolean(u.closest('details:not([open])>:not(summary)'))||(svg&&getComputedStyle(svg).display==='none');
+          const hidden=Boolean(u.closest('[hidden]'))||Boolean(u.closest('details:not([open])>:not(summary)'))||(svg&&getComputedStyle(svg).display==='none')||(svg&&!svg.checkVisibility()); // tổ tiên display:none (vd. hình minh họa đã bỏ khỏi khối chính)
           const sr=svg?svg.getBoundingClientRect():{width:0,height:0};
           const ur=u.getBoundingClientRect();
           return {href,local:href.startsWith('#')&&Boolean(document.querySelector(href)),hidden,zero:!hidden&&(sr.width===0||sr.height===0||ur.width===0||ur.height===0)};
@@ -342,7 +342,6 @@ async function main(){
     await livePage.setViewportSize({width:390,height:844});await livePage.screenshot({path:path.join(evidence,'thucte-mobile.png'),fullPage:true});
     await livePage.locator('#current-panel').scrollIntoViewIfNeeded();
     await livePage.screenshot({path:path.join(evidence,'mobile-current.png')});
-    await livePage.locator('#tab-forecast-section').click();
     await livePage.locator('#forecast-list').scrollIntoViewIfNeeded();
     await livePage.screenshot({path:path.join(evidence,'mobile-forecast.png')});
     await livePage.setViewportSize({width:1440,height:1050});

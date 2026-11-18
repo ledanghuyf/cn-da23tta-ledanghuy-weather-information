@@ -97,7 +97,6 @@ const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); c
   await page.unroute(/api\.open-meteo\.com\/v1\/forecast/); await page.route(/api\.open-meteo\.com\/v1\/forecast/, apply('wx'));
 
   // --- Chất lượng không khí lỗi riêng ---
-  await page.locator('#tab-air-section').click(); // nút thử lại nằm trong thẻ Không khí
   fault.air = 500; await page.click('#refresh-button'); await idle();
   await page.waitForFunction(() => document.querySelector('#air-section').getAttribute('aria-busy') === 'false', null, { timeout: 30000 });
   check('Không khí lỗi: thời tiết vẫn hiển thị bình thường', /Đã cập nhật/.test(await text('#weather-status')), await text('#weather-status'));

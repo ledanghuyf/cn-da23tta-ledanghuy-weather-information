@@ -42,10 +42,10 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
   await page.locator('#location-input').focus();await page.keyboard.press('Escape');assert.equal(await page.locator('#location-drawer').evaluate(el=>el.open),false);
 
   await page.locator('#current-panel').evaluate(el=>el.scrollIntoView({block:'start'}));await page.screenshot({path:path.join(out,'mobile-current-api-that.png')});
-  await page.locator('#tab-forecast-section').click();await page.locator('#forecast-group').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,'mobile-forecast-api-that.png')});
+  await page.locator('#daily-card').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,'mobile-forecast-api-that.png')});
   assert.equal(await page.locator('.weather-tabs a').count(),4);
-  assert.equal(await page.locator('#pane-hourly-section').isVisible(),false);
-  assert.equal(await page.locator('#pane-forecast-section').isVisible(),true);
+  // Như ứng dụng điện thoại: theo giờ, 7 ngày, chỉ số và không khí hiện cùng lúc (không còn tab ẩn bớt).
+  for(const id of ['#hourly-section','#forecast-section','#details-section','#current-metrics'])assert.equal(await page.locator(id).isVisible(),true,id);
   await page.locator('#weather-date').selectOption(weather.data.daily.time[1]);
   await page.locator('#forecast-list .day-open').first().click();
   assert.equal(await page.locator('#weather-date').inputValue(),'');
@@ -63,35 +63,22 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
   assert.equal(await page.locator('#forecast-list .forecast-day').count(),7);
   assert.equal(await page.locator('#forecast-list .forecast-day').evaluateAll(cards=>cards.every(card=>card.scrollWidth<=card.clientWidth+1)),true);
   await page.locator('#forecast-list').screenshot({path:path.join(out,'mobile-weekly-list.png')});
-  await page.locator('#tab-forecast-section').focus();await page.keyboard.press('ArrowLeft');
-  assert.equal(await page.locator('#tab-hourly-section').getAttribute('aria-selected'),'true');
-  assert.equal(await page.locator('#pane-hourly-section').isVisible(),true);
   await fitsChart('#hourly-chart');
   await page.locator('#hourly-chart').screenshot({path:path.join(out,'mobile-hourly-chart.png')});
   await page.setViewportSize({width:390,height:844});
   await fitsChart('#hourly-chart');
-  await page.locator('#tab-air-section').click();
-  assert.equal(await page.locator('#pane-details-section').isVisible(),false);
-  assert.equal(await page.locator('#pane-air-section').isVisible(),true);
-  await page.evaluate(()=>location.hash='details-section');
-  await page.waitForFunction(()=>!document.querySelector('#pane-details-section').hidden);
-  await page.evaluate(()=>location.hash='forecast-section');
-  await page.waitForFunction(()=>!document.querySelector('#pane-forecast-section').hidden);
   await page.locator('#refresh-button').click();
   await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');
-  assert.equal(await page.locator('#tab-forecast-section').getAttribute('aria-selected'),'true');
-  assert.equal(await page.locator('#pane-hourly-section').isVisible(),false);
+  for(const id of ['#hourly-section','#forecast-section','#details-section'])assert.equal(await page.locator(id).isVisible(),true,'sau cập nhật '+id);
   if(!await page.locator('#location-drawer').evaluate(el=>el.open))await page.locator('#location-drawer>summary').click();
   await page.locator('.quick-button').nth(1).click();
   await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');
   assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
-  assert.equal(await page.locator('#pane-forecast-section').isVisible(),true);
+  assert.equal(await page.locator('#forecast-section').isVisible(),true);
   await page.setViewportSize({width:1440,height:1000});
   await page.locator('#forecast-group').screenshot({path:path.join(out,'group-forecast-desktop.png')});
-  await page.locator('#tab-air-section').click();
   await page.waitForFunction(()=>document.querySelector('#air-section').getAttribute('aria-busy')==='false');
   await page.locator('#conditions-group').screenshot({path:path.join(out,'group-air-desktop.png')});
-  await page.locator('#tab-details-section').click();
   await page.locator('#conditions-group').screenshot({path:path.join(out,'group-indices-desktop.png')});
   await page.evaluate(()=>scrollTo(0,0));await page.screenshot({path:path.join(out,'group-home-desktop.png')});
   for(const width of [320,390,550,768,1024,1440]){await page.setViewportSize({width,height:844});assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`width=${width}`)}
