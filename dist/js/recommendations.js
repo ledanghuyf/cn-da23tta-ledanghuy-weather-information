@@ -16,7 +16,7 @@ globalThis.MayAdvice = (() => {
   }
   // Gợi ý theo thời tiết (trang phục, vật dụng, hoạt động) từ dữ liệu Open-Meteo hiện tại (+ khả năng mưa 3 giờ tới).
   // Mức theo nhiệt độ cảm nhận (apparent_temperature đã gộp nhiệt độ, độ ẩm, gió; thiếu thì dùng nhiệt độ):
-  //   Lạnh < 20°C · Mát mẻ 20–25°C · Dễ chịu 26–30°C · Oi bức/Nắng nóng > 30°C.
+  //   Lạnh < 20°C · Mát 20–26°C · Nóng ≥ 27°C (27°C là mốc "cần chú ý" của chỉ số nhiệt NOAA). Trên 30°C lời khuyên chống nóng mạnh hơn.
   // Trả { level, title, detail, lines: [trang phục, vật dụng, hoạt động] }; thiếu nhiệt độ thì null (không đoán).
   function outfitAdvice(data) {
     const current = data?.current || {}, code = current.weather_code, night = current.is_day === 0;
@@ -39,14 +39,15 @@ globalThis.MayAdvice = (() => {
     const humid = humidity !== null && humidity >= 75, strongUV = !night && uv !== null && uv >= cfg.highUV;
     const wetSoon = raining || (peak !== null && peak >= 40);
     const when = peakAt !== null && peakAt > start ? ` lúc ${times[peakAt].slice(11, 16)}` : "";
-    const level = f < 20 ? "cold" : f <= 25 ? "cool" : f <= 30 ? "pleasant" : "hot";
-    const label = { cold: "Lạnh", cool: "Mát mẻ", pleasant: "Dễ chịu", hot: strongUV ? "Nắng nóng" : "Oi bức" }[level];
+    const level = f < 20 ? "cold" : f <= 26 ? "cool" : "hot", veryHot = f > 30;
+    const label = { cold: "Lạnh", cool: "Mát", hot: "Nóng" }[level];
 
     const clothes = {
       cold: f < 15 ? "Áo khoác dày hoặc áo len, khăn quàng, quần dài và tất." : "Áo khoác nhẹ hoặc áo len mỏng, quần dài; giữ ấm cổ khi ra ngoài.",
-      cool: "Áo dài tay mỏng, hoặc áo thun kèm áo khoác nhẹ; quần dài.",
-      pleasant: humid ? "Áo thun cotton hoặc linen, quần thoáng; trời ẩm nên chọn vải thấm hút mồ hôi." : "Áo thun, quần thoáng, vải nhẹ là vừa.",
-      hot: "Đồ mỏng, sáng màu, vải cotton hoặc linen thấm hút; tránh đồ tối màu, bó sát." + (strongUV ? " Ra nắng thì mặc thêm áo khoác chống nắng." : ""),
+      cool: f < 23 ? "Áo dài tay mỏng, hoặc áo thun kèm áo khoác nhẹ; quần dài." : "Áo thun hoặc sơ mi mỏng; sáng sớm, tối muộn mang thêm áo khoác nhẹ.",
+      hot: (veryHot ? "Đồ mỏng, sáng màu, vải cotton hoặc linen thấm hút; tránh đồ tối màu, bó sát."
+        : humid ? "Áo thun cotton hoặc linen, quần thoáng; trời ẩm nên chọn vải thấm hút mồ hôi." : "Áo thun, quần thoáng, vải nhẹ là vừa.")
+        + (strongUV ? " Ra nắng thì mặc thêm áo khoác chống nắng." : ""),
     }[level];
 
     const items = [];
@@ -60,8 +61,8 @@ globalThis.MayAdvice = (() => {
     else if (raining) activity = night ? "Hạn chế ra ngoài tối nay, đường dễ trơn; đồ phơi nên đem vào." : "Không nên phơi đồ ngoài trời; ưu tiên hoạt động trong nhà.";
     else if (wetSoon) activity = `Có thể mưa${when}: phơi đồ dưới mái che, đi dạo nhớ mang ô.`;
     else if (night) activity = level === "cold" ? "Tối lạnh: ra ngoài nhớ mặc ấm, tập trong nhà dễ chịu hơn."
-      : level === "hot" ? "Tối vẫn oi: đi dạo nhẹ và uống đủ nước." : "Buổi tối dễ chịu, hợp đi dạo hoặc tập nhẹ ngoài trời.";
-    else if (level === "hot" || strongUV) activity = "Tránh vận động ngoài trời khoảng 10–15 giờ; đi dạo, tập luyện vào sáng sớm hoặc chiều mát. Nắng tốt để phơi đồ.";
+      : veryHot ? "Tối vẫn oi: đi dạo nhẹ và uống đủ nước." : "Buổi tối dễ chịu, hợp đi dạo hoặc tập nhẹ ngoài trời.";
+    else if (veryHot || strongUV) activity = "Tránh vận động ngoài trời khoảng 10–15 giờ; đi dạo, tập luyện vào sáng sớm hoặc chiều mát. Nắng tốt để phơi đồ.";
     else activity = (level === "cold" ? "Trời se lạnh, hợp đi bộ nhanh." : "Thời tiết hợp đi dạo, tập thể dục ngoài trời.")
       + (humid ? ` Độ ẩm cao (${fmt(humidity)}%), đồ phơi lâu khô.` : " Trời khô ráo, phơi đồ nhanh khô.");
     if (wind !== null && wind >= cfg.strongWind) activity += ` Gió mạnh (${fmt(wind)} km/h): cẩn thận khi đi xe máy.`;

@@ -5,7 +5,7 @@ const fixture=require('./weather-fixture.cjs');
 module.exports=async function({page,test,baseFixture,setForecast,json,ready,evidence}){
   const show=async data=>{setForecast(route=>json(route,data));await page.locator('#refresh-button').click();await ready();};
   await test('36 Nóng, lạnh, mưa, giông: thẻ trang phục đúng mức (màu viền), tiêu đề và 3 dòng có căn cứ',async()=>{
-    for(const [code,temp,level,title,items,weather] of [[0,33,'hot','Oi bức · 33°',/Không cần mang thêm gì/,'sunny'],[3,12,'cold','Lạnh · 12°',/Không cần mang thêm gì/,'cloudy'],[61,25,'cool','Mát mẻ · 25°',/Đang mưa/,'rain'],[97,25,'cool','Mát mẻ · 25°',/dông/,'storm']]){
+    for(const [code,temp,level,title,items,weather] of [[0,33,'hot','Nóng · 33°',/Không cần mang thêm gì/,'sunny'],[3,12,'cold','Lạnh · 12°',/Không cần mang thêm gì/,'cloudy'],[61,25,'cool','Mát · 25°',/Đang mưa/,'rain'],[97,25,'cool','Mát · 25°',/dông/,'storm']]){
       const d=fixture(baseFixture);d.current.weather_code=code;d.current.is_day=1;d.current.temperature_2m=temp;d.current.apparent_temperature=temp;d.current.uv_index=0;
       await show(d);assert.equal(await page.locator('#outfit-card').getAttribute('data-level'),level,`mã ${code}`);assert.equal(await page.locator('#outfit-level').innerText(),title);
       assert.deepEqual(await page.locator('#outfit-list .outfit-label').allInnerTexts(),['TRANG PHỤC','VẬT DỤNG','HOẠT ĐỘNG']);assert.match(await page.locator('#outfit-list [data-kind="items"]').innerText(),items);

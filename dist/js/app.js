@@ -382,7 +382,7 @@ function renderOutfit(data) {
   const advice = MayAdvice.outfitAdvice(data);
   $("outfit-card").hidden = !advice;
   if (!advice) return;
-  $("outfit-card").dataset.level = advice.level; // màu viền theo mức: lạnh/mát mẻ/dễ chịu/nóng
+  $("outfit-card").dataset.level = advice.level; // màu theo mức: lạnh/mát/nóng
   // Chấm trên thang cảm nhận 14–38°C (ngoài khoảng thì nằm ở mép).
   $("outfit-card").style.setProperty("--pos", String(Math.min(1, Math.max(0, (advice.feels - 14) / 24))));
   $("outfit-level").textContent = advice.title;

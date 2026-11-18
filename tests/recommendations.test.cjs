@@ -56,21 +56,21 @@ test('Ranh giới Việt Nam: nhận cả miền Bắc, biên giới, đảo; lo
     assert.equal(vn.province(query)?.name,town,query);
   for(const query of ['Paris','Vinh','An',''])assert.equal(vn.province(query),null,query);
 });
-test('Gợi ý theo thời tiết: 4 mức theo nhiệt độ cảm nhận, 3 dòng (trang phục, vật dụng, hoạt động) đúng số liệu; thiếu nhiệt độ thì không kết luận',()=>{
+test('Gợi ý theo thời tiết: 3 mức (lạnh, mát, nóng) theo nhiệt độ cảm nhận, 3 dòng (trang phục, vật dụng, hoạt động) đúng số liệu; thiếu nhiệt độ thì không kết luận',()=>{
   // Giờ hiện tại 15:xx, 3 giờ tới không mưa trừ khi đặt riêng.
   const make=(patch,rain={})=>{const d=fixture();Object.assign(d.current_units,{uv_index:'',apparent_temperature:'°C',relative_humidity_2m:'%'});
     Object.assign(d.current,{time:'2026-10-09T15:15',weather_code:1,is_day:1,temperature_2m:27,apparent_temperature:27,relative_humidity_2m:60,precipitation_probability:10,wind_speed_10m:5,uv_index:2},patch);
     d.hourly.precipitation_probability=d.hourly.precipitation_probability.map(()=>0);
     for(const [hour,p] of Object.entries(rain))d.hourly.precipitation_probability[d.hourly.time.indexOf('2026-10-09T'+hour)]=p;return d;};
   const a=(patch,rain)=>advice.outfitAdvice(make(patch,rain));const line=(r,kind)=>r.lines.find(l=>l.kind===kind).text;
-  // Mức theo nhiệt độ cảm nhận (biên 19/20, 25/26, 30/31)
-  for(const [feels,level] of [[19,'cold'],[20,'cool'],[25,'cool'],[26,'pleasant'],[30,'pleasant'],[31,'hot']])assert.equal(a({apparent_temperature:feels}).level,level,`cảm nhận ${feels}`);
-  let r=a({});assert.equal(r.title,'Dễ chịu · 27°');assert.equal(r.feels,27);assert.equal(a({apparent_temperature:31.4}).feels,31.4);assert.equal(r.detail,'Cảm giác 27° · Độ ẩm 60%');assert.deepEqual(Array.from(r.lines,l=>[l.kind,l.icon]),[['clothes','i-shirt'],['items','i-bag'],['activity','i-walk']]);
+  // Mức theo nhiệt độ cảm nhận (biên 19/20, 26/27)
+  for(const [feels,level] of [[19,'cold'],[20,'cool'],[26,'cool'],[26.4,'cool'],[27,'hot'],[31,'hot']])assert.equal(a({apparent_temperature:feels}).level,level,`cảm nhận ${feels}`);
+  let r=a({});assert.equal(r.title,'Nóng · 27°');assert.equal(r.feels,27);assert.equal(a({apparent_temperature:31.4}).feels,31.4);assert.equal(r.detail,'Cảm giác 27° · Độ ẩm 60%');assert.deepEqual(Array.from(r.lines,l=>[l.kind,l.icon]),[['clothes','i-shirt'],['items','i-bag'],['activity','i-walk']]);
   assert.equal(line(r,'items'),'Không cần mang thêm gì.');assert.match(line(r,'activity'),/đi dạo.*khô ráo, phơi đồ nhanh khô/);
   assert.match(line(a({relative_humidity_2m:85}),'clothes'),/thấm hút/);assert.match(line(a({relative_humidity_2m:85}),'activity'),/Độ ẩm cao \(85%\)/);
   // Nóng ban ngày + UV cao: "Nắng nóng", nhắc che nắng, tránh 10–15 giờ; ban đêm: "Oi bức", không nhắc chống nắng
-  r=a({temperature_2m:33,apparent_temperature:36,uv_index:8.4});assert.equal(r.title,'Nắng nóng · 33°');assert.match(line(r,'items'),/kính râm.*UV 8,4/);assert.match(line(r,'activity'),/10–15 giờ/);
-  r=a({temperature_2m:33,apparent_temperature:36,is_day:0,uv_index:0});assert.equal(r.title,'Oi bức · 33°');assert.doesNotMatch(JSON.stringify(r),/kem chống nắng|kính râm/);assert.match(line(r,'activity'),/Tối vẫn oi/);
+  r=a({temperature_2m:33,apparent_temperature:36,uv_index:8.4});assert.equal(r.title,'Nóng · 33°');assert.match(line(r,'items'),/kính râm.*UV 8,4/);assert.match(line(r,'activity'),/10–15 giờ/);
+  r=a({temperature_2m:33,apparent_temperature:36,is_day:0,uv_index:0});assert.equal(r.title,'Nóng · 33°');assert.doesNotMatch(JSON.stringify(r),/kem chống nắng|kính râm/);assert.match(line(r,'activity'),/Tối vẫn oi/);
   // Mưa: ≥ 40% (cả 3 giờ tới) → nhắc ô kèm giờ; 39% thì chưa; đang mưa/dông
   assert.match(line(a({},{'17:00':65}),'items'),/Mang ô hoặc áo mưa, khả năng mưa 65% lúc 17:00/);assert.match(line(a({},{'17:00':65}),'activity'),/phơi đồ dưới mái che/);
   assert.equal(line(a({precipitation_probability:39}),'items'),'Không cần mang thêm gì.');assert.match(line(a({precipitation_probability:40}),'items'),/khả năng mưa 40%\./);
@@ -79,6 +79,7 @@ test('Gợi ý theo thời tiết: 4 mức theo nhiệt độ cảm nhận, 3 d�
   // Lạnh, gió mạnh, ban đêm dễ chịu
   assert.match(line(a({temperature_2m:12,apparent_temperature:12}),'clothes'),/Áo khoác dày/);assert.match(line(a({temperature_2m:18,apparent_temperature:18,is_day:0}),'activity'),/Tối lạnh/);
   assert.match(line(a({wind_speed_10m:42}),'activity'),/Gió mạnh \(42 km\/h\)/);assert.match(line(a({is_day:0}),'activity'),/Buổi tối dễ chịu/);
+  assert.equal(a({temperature_2m:22,apparent_temperature:22}).title,'Mát · 22°');assert.doesNotMatch(line(a({}),'activity'),/10–15 giờ/,'27° chưa cần tránh nắng giữa trưa');
   assert.equal(a({temperature_2m:null}),null);
   for(const d of [make({}),make({is_day:0})])assert.doesNotMatch(JSON.stringify(advice.outfitAdvice(d)),/lý tưởng|tuyệt vời|hãy tận hưởng/);
 });
