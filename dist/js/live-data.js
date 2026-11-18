@@ -41,7 +41,7 @@ if (typeof document !== "undefined") (() => {
   const text = (id,value) => { $(id).textContent = value; };
   function onLoading() {
     busy = true;
-    airController?.abort(); airSerial++; airRecord = null; state.air = null;
+    airController?.abort(); airSerial++; airRecord = null;
     $("air-values").hidden = true; $("air-section").hidden = true;
   }
   function onLoaded(location) {
@@ -71,11 +71,8 @@ if (typeof document !== "undefined") (() => {
       text("air-status",`${location.name} · ${data.current.time.replace("T"," · ")} giờ địa phương. ${tools.freshness(data).text}`);
       $("air-values").hidden = false;
       airRecord = {source:"Open-Meteo / CAMS",requestedUrl:String(url),fetchedAt:new Date().toISOString(),location:{...location},response:data};
-      state.air = {key:`${location.latitude},${location.longitude}`,aqi:tools.airValue(data,"us_aqi"),label};
-      window.MayDashboard?.refreshHighlights();
     } catch(error) {
       if (serial !== airSerial || controller.signal.aborted) return;
-      state.air = null; window.MayDashboard?.refreshHighlights();
       text("air-status",`Chưa tải được chất lượng không khí tại ${location.name}. ${error.message}`);
       $("air-retry").hidden=false;
     } finally { if (serial === airSerial) $("air-section").setAttribute("aria-busy","false"); }

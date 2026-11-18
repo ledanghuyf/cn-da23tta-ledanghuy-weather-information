@@ -207,6 +207,24 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .search-button { background: linear-gradient(180deg, #1a74bd, #155f9e); color: #fff; box-shadow: 0 4px 14px rgba(8, 50, 100, .35); transition: filter .2s; }
 .search-button:hover:not(:disabled) { background: linear-gradient(180deg, #1f80cf, #1869ae); }
 .search-button:disabled { opacity: .6; cursor: not-allowed; }
+/* Thanh tìm kiếm liền khối dạng viên thuốc: ô nhập trong suốt + nút Tìm bo tròn nằm gọn ở mép phải trong cùng một khung kính.
+   Đang gõ: cả khung sáng viền và có quầng nhẹ (thay viền nhấn riêng của ô nhập). */
+.sidebar .search-row { align-items: center; gap: 4px; padding: 4px; border: 1px solid rgba(255, 255, 255, .3); border-radius: 999px; background: rgba(6, 18, 36, .32);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: border-color .2s, background-color .2s, box-shadow .2s; }
+.sidebar .search-row:hover { background: rgba(6, 18, 36, .42); }
+.sidebar .search-row:focus-within { border-color: rgba(255, 255, 255, .75); background: rgba(6, 18, 36, .5); box-shadow: 0 0 0 4px rgba(120, 190, 255, .22); }
+.sidebar .search-row:has(.search-input:disabled) { opacity: .75; }
+.sidebar .search-row .search-input, .sidebar .search-row .search-input:hover, .sidebar .search-row .search-input:focus { min-height: 40px; border: 0; border-radius: 999px; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.sidebar .search-row .search-input:focus-visible { outline: none; } /* khung ngoài đã sáng viền khi đang gõ */
+.sidebar .search-row .search-input:disabled { opacity: 1; }
+.sidebar .search-row .search-button { flex: none; justify-content: center; gap: 6px; min-height: 40px; padding: 0 16px 0 18px; border-radius: 999px; font-size: 15px; letter-spacing: .2px;
+  background: linear-gradient(180deg, #2280cc, #155f9e); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), 0 3px 10px rgba(8, 50, 100, .45); transition: background-color .2s, box-shadow .2s, transform .15s; }
+.sidebar .search-row .search-button:hover:not(:disabled) { background: linear-gradient(180deg, #2a8ad6, #1868aa); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .32), 0 5px 14px rgba(8, 50, 100, .55); }
+.sidebar .search-row .search-button:active:not(:disabled) { transform: scale(.96); }
+.search-button .icon { transition: transform .2s; }
+.search-button:hover:not(:disabled) .icon { transform: translateX(3px); }
+@media (min-width: 761px) and (max-width: 1180px) { .sidebar .search-row .search-button { width: 40px; padding: 0; } } /* chỉ còn mũi tên: nút tròn */
+@media (max-width: 359px) { .sidebar .search-row .search-button { padding: 0 12px; } }
 .field-help { margin-top: 8px; font-size: 12px; color: rgba(255, 255, 255, .85); }
 .search-status { margin-top: 10px; font-size: 13px; color: #fff; overflow-wrap: anywhere; }
 .search-status:empty { display: none; }
@@ -315,24 +333,6 @@ body[data-weather="storm"]  { --weather-accent: #c9a7ff; }
 .weather-icon svg, .daily-icon svg { display: block; width: 100%; height: auto; }
 .current-bottom { display: flex; justify-content: center; gap: 4px 14px; flex-wrap: wrap; margin-top: 12px; font-size: 12px; }
 
-/* Điểm cần chú ý: thẻ tóm tắt ngay dưới khối hiện tại; màu theo loại cảnh báo, luôn kèm biểu tượng và chữ */
-.weather-highlights { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; width: min(100%, 720px); margin-top: 16px; list-style: none; text-align: left; }
-.highlight { display: flex; align-items: flex-start; gap: 10px; min-width: 0; padding: 11px 14px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, .16); border-left: 4px solid var(--accent); background: rgba(6, 18, 36, .32); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
-.highlight > .icon { width: 18px; height: 18px; margin-top: 2px; color: var(--accent); }
-.highlight-body { display: flex; flex-direction: column; min-width: 0; font-size: 13px; line-height: 1.45; }
-.highlight-body strong { font-size: 15px; font-weight: 650; }
-.highlight.is-calm { border-left-color: #7ee2a8; }
-.highlight.is-calm > .icon { color: #7ee2a8; }
-.highlight[data-kind] { border-left-color: var(--kind); }
-.highlight[data-kind] > .icon { color: var(--kind); }
-.highlight[data-kind="storm"] { --kind: #ff7a7a; background: rgba(90, 16, 34, .48); border-color: rgba(255, 122, 122, .45); }
-.highlight[data-kind="rain"]  { --kind: #6cc4ff; }
-.highlight[data-kind="heat"]  { --kind: #ff9a4d; }
-.highlight[data-kind="uv"]    { --kind: #ffd166; }
-.highlight[data-kind="cold"]  { --kind: #9fd8ff; }
-.highlight[data-kind="wind"]  { --kind: #8fe3cf; }
-.highlight[data-kind="air"]   { --kind: #c9a7ff; }
-.highlight[data-kind="calm"]  { --kind: #7ee2a8; }
 
 /* ---------- Thẻ kính mờ: nền tối trong suốt, chữ trắng ---------- */
 .glass-card, .metric, .daily-metric {
@@ -548,7 +548,6 @@ dd { font-size: 15px; font-weight: 650; }
 @media (max-width: 420px) {
   .metric, .daily-metric { min-height: 140px; padding: 12px; }
   .metric-value strong { font-size: 32px; }
-  .weather-highlights { grid-template-columns: 1fr; }
   .temperature { font-size: 88px; }
 }
 
@@ -627,8 +626,8 @@ body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời 
 .hero-card .condition { font-size: 20px; font-weight: 500; }
 .hero-card .condition::after { display: none; }
 .hero-card .high-low { font-size: 20px; font-weight: 500; }
-.hero-card .weather-highlights { margin-top: 18px; }
-.hero-card .current-bottom { margin-top: 10px; opacity: .8; }
+.hero-card .current-bottom { margin-top: 20px; opacity: .8; } /* ngay dưới "C:31° T:26°": tách vừa đủ thành dòng chú thích */
+@media (max-width: 760px) { .hero-card .current-bottom { margin-top: 16px; } }
 @media (max-width: 760px) { .hero-card { padding-top: 52px; } } /* chừa hàng nút ở góc phải */
 
 /* Thẻ kính mờ chung */
@@ -669,7 +668,6 @@ body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời 
   .bento #forecast-group { grid-area: hourly; }
   .bento #daily-card { grid-area: daily; }
   .bento #conditions-group { grid-area: tiles; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .bento .weather-highlights { width: min(100%, 760px); }
   .bento .outfit-list { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
   .bento .forecast-day { grid-template-columns: minmax(64px, 1fr) 32px minmax(34px, auto) 34px minmax(50px, 2fr) 34px; column-gap: 8px; }
 }
@@ -682,12 +680,7 @@ body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời 
 .weather-content[aria-busy="false"] #weather-view > :nth-child(3) { animation-delay: .12s; }
 .weather-content[aria-busy="false"] #weather-view > :nth-child(4) { animation-delay: .18s; }
 .weather-content[aria-busy="false"] #weather-view > :nth-child(n+5) { animation-delay: .24s; }
-.weather-content[aria-busy="false"] .highlight { animation: rise .5s .3s cubic-bezier(.2, .7, .2, 1) both; }
-.weather-content[aria-busy="false"] .highlight:nth-child(2) { animation-delay: .4s; }
-.weather-content[aria-busy="false"] .highlight:nth-child(3) { animation-delay: .5s; }
 /* Biểu tượng cảnh báo khẽ nhún để thu hút ánh nhìn (không nhấp nháy). */
-@keyframes nudge { 0%, 70%, 100% { transform: translateY(0); } 80% { transform: translateY(-3px); } 90% { transform: translateY(1px); } }
-.highlight:not(.is-calm) > .icon { animation: nudge 3.2s ease-in-out 1s infinite; }
 /* Rê chuột lên ô chỉ số: nhích nhẹ lên. */
 .metric, .daily-metric, .extra-metric, .sun-card, .air-metric, .air-score { transition: transform .25s ease, background-color .25s ease; }
 @media (hover: hover) { .metric:hover, .daily-metric:hover, .extra-metric:hover, .sun-card:hover, .air-metric:hover, .air-score:hover { transform: translateY(-3px); } }

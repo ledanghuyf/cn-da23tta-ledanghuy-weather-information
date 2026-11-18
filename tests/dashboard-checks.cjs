@@ -35,15 +35,13 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     assert.equal(await page.locator('#details-period').count(),0);
     await page.locator('#weather-date').selectOption('');
   });
-  await test('49b Điểm cần chú ý: hiện hôm nay, ẩn khi xem ngày khác; ô Cảm nhận nổi rồi trả chữ gốc',async()=>{
+  await test('49b Không còn dải cảnh báo dưới nhiệt độ; ô Cảm nhận nổi khi lệch ≥ 3° rồi trả chữ gốc; giờ dễ mưa tô xanh',async()=>{
     const d=data();d.current.apparent_temperature=29;d.hourly.precipitation_probability[17]=70;await show(d);
-    const list=page.locator('#weather-highlights'),feels=page.locator('.metric:has(#feels-like)');
-    assert.equal(await list.isVisible(),true);assert.match(await list.innerText(),/Có thể mưa lúc 17:00/);assert.doesNotMatch(await list.innerText(),/Cảm giác/); // cảm nhận lệch chỉ hiện ở ô Cảm nhận, không còn trong dải cảnh báo
+    const feels=page.locator('.metric:has(#feels-like)');
+    assert.equal(await page.locator('#weather-highlights, .highlight').count(),0);
     assert.equal(await feels.getAttribute('data-alert'),'');assert.match(await feels.innerText(),/Nóng hơn thực tế 4°/);
     assert.equal(await page.locator('.hour-tile[data-rain="high"]').count(),1);
-    await page.locator('#weather-date').selectOption('2026-10-12');assert.equal(await list.isVisible(),false);
-    await page.locator('#weather-date').selectOption('');assert.equal(await list.isVisible(),true);
-    await show(data());assert.equal(await feels.getAttribute('data-alert'),null);assert.match(await feels.innerText(),/Nhiệt độ cảm nhận ngoài trời/);assert.equal(await list.isVisible(),false); // không có gì đáng chú ý → ẩn hẳn
+    await show(data());assert.equal(await feels.getAttribute('data-alert'),null);assert.match(await feels.innerText(),/Nhiệt độ cảm nhận ngoài trời/);
   });
   await test('50 Dữ liệu bổ sung thiếu, sai đơn vị, gián đoạn không làm mất thời tiết lõi',async()=>{
     const d=data();d.hourly.temperature_2m[17]=null;d.current.visibility=null;d.daily.sunrise.fill(null);await show(d);

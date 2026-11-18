@@ -31,22 +31,6 @@ test('Chỉ số bổ sung đúng miền và hướng gió khớp góc',()=>{
   for(const [angle,name] of [[0,'Bắc'],[90,'Đông'],[180,'Nam'],[270,'Tây'],[360,'Bắc']])assert.equal(context.MayDashboardData.direction(angle),name);
   assert.equal(context.MayDashboardData.direction(null),null);
 });
-test('Điểm cần chú ý: mưa, UV, gió giật (không còn mục cảm nhận lệch); không có gì thì ẩn hẳn; không kết luận khi thiếu dữ liệu',()=>{
-  const h=d=>Array.from(context.MayDashboardData.highlights(d),i=>i.title);
-  let d=fixture();assert.deepEqual(h(d),[]);
-  d.hourly.precipitation_probability[17]=70;d.current.apparent_temperature=33;d.hourly.uv_index[16]=8.4;
-  d.current_units.wind_gusts_10m='km/h';d.current.wind_gusts_10m=45;
-  assert.deepEqual(h(d),['Có thể mưa lúc 17:00','UV rất cao (8,4)','Gió giật 45 km/h']);
-  d.current.precipitation=1.2;assert.equal(h(d)[0],'Đang có mưa');
-  d=fixture();d.hourly_units.precipitation_probability='mm';assert.deepEqual(h(d),[]);
-  d=fixture();d.current.weather_code=61;assert.equal(h(d)[0],'Đang có mưa');d.current.weather_code=95;assert.equal(h(d)[0],'Đang có giông');
-  // Không khí: >100 thì cảnh báo; <=100 hoặc chưa có thì bỏ qua.
-  const ha=(d,air)=>Array.from(context.MayDashboardData.highlights(d,air),i=>i.title);
-  d=fixture();assert.deepEqual(ha(d,{aqi:162,label:'Không tốt'}),['Không khí không tốt (AQI 162)']);
-  assert.deepEqual(ha(d,{aqi:100,label:'Trung bình'}),[]);assert.deepEqual(ha(d,{aqi:null,label:'Chưa có chỉ số'}),[]);
-  assert.equal(context.MayDashboardData.feelsGap(27.4,34.5),8);assert.equal(context.MayDashboardData.feelsGap(29.6,31),0);assert.equal(context.MayDashboardData.feelsGap(20,16.6),-3);
-  assert.equal(context.MayDashboardData.uvLevel(5.9),'Trung bình');assert.equal(context.MayDashboardData.uvLevel(11),'Cực cao');
-});
 test('Ngày/đêm tách khỏi mưa/mây/giông; mã không biết có giao diện mặc định',()=>{
   // [mã, chủ đề ban đêm, chủ đề ban ngày]: mã 2 ban ngày là "Nhiều nắng" (nền xanh), ban đêm vẫn là mây.
   for(const [code,night,day1] of [[0,'sunny','sunny'],[1,'sunny','sunny'],[2,'cloudy','sunny'],[3,'cloudy','cloudy'],[61,'rain','rain'],[95,'storm','storm'],[97,'storm','storm']]){

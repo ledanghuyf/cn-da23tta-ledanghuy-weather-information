@@ -69,10 +69,9 @@ const airBand = v => [[50, "Tốt"], [100, "Trung bình"], [150, "Kém với nh�
     await eq("#precipitation", f(c.precipitation), "Lượng mưa");
     const [dt, tm] = c.time.split("T");
     await eq("#data-time", `Cập nhật lúc ${tm.slice(0, 5)} · ${dt.slice(8)}/${dt.slice(5, 7)}/${dt.slice(0, 4)} · giờ địa phương`, "Mốc cập nhật");
-    // Điểm cần chú ý: có mưa/giông thì phải có thẻ tương ứng
-    const kinds = await page.locator("#weather-highlights .highlight").evaluateAll(els => els.map(e => e.dataset.kind));
-    if (STORM.includes(c.weather_code)) ok(kinds.includes("storm"), "Cảnh báo giông", kinds.join(","), "storm");
-    else if (RAIN.includes(c.weather_code) || c.precipitation > 0) ok(kinds.includes("rain"), "Cảnh báo mưa", kinds.join(","), "rain");
+    // Lời khuyên & trang phục: đang mưa/giông thì phải có nhóm mưa
+    const kinds = await page.locator("#outfit-list .outfit-item").evaluateAll(els => els.map(e => e.dataset.kind));
+    if (STORM.includes(c.weather_code) || RAIN.includes(c.weather_code)) ok(kinds.includes("rain"), "Gợi ý khi mưa/giông", kinds.join(","), "rain");
 
     // 2. Chỉ số mở rộng hiện tại
     const ex = async (key, want, label) => eq(`[data-extra="${key}"] .extra-value`, want, label);

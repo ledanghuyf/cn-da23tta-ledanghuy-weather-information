@@ -70,26 +70,7 @@ globalThis.MayDashboardData = (() => {
     const gap = temp === null || feels === null ? 0 : Math.round(feels) - Math.round(temp);
     return Math.abs(gap) >= 3 ? gap : 0;
   };
-  // Tối đa 3 điểm cần chú ý trong 12 giờ tới, xếp theo mức ảnh hưởng; không có gì đáng chú ý thì [] (ẩn hẳn, không hiện ô "yên ổn").
-  // air: { aqi, label } của nơi đang xem khi đã tải được chất lượng không khí (không có thì bỏ qua).
-  function highlights(data, air = null) {
-    const now = key => value(data, "current", key), next = hours(data).slice(0, 12), items = [];
-    const rainNow = now("precipitation"), rainHour = next.find(r => r.precipitation_probability >= 50);
-    // Mã thời tiết hiện tại báo mưa/giông vẫn tính là đang mưa dù lượng đo được bằng 0.
-    const code = data?.current?.weather_code, storm = MayWeatherConfig.stormCodes.includes(code);
-    if (rainNow > 0 || storm || MayWeatherConfig.rainCodes.includes(code)) items.push({ kind: storm ? "storm" : "rain", icon: "i-rain", title: storm ? "Đang có giông" : "Đang có mưa",
-      text: rainNow > 0 ? `Vừa ghi nhận ${num(rainNow)} mm · nhớ mang ô` : storm ? "Ưu tiên ở trong nhà, tránh nơi trống trải" : "Theo dữ liệu hiện tại · nhớ mang ô" });
-    else if (rainHour) items.push({ kind: "rain", icon: "i-rain", title: `Có thể mưa lúc ${rainHour.time.slice(11)}`, text: `Khả năng ${num(rainHour.precipitation_probability)}% · nên mang ô` });
-    // Thang US AQI: trên 100 là kém với nhóm nhạy cảm, trên 150 là không tốt cho mọi người.
-    if (air?.aqi > 100) items.push({ kind: "air", icon: "i-wind", title: `Không khí ${air.label.toLowerCase()} (AQI ${num(air.aqi)})`,
-      text: air.aqi > 150 ? "Hạn chế ra ngoài, đeo khẩu trang khi cần" : "Người nhạy cảm nên hạn chế ở ngoài lâu" });
-    const uv = [{ time: "", uv_index: now("uv_index") }, ...next].filter(r => r.uv_index !== null).sort((a, b) => b.uv_index - a.uv_index)[0];
-    if (uv?.uv_index >= 6) items.push({ kind: "uv", icon: "i-sun", title: `UV ${uvLevel(uv.uv_index).toLowerCase()} (${num(uv.uv_index)})`, text: uv.time ? `Mạnh nhất lúc ${uv.time.slice(11)} · che nắng khi ra ngoài` : "Đang ở mức này · che nắng khi ra ngoài" });
-    const gust = now("wind_gusts_10m");
-    if (gust >= 40) items.push({ kind: "wind", icon: "i-wind", title: `Gió giật ${num(gust)} km/h`, text: "Cẩn thận khi đi xe máy, tránh đứng dưới cây" });
-    return items.slice(0, 3);
-  }
-  return { specs, value, hours, sun, direction, uvLevel, feelsGap, highlights };
+  return { specs, value, hours, sun, direction, uvLevel, feelsGap };
 })();
 
 (() => {
@@ -223,17 +204,8 @@ globalThis.MayDashboardData = (() => {
       card.querySelector(".day-open")?.remove(); card.append(button);
     });
   }
-  function renderHighlights() {
-    // Khi chọn ngày khác, daily-view.js ẩn cả #current-panel (chứa dải này) nên không cần kiểm tra ngày ở đây.
-    const air = state.air?.key === `${state.location.latitude},${state.location.longitude}` ? state.air : null;
-    const list = $("weather-highlights"), items = dataTools.highlights(source, air);
-    list.hidden = !items.length;
-    list.replaceChildren(...items.map(item => {
-      const li = node("li", item.calm ? "highlight is-calm" : "highlight"); li.dataset.kind = item.kind; // màu theo loại cảnh báo
-      const icon = svgElement("svg", { class: "icon", width: "18", height: "18", "aria-hidden": "true" }); icon.append(svgElement("use", { href: `#${item.icon}` }));
-      const body = node("span", "highlight-body"); body.append(node("strong", "", item.title), node("span", "", item.text));
-      li.append(icon, body); return li;
-    }));
+  // Ô Cảm nhận: nổi lên và ghi "Nóng/Lạnh hơn thực tế N°" khi lệch từ 3° trở lên.
+  function renderFeels() {
     const feels = $("feels-like").closest(".metric"), note = feels.querySelector(".metric-note");
     note.dataset.base ??= note.textContent;
     const gap = dataTools.feelsGap(dataTools.value(source, "current", "temperature_2m"), dataTools.value(source, "current", "apparent_temperature"));
@@ -243,7 +215,7 @@ globalThis.MayDashboardData = (() => {
   function render(data, date = "") {
     source = data; selectedDate = date; selectedHour = "";
     $("hourly-section").hidden = false; $("details-section").hidden = false;
-    renderHighlights(); renderHours(); renderDetails(); wireDayCards();
+    renderFeels(); renderHours(); renderDetails(); wireDayCards();
   }
   function onLoading() {
     $("hourly-section").hidden = true; $("details-section").hidden = true;
@@ -256,7 +228,6 @@ globalThis.MayDashboardData = (() => {
   new ResizeObserver(() => {
     if (source && hourlyChart.clientWidth && hourlyChart.clientWidth !== chartWidth) renderChart(chartRows);
   }).observe(hourlyChart);
-  // live-data.js gọi khi chất lượng không khí tải xong/lỗi để dải điểm nhấn cập nhật theo.
-  window.MayDashboard = { render, onLoading, refreshHighlights: () => { if (source) renderHighlights(); } };
+  window.MayDashboard = { render, onLoading };
   if (state.weather) render(state.weather, $("weather-date").value);
 })();
