@@ -14,7 +14,7 @@ globalThis.MayAdvice = (() => {
     const value = index === null ? data?.[group]?.[key] : data?.[group]?.[key]?.[index];
     return Number.isFinite(value) ? value : null;
   }
-  // Lời khuyên & trang phục từ dữ liệu Open-Meteo hiện tại (+ khả năng mưa 3 giờ tới).
+  // Gợi ý theo thời tiết (trang phục, vật dụng, hoạt động) từ dữ liệu Open-Meteo hiện tại (+ khả năng mưa 3 giờ tới).
   // Mức theo nhiệt độ cảm nhận (apparent_temperature đã gộp nhiệt độ, độ ẩm, gió; thiếu thì dùng nhiệt độ):
   //   Lạnh < 20°C · Mát mẻ 20–25°C · Dễ chịu 26–30°C · Oi bức/Nắng nóng > 30°C.
   // Trả { level, title, detail, lines: [trang phục, vật dụng, hoạt động] }; thiếu nhiệt độ thì null (không đoán).

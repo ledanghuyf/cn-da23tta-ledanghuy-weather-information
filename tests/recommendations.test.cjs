@@ -56,7 +56,7 @@ test('Ranh giới Việt Nam: nhận cả miền Bắc, biên giới, đảo; lo
     assert.equal(vn.province(query)?.name,town,query);
   for(const query of ['Paris','Vinh','An',''])assert.equal(vn.province(query),null,query);
 });
-test('Lời khuyên & trang phục: 4 mức theo nhiệt độ cảm nhận, 3 dòng (trang phục, vật dụng, hoạt động) đúng số liệu; thiếu nhiệt độ thì không kết luận',()=>{
+test('Gợi ý theo thời tiết: 4 mức theo nhiệt độ cảm nhận, 3 dòng (trang phục, vật dụng, hoạt động) đúng số liệu; thiếu nhiệt độ thì không kết luận',()=>{
   // Giờ hiện tại 15:xx, 3 giờ tới không mưa trừ khi đặt riêng.
   const make=(patch,rain={})=>{const d=fixture();Object.assign(d.current_units,{uv_index:'',apparent_temperature:'°C',relative_humidity_2m:'%'});
     Object.assign(d.current,{time:'2026-10-09T15:15',weather_code:1,is_day:1,temperature_2m:27,apparent_temperature:27,relative_humidity_2m:60,precipitation_probability:10,wind_speed_10m:5,uv_index:2},patch);

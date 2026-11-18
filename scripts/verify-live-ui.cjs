@@ -69,7 +69,7 @@ const airBand = v => [[50, "Tốt"], [100, "Trung bình"], [150, "Kém với nh�
     await eq("#precipitation", f(c.precipitation), "Lượng mưa");
     const [dt, tm] = c.time.split("T");
     await eq("#data-time", `Cập nhật lúc ${tm.slice(0, 5)} · ${dt.slice(8)}/${dt.slice(5, 7)}/${dt.slice(0, 4)} · giờ địa phương`, "Mốc cập nhật");
-    // Lời khuyên & trang phục: đang mưa/giông thì dòng Vật dụng phải nhắc áo mưa/ô
+    // Gợi ý theo thời tiết: đang mưa/giông thì dòng Vật dụng phải nhắc áo mưa/ô
     const items = await page.locator('#outfit-list [data-kind="items"]').innerText().catch(() => "");
     if (STORM.includes(c.weather_code) || RAIN.includes(c.weather_code)) ok(/áo mưa|ô/.test(items), "Gợi ý khi mưa/giông", items, "nhắc áo mưa/ô");
 

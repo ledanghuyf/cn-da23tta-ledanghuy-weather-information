@@ -377,7 +377,7 @@ async function loadWeather(location) {
   }
 }
 
-// Thẻ "Lời khuyên & trang phục": mỗi nhóm (nắng, mưa, lạnh, gió, dễ chịu) một biểu tượng, tên nhóm và các gợi ý.
+// Thẻ "Gợi ý theo thời tiết": mức nhiệt (màu viền) + 3 dòng trang phục, vật dụng, hoạt động.
 function renderOutfit(data) {
   const advice = MayAdvice.outfitAdvice(data);
   $("outfit-card").hidden = !advice;

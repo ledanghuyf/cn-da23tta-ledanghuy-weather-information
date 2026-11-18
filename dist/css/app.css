@@ -660,7 +660,7 @@ dd { font-size: 15px; font-weight: 650; }
 /* Màn hẹp: chỉ còn chip "Ban ngày/Ban đêm" cạnh các nút; nhãn vẫn đọc được bằng trình đọc màn hình. */
 @media (pointer: coarse) { .icon-button { width: 44px; height: 44px; } }
 
-/* Thẻ Lời khuyên & trang phục: mỗi nhóm một màu, luôn có biểu tượng và chữ. */
+/* Thẻ Gợi ý theo thời tiết: màu theo mức nhiệt, 3 dòng trang phục/vật dụng/hoạt động, luôn có biểu tượng và chữ. */
 body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời tiết hiện tại, không áp cho ngày khác */
 .outfit-title { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--ink-soft); }
 .outfit-title .icon { width: 18px; height: 18px; color: var(--level); }
