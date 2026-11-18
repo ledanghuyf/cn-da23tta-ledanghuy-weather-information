@@ -6,10 +6,6 @@ const API = {
   geocoding: "https://geocoding-api.open-meteo.com/v1/search",
   forecast: "https://api.open-meteo.com/v1/forecast",
 };
-const DEFAULT_LOCATION = {
-  name: "Vĩnh Long", admin1: "Vĩnh Long", country: "Việt Nam",
-  latitude: 10.2537, longitude: 105.9722,
-};
 const WEATHER_CODES = {
   0: ["Trời quang", "☀️"], 1: ["Ít mây", "🌤️"],
   2: ["Mây rải rác", "⛅"], 3: ["Nhiều mây", "☁️"],
@@ -29,7 +25,8 @@ const WEATHER_CODES = {
 // 2. Tham chiếu DOM và trạng thái. Hai luồng tìm kiếm/lấy thời tiết hủy độc lập.
 const $ = (id) => document.getElementById(id);
 const state = {
-  location: DEFAULT_LOCATION, weather: null, results: [],
+  // location: nơi đang xem; here: nơi người dùng đang đứng (bắt buộc có trước khi hiện thời tiết, xem location.js).
+  location: null, here: null, weather: null, results: [],
   searchController: null, weatherController: null,
 };
 const numberFormat = new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 1 });
@@ -226,16 +223,21 @@ async function findPlaces(query, signal) {
   return searchOpenMeteo(query, signal, Math.max(5000, 15000 - (Date.now() - started)));
 }
 
-let lastNominatim = 0;
-// Chờ đủ 1 giây giữa hai lần gọi (chính sách Nominatim), không gọi khi đã hủy.
-async function nominatimJSON(path, params, signal) {
-  const wait = lastNominatim + 1000 - Date.now();
-  if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
-  if (signal.aborted) throw new DOMException("Đã hủy", "AbortError");
-  lastNominatim = Date.now();
-  const url = new URL(`${API.nominatim}/${path}`);
-  url.search = new URLSearchParams({ format: "json", addressdetails: "1", "accept-language": "vi", ...params });
-  return fetchJSON(url, signal, { array: path === "search", timeout: 8000 });
+// Hàng đợi Nominatim: các lần gọi (tìm kiếm, tên vị trí, gợi ý lân cận) chạy lần lượt, cách nhau ít nhất 1 giây
+// (chính sách Nominatim); lần gọi đã hủy trong lúc chờ thì bỏ qua.
+let nominatimQueue = Promise.resolve(), lastNominatim = 0;
+function nominatimJSON(path, params, signal) {
+  const run = nominatimQueue.then(async () => {
+    const wait = lastNominatim + 1000 - Date.now();
+    if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+    if (signal.aborted) throw new DOMException("Đã hủy", "AbortError");
+    lastNominatim = Date.now();
+    const url = new URL(`${API.nominatim}/${path}`);
+    url.search = new URLSearchParams({ format: "json", addressdetails: "1", "accept-language": "vi", ...params });
+    return fetchJSON(url, signal, { array: path === "search", timeout: 8000 });
+  });
+  nominatimQueue = run.catch(() => {});
+  return run;
 }
 
 async function searchNominatim(query, signal) {
@@ -245,11 +247,14 @@ async function searchNominatim(query, signal) {
 
 // Tên xã/phường cho tọa độ định vị (giữ tọa độ GPS gốc). Không tra được → "Gần <tỉnh lỵ>"; không bao giờ hiện tọa độ thô.
 async function nameCoordinates(latitude, longitude) {
-  try {
-    const data = await nominatimJSON("reverse", { lat: String(latitude), lon: String(longitude), zoom: "18" }, new AbortController().signal);
-    const place = MayVietnam.fromOSM({ ...data, lat: latitude, lon: longitude }, true);
-    if (place) return place;
-  } catch { /* bị chặn hoặc lỗi mạng: dùng tỉnh lỵ gần nhất */ }
+  for (let attempt = 0; attempt < 2; attempt++) { // thử lại một lần: Nominatim đôi khi tạm từ chối khi nhiều lượt gọi
+    try {
+      const data = await nominatimJSON("reverse", { lat: String(latitude), lon: String(longitude), zoom: "18" }, new AbortController().signal);
+      const place = MayVietnam.fromOSM({ ...data, lat: latitude, lon: longitude }, true);
+      if (place) return place;
+      break; // trả về được nhưng không có tên xã/phường: không cần thử lại
+    } catch { /* bị chặn hoặc lỗi mạng */ }
+  }
   return MayVietnam.nearest(latitude, longitude);
 }
 
@@ -298,7 +303,7 @@ function renderSearchResults() {
 }
 
 function isSameLocation(a, b) {
-  return a.latitude === b.latitude && a.longitude === b.longitude;
+  return Boolean(a && b) && a.latitude === b.latitude && a.longitude === b.longitude;
 }
 
 // Truy vấn dự báo dùng chung cho màn hình chính, định vị và địa điểm đã lưu.
@@ -325,7 +330,6 @@ async function loadWeather(location) {
   state.weatherController = controller;
   $("weather-content").setAttribute("aria-busy", "true");
   $("refresh-button").disabled = true;
-  $("save-location").disabled = true;
   $("weather-date").disabled = true;
   $("retry-button").hidden = true;
   MayTheme.apply();
@@ -346,11 +350,9 @@ async function loadWeather(location) {
     validateWeather(data);
     state.location = location;
     state.weather = data;
-    rememberLocation(location);
     renderWeather(location, data);
     window.MayLive?.onLoaded(location, data, url);
     renderSearchResults();
-    window.MayFeatures?.onWeatherLoaded(location);
     setStatus("weather-status", `Đã cập nhật thời tiết ${location.name}.`, "success");
     return data;
   } catch (error) {
@@ -371,7 +373,6 @@ async function loadWeather(location) {
     if (state.weatherController === controller) {
       $("weather-content").setAttribute("aria-busy", "false");
       $("refresh-button").disabled = false;
-      $("save-location").disabled = !state.weather;
       $("weather-date").disabled = !state.weather || $("weather-status").dataset.kind === "error";
     }
   }
@@ -585,20 +586,3 @@ if (document.modelContext?.registerTool) {
   };
   try { Promise.resolve(document.modelContext.registerTool(tool, { signal: lifecycle.signal })).catch(() => {}); } catch { /* Trình duyệt chưa hỗ trợ đầy đủ: giao diện vẫn hoạt động. */ }
 }
-
-// Mở lại nơi xem gần nhất; dữ liệu lưu hỏng hoặc trình duyệt chặn lưu thì dùng nơi mặc định.
-const LAST_KEY = "may.last.v1";
-function lastViewed() {
-  try { const place = JSON.parse(localStorage.getItem(LAST_KEY)); return place && validateLocation(place); } catch { return null; }
-}
-function rememberLocation(location) {
-  try { localStorage.setItem(LAST_KEY, JSON.stringify({ name: location.name, admin1: location.admin1, country: location.country, latitude: location.latitude, longitude: location.longitude })); } catch { /* Không lưu được thì lần sau mở nơi mặc định. */ }
-}
-
-document.addEventListener("DOMContentLoaded", async () => {
-  const shared = WeatherDataTools.sharedLocation(window.location.search);
-  const fallback = lastViewed() || DEFAULT_LOCATION;
-  // Link chia sẻ trỏ ra nước ngoài thì mở nơi thường dùng thay vì để trang trống.
-  if (shared && !(await loadWeather({ ...shared, vietnamOnly: true })) && state.lastError?.outside) void loadWeather(fallback);
-  else if (!shared) void loadWeather(fallback);
-}, { once: true });

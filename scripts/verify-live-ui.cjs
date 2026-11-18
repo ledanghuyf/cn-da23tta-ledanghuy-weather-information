@@ -39,7 +39,7 @@ const airBand = v => [[50, "Tốt"], [100, "Trung bình"], [150, "Kém với nh�
   const browser = await chromium.launch({ channel: "chrome" });
   const summary = []; let total = 0, bad = 0;
   for (const [name, lat, lon] of PLACES) {
-    const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, timezoneId: "Asia/Ho_Chi_Minh" });
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, timezoneId: "Asia/Ho_Chi_Minh", geolocation: { latitude: 10.2537, longitude: 105.9722 }, permissions: ["geolocation"] }); // trang bắt buộc có vị trí trước khi mở link
     const errors = []; page.on("pageerror", e => errors.push(e.message));
     let wx = null, air = null;
     page.on("response", async res => {

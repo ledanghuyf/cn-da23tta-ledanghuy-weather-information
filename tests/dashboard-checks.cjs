@@ -51,15 +51,6 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     delete d.hourly;await show(d);assert.equal(await page.locator('.hour-tile').count(),0);assert.match(await page.locator('#hourly-message').innerText(),/Chưa có/);assert.equal(await page.locator('#hourly-detail').isVisible(),false);assert.equal(await page.locator('#current-panel').isVisible(),true);
     await show(data());
   });
-  await test('51 Định vị: từ chối, thành công và kết quả trễ không ghi đè nơi chọn tay',async()=>{
-    await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:(_,fail)=>fail({code:1})}}));
-    await page.locator('#locate-button').click();assert.match(await page.locator('#locate-status').innerText(),/chưa cho phép/);assert.equal(await page.locator('#locate-button').isEnabled(),true);
-    await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>ok({coords:{latitude:10.253789,longitude:105.972218}})}}));
-    await page.locator('#locate-button').click();await page.waitForFunction(()=>document.getElementById('locate-status').textContent.includes('Đã tải thời tiết'));await ready();assert.equal(await page.locator('#place-name').innerText(),'Gần Vĩnh Long');assert.doesNotMatch(await page.locator('#place-region').innerText(),/\d/); // Nominatim bị chặn → tỉnh lỵ gần nhất, không hiện tọa độ
-    await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>{window.lateGeo=ok;}}}));
-    await page.locator('#locate-button').click();await pick(page,1);await ready();
-    await page.evaluate(()=>window.lateGeo({coords:{latitude:10,longitude:106}}));assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
-  });
   await test('52 Giao diện mới không tràn, điều hướng bàn phím và ảnh desktop/mobile',async()=>{
     await show(data());
     for(const width of [320,390,768,1024,1440]){

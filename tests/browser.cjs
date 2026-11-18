@@ -32,7 +32,12 @@ const server = http.createServer((req,res)=>{
   });
 });
 let browser, context, page, base;
-let forecast, geocoding, nominatim = r => r.abort(); // mặc định: Nominatim bị chặn (như một số mạng ở Việt Nam) → dùng Open-Meteo
+let forecast, geocoding, nominatim;
+// Nominatim mặc định: tìm kiếm bị chặn (như một số mạng ở Việt Nam) → dùng Open-Meteo; tra ngược vị trí trả về Vĩnh Long.
+const HERE = {latitude:10.2537,longitude:105.9722};
+const hereOSM = {lat:'10.2537',lon:'105.9722',name:'',address:{city:'Vĩnh Long',state:'Tỉnh Vĩnh Long',country_code:'vn'}};
+const defaultNominatim = r => new URL(r.request().url()).pathname==='/reverse' ? json(r,hereOSM) : r.abort();
+nominatim = defaultNominatim;
 const errors = [];
 const json = (route, value, status=200) => route.fulfill({status,contentType:'application/json',body:JSON.stringify(value)});
 async function ready(){await page.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');}
@@ -40,17 +45,11 @@ async function statusHas(text){await page.waitForFunction(t=>document.getElement
 async function openDrawer(p=page){
   if(!await p.locator('#location-drawer').evaluate(el=>el.open))await p.locator('#location-drawer>summary').click();
 }
-// "Địa điểm của bạn" là menu thả xuống (đóng khi bấm ra ngoài): mở ngay trước khi thao tác như người dùng thật.
-async function openSaved(p=page){
-  await openDrawer(p);
-  if(!await p.locator('.personal-section').evaluate(el=>el.open))await p.locator('.personal-section>summary').click();
-}
 async function reset(){
   forecast = route=>json(route,fixture);
   geocoding = route=>json(route,{results:locations});
   await context.setOffline(false);
-  // Mỗi lần reset là một lượt mở mới: bỏ nơi vừa xem đã nhớ để trang mở nơi mặc định.
-  await page.evaluate(()=>localStorage.removeItem('may.last.v1')).catch(()=>{});
+  nominatim = defaultNominatim;
   await page.goto(base);
   await ready();
   await openDrawer();
@@ -64,7 +63,7 @@ async function main(){
   await new Promise(r=>server.listen(0,'127.0.0.1',r));
   base = `http://127.0.0.1:${server.address().port}`;
   browser = await chromium.launch(process.env.BROWSER_PATH ? {executablePath:process.env.BROWSER_PATH,headless:true} : {channel:'chrome',headless:true});
-  context = await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'America/Los_Angeles'});
+  context = await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'America/Los_Angeles',geolocation:HERE,permissions:['geolocation']});
   await context.route('https://air-quality-api.open-meteo.com/**', r => r.abort());
   page = await context.newPage();
   page.on('pageerror',e=>errors.push(e.message));
@@ -88,10 +87,31 @@ async function main(){
     await ready();assert.equal(await page.evaluate(()=>document.activeElement.id),'place-name');
     assert.equal(await page.locator('.search-dropdown').isVisible(),false);
   });
-  await test('02b Mở lại nơi vừa xem khi tải lại trang; dữ liệu nhớ hỏng thì về mặc định',async()=>{
-    await page.reload();await ready();assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
-    await page.evaluate(()=>localStorage.setItem('may.last.v1','{hỏng'));await page.reload();await ready();
-    assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');
+  await test('G1 Mở trang tự định vị: thời tiết nơi đang đứng; không còn Gần tôi, Bản đồ, Đã lưu',async()=>{
+    let asked;forecast=r=>{asked=new URL(r.request().url());return json(r,fixture);};
+    await page.goto(base);await ready();
+    assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');assert.equal(await page.locator('#place-region').innerText(),'Tỉnh Vĩnh Long');
+    assert.equal(asked.searchParams.get('latitude'),String(HERE.latitude));assert.equal(asked.searchParams.get('longitude'),String(HERE.longitude));
+    assert.equal(await page.locator('#locate-button, #place-map, .personal-section, #save-location, .location-tools').count(),0);
+    assert.equal(await page.locator('#location-input').isEnabled(),true);
+    forecast=r=>json(r,fixture);await openDrawer();
+  });
+  await test('G2 Bấm ô tìm kiếm: gợi ý vị trí hiện tại + xã/phường lân cận (không trùng); gõ chữ thì ẩn; bấm gợi ý mở nơi đó',async()=>{
+    const names=['Xã Tân Hạnh','Phường Long Châu','Xã Tân Hạnh','Vĩnh Long','Xã Thanh Đức','Phường Phước Hậu'];let call=0,zooms=[];
+    nominatim=r=>{const u=new URL(r.request().url());if(u.pathname!=='/reverse')return r.abort();zooms.push(u.searchParams.get('zoom'));
+      if(u.searchParams.get('zoom')==='18')return json(r,hereOSM);
+      const n=names[call++%names.length];return json(r,{lat:u.searchParams.get('lat'),lon:u.searchParams.get('lon'),address:{county:n,state:'Tỉnh Vĩnh Long',country_code:'vn'}});};
+    await page.goto(base);await ready();await openDrawer();
+    await page.locator('#location-input').click();assert.equal(await page.locator('#nearby').isVisible(),true);
+    assert.match(await page.locator('#nearby-list .result-name').first().innerText(),/Vị trí hiện tại · Vĩnh Long/);
+    await page.waitForFunction(()=>document.getElementById('nearby-status').textContent==='',null,{timeout:15000});
+    assert.deepEqual((await page.locator('#nearby-list .result-name').allInnerTexts()).slice(1),['Xã Tân Hạnh','Phường Long Châu','Xã Thanh Đức','Phường Phước Hậu']);
+    assert.equal(zooms.filter(z=>z==='10').length,6,'6 điểm quanh vị trí');
+    await page.locator('#location-input').fill('Hu');assert.equal(await page.locator('#nearby').isVisible(),false);
+    await page.locator('#location-input').fill('');assert.equal(await page.locator('#nearby').isVisible(),true);
+    await page.locator('#nearby-list .result-button',{hasText:'Phường Long Châu'}).click();await ready();
+    assert.equal(await page.locator('#place-name').innerText(),'Phường Long Châu');
+    nominatim=defaultNominatim;
   });
   await test('03 Từ chối tên trống và một ký tự',async()=>{for(const value of ['',' ','a']){await search(value);assert.match(await page.locator('#search-status').innerText(),/2 đến 120/);assert.equal(await page.locator('#location-input').getAttribute('aria-invalid'),'true');}});
   await test('04 Không tìm thấy địa điểm',async()=>{geocoding=r=>json(r,{});await search('khongtontai');assert.match(await page.locator('#search-status').innerText(),/Không tìm thấy/);});
@@ -223,54 +243,18 @@ async function main(){
     assert.equal(await page.locator('.weather-icon').evaluate(el=>getComputedStyle(el).animationName),'none');
     assert.deepEqual(errors,[]);
   });
-  await test('25 Lưu yêu thích, chống trùng và tải lại trang',async()=>{
-    await reset();await page.evaluate(()=>localStorage.clear());await page.reload();await ready();await openDrawer();
-    await page.locator('#save-location').click();
-    assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
-    assert.equal(await page.locator('#save-location').getAttribute('aria-pressed'),'true');
-    // Thông báo "Đã lưu…" hiện ngay rồi tự tắt sau khoảng 2 giây.
-    const t0=Date.now();assert.match(await page.locator('#saved-status').innerText(),/Đã lưu Vĩnh Long/);
-    await page.waitForFunction(()=>document.getElementById('saved-status').textContent==='',null,{timeout:4000});
-    assert.ok(Date.now()-t0>=1500,'không tắt quá sớm');assert.equal(await page.locator('#saved-status').isVisible(),false);
-    await page.reload();await ready();await openDrawer();assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
-    const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('may.locations.v1')));
-    assert.equal(saved.favorites[0].name,'Vĩnh Long');assert.equal(saved.history.length,1);
-    assert.equal(JSON.stringify(saved).includes('temperature'),false);
-    await pick(page,1);await ready();
-    await openSaved();await page.locator('#favorite-list .personal-place').click();await ready();
-    assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');
-    await openSaved();await page.locator('#favorite-list .remove-place').click();assert.equal(await page.locator('#favorite-list .personal-place').count(),0);
-  });
-  await test('26 Lịch sử không trùng, không ghi lần tải lỗi, xóa độc lập yêu thích',async()=>{
-    await page.locator('#save-location').click();await openSaved();await page.locator('#clear-history').click();
-    assert.equal(await page.locator('#history-list .personal-place').count(),0);
-    assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
-    forecast=r=>json(r,{},500);await pick(page,2);await ready();
-    assert.equal(await page.locator('#history-list .personal-place').count(),0);
-    forecast=r=>json(r,fixture);await page.locator('#retry-button').click();await ready();
-    await page.locator('#refresh-button').click();await ready();
-    assert.equal(await page.locator('#history-list .personal-place').count(),1);
-  });
-  await test('33 Dữ liệu lưu hỏng, giới hạn danh sách và chống chèn HTML',async()=>{
-    await page.evaluate(()=>localStorage.setItem('may.locations.v1','{broken'));await reset();assert.equal(await page.locator('#favorite-list .personal-place').count(),0);
-    await page.evaluate(()=>localStorage.setItem('may.locations.v1',JSON.stringify({version:1,favorites:[null,{name:'x',latitude:999,longitude:0},{name:'<img src=x onerror=alert(1)>',country:'<b>VN</b>',latitude:1,longitude:2}],history:[]})));
-    await reset();await openSaved();assert.equal(await page.locator('#favorite-list img,#favorite-list b').count(),0);assert.match(await page.locator('#favorite-list').innerText(),/<img/);
-    await page.evaluate(()=>localStorage.setItem('may.locations.v1',JSON.stringify({version:1,favorites:Array.from({length:6},(_,i)=>({name:'Nơi '+i,latitude:i,longitude:i})),history:Array.from({length:20},(_,i)=>({name:'Nơi '+i,latitude:i,longitude:i}))})));
-    await reset();await page.locator('#save-location').click();assert.match(await page.locator('#saved-status').innerText(),/Đã đủ 6/);
-    assert.equal(await page.locator('#favorite-list .personal-place').count(),6);assert.equal(await page.locator('#history-list .personal-place').count(),8);
-  });
-  await test('34 Trình duyệt chặn lưu vẫn tra cứu được',async()=>{
+  // Chặn lưu trữ từ đây trở đi (các kiểm thử sau, vd. 37b, dựa vào trạng thái này).
+  await test('34 Trình duyệt chặn lưu trữ vẫn định vị, xem và tìm thời tiết được',async()=>{
     await page.evaluate(()=>localStorage.clear());
     await page.addInitScript(()=>{Storage.prototype.setItem=function(){throw new DOMException('Blocked','SecurityError');};});
-    await reset();await page.locator('#save-location').click();
-    assert.match(await page.locator('#saved-status').innerText(),/chỉ được giữ trong lần mở trang/);
-    assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
+    await reset();assert.equal(await page.locator('#weather-view').isVisible(),true);assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');
     await pick(page,1);await ready();assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
-    assert.deepEqual(errors,[]);
   });
   await require('./experience-checks.cjs')({page,test,baseFixture:fixture,setForecast:handler=>{forecast=handler;},json,ready,evidence});
   await require('./dashboard-checks.cjs')({page,test,baseFixture:fixture,setForecast:handler=>{forecast=handler;},json,ready,evidence});
-  await require('./location-checks.cjs')({page,test,baseFixture:fixture,setForecast:handler=>{forecast=handler;},json,ready,evidence});
+  // Mỗi tình huống định vị cần một lượt mở trang riêng (định vị chạy ngay khi mở): init giả lập navigator.geolocation, before đăng ký route riêng.
+  const open=async({init,arg,before,query=''}={})=>{const p=await context.newPage();p.on('pageerror',e=>errors.push(e.message));if(before)await before(p);if(init)await p.addInitScript(init,arg);await p.goto(base+'/'+query);return p;};
+  await require('./location-checks.cjs')({page,open,test,baseFixture:fixture,setForecast:handler=>{forecast=handler;},json,ready,evidence});
   await test('56 Logo, ảnh minh họa, biểu tượng SVG cục bộ và bố cục máy tính/điện thoại ở 320–1440 px',async()=>{
     await reset();
     for(const width of [320,360,390,430,768,1024,1440]){
@@ -332,7 +316,7 @@ async function main(){
   await test('41 Không có lỗi JavaScript sau toàn bộ tính năng mới',async()=>assert.deepEqual(errors,[]));
   await context.close();
   // API thật: tách riêng để không nhầm kết quả mô phỏng với kết nối Internet.
-  const live = await browser.newContext({viewport:{width:1440,height:1050}});
+  const live = await browser.newContext({viewport:{width:1440,height:1050},geolocation:HERE,permissions:['geolocation']});
   const livePage = await live.newPage();
   const liveResponses = [];
   livePage.on('response',async r=>{if(/open-meteo.com\/v1\//.test(r.url())){try{liveResponses.push({url:r.url(),status:r.status(),data:await r.json()});}catch{}}});
@@ -357,18 +341,6 @@ async function main(){
     const name=await livePage.locator('.result-name').first().innerText();await livePage.locator('.result-button').first().click();
     await livePage.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');
     assert.equal(await livePage.locator('#place-name').innerText(),name);assert.equal(await livePage.locator('#weather-status').getAttribute('data-kind'),'success');
-  });
-  await test('35 API thật: lưu yêu thích, tải lại mở đúng nơi vừa xem, mở lại từ yêu thích',async()=>{
-    const liveReady=()=>livePage.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='false');
-    await livePage.locator('#save-location').click();assert.equal(await livePage.locator('#save-location').getAttribute('aria-pressed'),'true');
-    await livePage.screenshot({path:path.join(evidence,'toan-trang-moi.png'),fullPage:true});
-    await livePage.reload();await liveReady();assert.match(await livePage.locator('#place-name').innerText(),/Hu[eế]/i);
-    await openDrawer(livePage);await pick(livePage,1);await liveReady();
-    assert.equal(await livePage.locator('#place-name').innerText(),'Hà Nội');
-    await openSaved(livePage);
-    assert.equal(await livePage.locator('#favorite-list .personal-place').count(),1);
-    await livePage.locator('#favorite-list .personal-place').click();await liveReady();
-    assert.match(await livePage.locator('#place-name').innerText(),/Hu[eế]/i);
   });
   await test('42 API thật có hourly/UV; chủ đề khớp mã; thẻ trang phục khớp số liệu trả về',async()=>{
     const response=[...liveResponses].reverse().find(r=>new URL(r.url).searchParams.has('hourly'));

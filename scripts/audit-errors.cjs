@@ -10,7 +10,7 @@ const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); c
 (async () => {
   await new Promise(r => server.listen(0, '127.0.0.1', r)); const base = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch({ channel: 'chrome' });
-  const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 } }); const page = await ctx.newPage();
+  const ctx = await browser.newContext({ viewport: { width: 1366, height: 900 }, geolocation: { latitude: 10.2537, longitude: 105.9722 }, permissions: ['geolocation'] }); const page = await ctx.newPage();
   const jsErrors = []; page.on('pageerror', e => jsErrors.push(e.message));
   // Bộ chặn có thể đổi theo từng tình huống: null = để đi dữ liệu thật.
   const fault = { geo: null, wx: null, air: null };

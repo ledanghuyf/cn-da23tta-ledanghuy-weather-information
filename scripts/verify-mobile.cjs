@@ -7,7 +7,7 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
 (async()=>{
  await new Promise(r=>server.listen(0,'127.0.0.1',r));let browser;const responses=[],errors=[];
  try{
-  browser=await chromium.launch({channel:'chrome',headless:true});const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1,timezoneId:'Asia/Ho_Chi_Minh'});
+  browser=await chromium.launch({channel:'chrome',headless:true});const context=await browser.newContext({geolocation:{latitude:10.2537,longitude:105.9722},permissions:['geolocation'],viewport:{width:390,height:844},isMobile:true,hasTouch:true,deviceScaleFactor:1,timezoneId:'Asia/Ho_Chi_Minh'});
   const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));
   page.on('response',async r=>{if(/https:\/\/(api|air-quality-api)\.open-meteo.com\//.test(r.url())&&r.ok())try{responses.push({url:r.url(),receivedAt:new Date().toISOString(),data:await r.json()})}catch{}});
   const weatherResponse=page.waitForResponse(r=>r.url().includes('api.open-meteo.com/v1/forecast')&&r.ok(),{timeout:30000});
@@ -16,7 +16,6 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
   await page.waitForFunction(()=>/^-?\d/.test(document.querySelector('#temperature').textContent.trim())&&document.querySelector('#weather-content').getAttribute('aria-busy')==='false',{},{timeout:30000});
   assert.equal(await page.locator('#temperature').innerText(),String(Math.round(weather.data.current.temperature_2m)));
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
-  assert.equal(await page.locator('.personal-section').evaluate(el=>el.open),false);
   assert.equal(await page.locator('#location-drawer').evaluate(el=>el.open),false);
   assert.ok((await page.locator('#current-panel').boundingBox()).y<600,'Thông tin thời tiết xuất hiện ngay trên màn hình đầu');
   await page.screenshot({path:path.join(out,'mobile-top-api-that.png')});
@@ -35,11 +34,6 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
   assert.equal(await page.locator('#weather-age').isVisible(),true);assert.match(await page.locator('#weather-age').innerText(),/120 phút/);
   await page.evaluate(()=>{Date.now=window.originalNow;delete window.originalNow;window.dispatchEvent(new Event('focus'))});
   await page.locator('#location-drawer>summary').click();assert.equal(await page.locator('#location-input').isVisible(),true);
-  const locationButtons = await page.locator('#locate-button, #place-map').evaluateAll(buttons => buttons.map(button => {
-    const css = getComputedStyle(button);
-    return [css.color, css.backgroundColor, css.borderColor];
-  }));
-  assert.deepEqual(locationButtons[0],locationButtons[1]);
   await page.locator('#location-input').focus();await page.keyboard.press('Escape');assert.equal(await page.locator('#location-drawer').evaluate(el=>el.open),false);
 
   await page.locator('#current-panel').evaluate(el=>el.scrollIntoView({block:'start'}));await page.screenshot({path:path.join(out,'mobile-current-api-that.png')});

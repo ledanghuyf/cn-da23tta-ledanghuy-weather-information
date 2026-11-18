@@ -249,7 +249,6 @@ globalThis.MayDashboardData = (() => {
     renderHighlights(); renderHours(); renderDetails(); wireDayCards();
   }
   function onLoading() {
-    window.MayLocation?.cancel("Đã chuyển sang địa điểm bạn chọn.");
     $("hourly-section").hidden = true; $("details-section").hidden = true;
   }
   document.querySelectorAll("[data-hour-mode]").forEach(button => button.addEventListener("click", () => {

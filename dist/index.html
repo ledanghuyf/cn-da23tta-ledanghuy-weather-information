@@ -14,12 +14,10 @@
   <script src="js/recommendations.js?v=3.0.0" defer></script>
   <script src="js/vietnam-border.js?v=3.0.0" defer></script>
   <script src="js/app.js?v=3.0.0" defer></script>
-  <script src="js/features.js?v=3.0.0" defer></script>
   <script src="js/daily-view.js?v=3.0.0" defer></script>
   <script src="js/dashboard.js?v=3.0.0" defer></script>
   <script src="js/location.js?v=3.0.0" defer></script>
   <script src="js/live-data.js?v=3.0.0" defer></script>
-  <script src="js/my-map.js?v=3.0.0" defer></script>
   <script src="js/clean-layout.js?v=3.0.0" defer></script>
   <script src="js/usability.js?v=3.0.0" defer></script>
 </head>
@@ -65,7 +63,7 @@
     <aside class="sidebar" aria-labelledby="search-title">
       <a class="brand" href="./" aria-label="Thời tiết, trang chính"><img class="brand-logo" src="assets/favicon.svg?v=3.0.0" width="32" height="32" alt=""><span>Thời tiết</span></a>
       <details id="location-drawer" class="location-drawer">
-        <summary><span class="drawer-label">Chọn địa điểm<span class="drawer-hint">Tìm kiếm, định vị và các nơi đã lưu</span></span><span class="drawer-chevron" aria-hidden="true"></span></summary>
+        <summary><span class="drawer-label">Chọn địa điểm<span class="drawer-hint">Tìm địa điểm hoặc chọn nơi gần bạn</span></span><span class="drawer-chevron" aria-hidden="true"></span></summary>
         <div class="drawer-body">
         <div class="search-panel">
           <h2 id="search-title" class="panel-title">Tìm địa điểm</h2>
@@ -75,39 +73,15 @@
             <p id="search-help" class="field-help">Chỉ tìm địa điểm ở Việt Nam. Chọn đúng tỉnh, thành trong kết quả.</p>
           </form>
           <div class="bar-dropdown search-dropdown">
+            <section id="nearby" class="nearby" aria-labelledby="nearby-title" hidden>
+              <h3 id="nearby-title" class="nearby-title"><svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-locate"/></svg>Gần bạn</h3>
+              <div id="nearby-list" class="search-results"></div>
+              <p id="nearby-status" class="search-status" role="status" aria-live="polite"></p>
+            </section>
             <p id="search-status" class="search-status" role="status" aria-live="polite"></p>
             <div id="search-results" class="search-results" aria-label="Kết quả tìm địa điểm"></div>
           </div>
         </div>
-        <div class="location-tools" role="group" aria-labelledby="location-tools-label">
-          <p id="location-tools-label" class="eyebrow">Vị trí của tôi</p>
-          <div class="location-tool-buttons">
-            <button id="locate-button" class="locate-button" type="button" title="Xem thời tiết tại vị trí hiện tại của bạn"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-locate"/></svg><span id="locate-label">Gần tôi</span></button>
-            <div class="map-panel"><button id="place-map" class="locate-button" type="button" aria-label="Xem vị trí tổng quát gần tôi trên bản đồ" title="Xem vị trí tổng quát gần tôi trên bản đồ"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-map"/></svg><span>Bản đồ</span></button></div>
-          </div>
-          <div class="bar-dropdown locate-dropdown">
-          <div id="my-map-result" class="share-result" hidden><p id="my-map-status" role="status"></p><div id="my-map-overview" class="map-overview" hidden></div><button id="map-cancel" class="locate-secondary" type="button" hidden>Hủy</button><a id="my-map-link" target="_blank" rel="noopener noreferrer" hidden>Mở Google Maps (vùng tổng quát) <span aria-hidden="true">↗</span></a></div>
-          <p id="locate-status" class="search-status" role="status" aria-live="polite"></p>
-          <button id="locate-cancel" class="locate-secondary" type="button" hidden>Hủy định vị</button>
-          <details id="locate-help" class="locate-help" hidden>
-            <summary>Cách xử lý định vị</summary>
-            <ol><li>Nếu địa chỉ bắt đầu bằng <strong>http://192.168…</strong>, hãy mở bản website có địa chỉ <strong>HTTPS</strong>. Trình duyệt điện thoại chặn GPS trên địa chỉ HTTP trong mạng Wi-Fi.</li><li>Trên website HTTPS, mở trực tiếp trang trong trình duyệt bạn muốn dùng và cho phép <strong>Vị trí</strong> khi được hỏi.</li><li>Nếu đã dùng HTTPS mà vẫn không định vị được, kiểm tra quyền Vị trí của trang và dịch vụ vị trí của điện thoại.</li></ol>
-            <label for="locate-url" class="field-label">Địa chỉ trang</label><input id="locate-url" type="text" readonly spellcheck="false">
-            <button id="locate-copy" class="locate-secondary" type="button">Sao chép địa chỉ</button><p id="locate-copy-status" role="status" aria-live="polite"></p>
-            <button id="locate-search" class="locate-secondary" type="button">Tìm địa điểm bằng tên</button>
-            <p>Tra cứu thời tiết theo tên địa điểm vẫn hoạt động. Định vị GPS trên điện thoại cần website HTTPS; localhost chỉ có hiệu lực trên chính thiết bị đang chạy máy chủ.</p>
-          </details>
-          </div>
-        </div>
-        <details class="personal-section">
-          <summary><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-star"/></svg><span>Đã lưu</span></summary>
-          <div class="bar-dropdown personal-dropdown">
-            <p class="personal-caption">Yêu thích <span>tối đa 6 nơi</span></p>
-            <div id="favorite-list" class="personal-list"></div>
-            <div class="history-heading"><p class="personal-caption">Vừa tra cứu</p><button id="clear-history" class="text-button" type="button">Xóa lịch sử</button></div>
-            <div id="history-list" class="personal-list"></div>
-          </div>
-        </details>
         </div>
       </details>
     </aside>
@@ -129,14 +103,14 @@
         <p id="saved-status" class="notice" role="status" aria-live="polite"></p>
         <p id="weather-age" class="notice notice-warn" role="status" hidden></p>
         <p id="connection-status" class="weather-status" data-kind="error" role="status" hidden>Thiết bị đang ngoại tuyến. Hãy kết nối Internet rồi bấm Cập nhật hoặc Thử tải lại. Dữ liệu đã hiển thị có thể cũ.</p>
-        <div id="weather-status" class="weather-status" role="status" aria-live="polite">Đang tải thời tiết Vĩnh Long…</div>
+        <div id="weather-status" class="weather-status" role="status" aria-live="polite">Đang xác định vị trí của bạn…</div>
         <button id="retry-button" class="glass-button retry-button" type="button" hidden>Thử tải lại <span aria-hidden="true">↻</span></button>
 
         <div id="weather-view" class="bento" hidden>
           <div class="bento-main">
           <div class="hero-card">
           <!-- Nút phụ thu gọn thành biểu tượng ở góc phải khối chính; chữ vẫn có cho trình đọc màn hình, rê chuột hiện gợi ý. -->
-          <div class="overview-actions" role="group" aria-label="Thao tác với địa điểm"><button id="save-location" class="icon-button" type="button" aria-pressed="false" title="Lưu yêu thích" disabled><span class="action-icon" aria-hidden="true">☆</span><span class="action-label">Lưu yêu thích</span></button><button id="refresh-button" class="icon-button" type="button" title="Cập nhật dữ liệu mới nhất" disabled><svg class="icon" width="18" height="18" aria-hidden="true"><use href="#i-refresh"/></svg><span class="action-label">Cập nhật</span></button><button id="motion-toggle" class="icon-button motion-toggle" type="button" aria-pressed="true" title="Bật/tắt hiệu ứng động (mưa rơi, nắng, mây trôi)"><svg class="icon" width="18" height="18" aria-hidden="true"><use href="#i-motion"/></svg><span class="action-label">Hiệu ứng</span></button></div>
+          <div class="overview-actions" role="group" aria-label="Thao tác với địa điểm"><button id="refresh-button" class="icon-button" type="button" title="Cập nhật dữ liệu mới nhất" disabled><svg class="icon" width="18" height="18" aria-hidden="true"><use href="#i-refresh"/></svg><span class="action-label">Cập nhật</span></button><button id="motion-toggle" class="icon-button motion-toggle" type="button" aria-pressed="true" title="Bật/tắt hiệu ứng động (mưa rơi, nắng, mây trôi)"><svg class="icon" width="18" height="18" aria-hidden="true"><use href="#i-motion"/></svg><span class="action-label">Hiệu ứng</span></button></div>
           <section id="current-panel" class="current-panel" data-scene="day" aria-labelledby="current-title">
             <div class="current-topline"><h3 id="current-title">Thời tiết hiện tại</h3><span id="day-label" class="day-label"></span></div>
             <div class="current-main">
@@ -223,7 +197,7 @@
 
         </div>
 
-        <div id="empty-view" class="empty-view"><svg class="empty-weather" viewBox="0 0 160 160" width="140" height="140" aria-hidden="true"><use href="#partly-cloudy"/></svg><h3 id="empty-title">Đang tải thời tiết</h3><p id="empty-message">Thông tin thời tiết sẽ xuất hiện ở đây.</p></div>
+        <div id="empty-view" class="empty-view"><svg class="empty-weather" viewBox="0 0 160 160" width="140" height="140" aria-hidden="true"><use href="#partly-cloudy"/></svg><h3 id="empty-title">Đang xác định vị trí của bạn</h3><p id="empty-message">Hãy cho phép truy cập Vị trí khi trình duyệt hỏi. Ứng dụng cần vị trí để hiện thời tiết nơi bạn đang ở.</p><button id="locate-retry" class="glass-button" type="button" hidden>Thử lại</button></div>
       </section>
 
       <footer class="site-footer"><span class="footer-brand"><img class="footer-logo" src="assets/favicon.svg?v=3.0.0" width="24" height="24" alt=""><b>Thời tiết</b></span><span>Lê Đăng Huy · Dữ liệu: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap</a> · <a href="https://www.geonames.org/" target="_blank" rel="noopener noreferrer">GeoNames</a> · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></span></footer>

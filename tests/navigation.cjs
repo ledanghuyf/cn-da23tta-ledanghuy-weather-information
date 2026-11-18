@@ -7,7 +7,7 @@ const server=http.createServer((req,res)=>{const p=new URL(req.url,'http://local
  try{
   browser=await chromium.launch({channel:'chrome',headless:true});
   for(const width of [390,630,1440]){
-   const page=await browser.newPage({viewport:{width,height:width===1440?900:668},reducedMotion:'reduce'});page.on('pageerror',e=>errors.push(e.message));
+   const page=await browser.newPage({viewport:{width,height:width===1440?900:668},reducedMotion:'reduce',geolocation:{latitude:10.2537,longitude:105.9722},permissions:['geolocation']});page.on('pageerror',e=>errors.push(e.message));
    await page.goto(`http://127.0.0.1:${server.address().port}/#conditions-group`);
    await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');
    assert.equal(await page.locator('#weather-status').getAttribute('data-kind'),'success');
@@ -34,7 +34,7 @@ const server=http.createServer((req,res)=>{const p=new URL(req.url,'http://local
     assert.equal(await page.locator('#location-drawer').evaluate(el=>el.open),false);
     await page.screenshot({path:path.join(out,`drawer-closed-${width}.png`)});
     await page.locator('#location-drawer>summary').click();
-    assert.equal(await page.locator('#location-input').isVisible(),true);assert.equal(await page.locator('#place-map').isVisible(),true);assert.equal(await page.locator('.quick-button').count(),0);
+    assert.equal(await page.locator('#location-input').isVisible(),true);assert.equal(await page.locator('#place-map, #locate-button, .personal-section').count(),0);assert.equal(await page.locator('.quick-button').count(),0);
     await page.screenshot({path:path.join(out,`drawer-open-${width}.png`)});
     await page.locator('#location-input').focus();await page.keyboard.press('Escape');assert.equal(await page.locator('#location-drawer').evaluate(el=>el.open),false);
     checks.push(`Drawer opens and closes ${width}`);

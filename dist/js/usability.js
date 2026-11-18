@@ -8,15 +8,13 @@
   drawer.addEventListener('keydown', event => {
     if (event.key === 'Escape' && small.matches) { drawer.open = false; drawer.querySelector('summary').focus(); }
   });
-  // Máy tính: kết quả tìm và "Địa điểm của bạn" là bảng thả xuống trên thanh trên cùng.
+  // Máy tính: kết quả tìm và gợi ý "Gần bạn" là bảng thả xuống dưới ô tìm kiếm.
   // Đóng khi bấm/chuyển focus ra ngoài hoặc Esc để không che nội dung. Không dựa vào :focus-within
   // vì danh sách được vẽ lại sẽ tạm mất focus và ẩn bảng trước khi JS kịp trả focus.
-  const saved = document.querySelector('.personal-section');
-  const panels = [document.querySelector('.search-panel'), document.querySelector('.location-tools')];
+  const panels = [document.querySelector('.search-panel')];
   const closeOutside = target => {
     if (small.matches) return;
     for (const panel of panels) if (!panel.contains(target)) panel.dataset.dismissed = '';
-    if (saved.open && !saved.contains(target)) saved.open = false;
   };
   document.addEventListener('pointerdown', event => closeOutside(event.target));
   document.addEventListener('focusin', event => closeOutside(event.target));
@@ -24,21 +22,18 @@
     panel.addEventListener('focusin', () => delete panel.dataset.dismissed);
     panel.addEventListener('keydown', event => { if (event.key === 'Escape' && !small.matches) panel.dataset.dismissed = ''; });
   }
-  saved.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && saved.open && !small.matches) { event.stopPropagation(); saved.open = false; saved.querySelector('summary').focus(); }
-  });
-  // Chọn một nơi xong (kết quả tìm, nơi phổ biến, nơi đã lưu): khi thời tiết tải xong thì đóng bảng thả xuống,
+  // Chọn một nơi xong (kết quả tìm hoặc gợi ý gần bạn): khi thời tiết tải xong thì đóng bảng thả xuống,
   // cuộn lên đầu để thấy nơi mới và đưa focus tới tên nơi (trình đọc màn hình đọc ngay). Lỗi tải thì giữ nguyên để thử lại.
   let picked = false;
   document.addEventListener('click', event => {
-    if (event.target.closest('.result-button, .personal-place')) picked = true;
+    if (event.target.closest('.result-button')) picked = true;
   });
   new MutationObserver(() => {
     const content = document.getElementById('weather-content');
     if (!picked || content.getAttribute('aria-busy') !== 'false') return;
     picked = false;
     if (document.getElementById('weather-status').dataset.kind !== 'success') return;
-    panels[0].dataset.dismissed = ''; saved.open = false;
+    panels[0].dataset.dismissed = '';
     if (small.matches) drawer.open = false;
     window.scrollTo({ top: 0, behavior: 'instant' });
     document.getElementById('place-name').focus({ preventScroll: true });

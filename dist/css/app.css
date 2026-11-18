@@ -155,8 +155,9 @@ body[data-weather="partly"]:not([data-phase="night"]) .weather-art::before { opa
 
 /* ---------- Khung trang ---------- */
 /* Một cột: thanh địa điểm ở trên cùng, nội dung bên dưới. */
-.app-shell { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 100vh; }
-.sidebar { color: var(--on-sky); background: rgba(5, 16, 32, .55); border-bottom: 1px solid rgba(255, 255, 255, .12); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.app-shell { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; min-height: 100vh; } /* trang ngắn (chưa có thời tiết) không kéo giãn header */
+.main-content:has(#weather-view[hidden]) .control-bar { display: none; } /* chưa có thời tiết thì chưa cần chọn ngày, chuyển mục */
+.sidebar { color: var(--on-sky); background: rgba(255, 255, 255, .08); border-bottom: 1px solid rgba(255, 255, 255, .14); -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2); } /* bán trong suốt: thấy bầu trời phía sau */
 .main-content { width: 100%; max-width: 1080px; min-width: 0; margin: 0 auto; padding: 26px 34px 32px; color: var(--on-sky); }
 
 /* ---------- Thanh địa điểm (kiểu xếp dọc dùng cho ngăn kéo điện thoại; máy tính xem khối @media bên dưới) ---------- */
@@ -178,70 +179,35 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .search-status[data-kind="error"], .search-status[data-error]:not([data-error=""]) { color: #ffd0c2; }
 .search-results { display: grid; gap: 6px; margin-top: 10px; }
 .search-results:empty { display: none; }
-.result-button, .personal-place { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid rgba(255, 255, 255, .18); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); text-align: left; }
-.result-button:hover, .personal-place:hover { background: rgba(255, 255, 255, .16); }
+.nearby-title { display: flex; align-items: center; gap: 6px; margin: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: rgba(255, 255, 255, .75); }
+.nearby:not([hidden]) ~ .search-status:not(:empty), .nearby:not([hidden]) ~ .search-results:not(:empty) { margin-top: 12px; }
+#empty-view .glass-button { margin-top: 8px; }
+.result-button { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid rgba(255, 255, 255, .18); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); text-align: left; }
+.result-button:hover { background: rgba(255, 255, 255, .16); }
 .result-button[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 160, 75, .2); }
 .result-name { font-weight: 600; }
-.result-region, .personal-place small { font-size: 12px; color: rgba(255, 255, 255, .85); }
-.eyebrow { margin: 22px 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: rgba(255, 255, 255, .9); }
-.location-tool-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.locate-button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 56px; padding: 8px 6px; border: 1px solid rgba(255, 255, 255, .2); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); font-size: 13px; text-align: center; }
-.locate-button:hover:not(:disabled) { background: rgba(255, 255, 255, .16); }
-.locate-button:disabled { opacity: .7; }
-.share-result { margin-top: 10px; padding: 10px 12px; border: 1px solid rgba(255, 255, 255, .2); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); font-size: 13px; }
-.share-result a { display: inline-block; margin-top: 6px; }
-.locate-secondary, .text-button { min-height: 36px; padding: 6px 10px; border: 1px solid currentColor; border-radius: 8px; background: transparent; font-size: 13px; }
-.sidebar .locate-secondary { margin-top: 8px; }
-.locate-help { margin-top: 10px; padding: 10px 12px; border-radius: var(--radius-sm); background: rgba(255, 255, 255, .1); font-size: 13px; }
-.locate-help summary { cursor: pointer; font-weight: 600; }
-.locate-help ol { padding-left: 18px; margin: 8px 0; }
-.locate-help input { margin-bottom: 6px; }
-.locate-help p { margin-top: 8px; }
-.personal-section { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .16); }
-.personal-section > summary { cursor: pointer; font-weight: 650; }
-.personal-caption { display: flex; justify-content: space-between; margin: 12px 0 6px; font-size: 13px; color: rgba(255, 255, 255, .9); }
-.personal-caption span { font-size: 12px; }
-.personal-list { display: grid; gap: 6px; }
-.personal-row { display: flex; gap: 6px; }
-.personal-row .personal-place { flex: 1; min-width: 0; }
-.remove-place { width: 44px; flex: none; border: 1px solid rgba(255, 255, 255, .2); border-radius: var(--radius-sm); background: transparent; font-size: 18px; }
-.personal-empty { font-size: 12px; color: rgba(255, 255, 255, .85); }
-.history-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.history-heading .text-button { margin-top: 6px; border: 0; text-decoration: underline; padding: 6px 2px; color: #ffd9a8; }
-.history-heading .text-button:disabled { opacity: .5; text-decoration: none; }
+.result-name, .result-region { max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: left; }
+.result-region { font-size: 12px; color: rgba(255, 255, 255, .85); }
 .search-row { display: flex; gap: 6px; }
 .search-row .input-wrap { flex: 1; min-width: 0; }
 .search-row .search-button { width: auto; margin-top: 0; gap: 6px; }
-.personal-section > summary { display: flex; align-items: center; gap: 8px; }
-.personal-section > summary .icon { width: 16px; height: 16px; }
 
 /* ---------- Máy tính: thanh ngang dính trên cùng, các bảng phụ thả xuống ---------- */
 @media (min-width: 761px) {
   .sidebar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 18px; padding: 10px max(24px, calc((100% - 1440px) / 2 + 34px)); }
   .location-drawer { flex: 1; min-width: 0; }
   .drawer-body { display: flex; align-items: center; gap: 10px; min-width: 0; }
-  .panel-title, .search-form .field-label, .field-help, .location-tools .eyebrow { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .panel-title, .search-form .field-label, .field-help { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
   .search-panel { position: relative; flex: 0 1 340px; min-width: 220px; }
-  .location-tools { position: relative; flex: none; }
-  .location-tool-buttons { display: flex; gap: 6px; }
-  .locate-button { flex-direction: row; gap: 6px; width: auto; min-height: 44px; padding: 8px 12px; white-space: nowrap; }
-  .personal-section { position: relative; flex: none; margin: 0; padding: 0; border: 0; }
-  .personal-section > summary { min-height: 44px; padding: 8px 14px; list-style: none; white-space: nowrap; border: 1px solid rgba(255, 255, 255, .25); border-radius: 999px; background: rgba(6, 18, 36, .4); }
-  .personal-section > summary::-webkit-details-marker { display: none; }
-  .personal-section[open] > summary { border-color: var(--accent); }
   /* Bảng thả xuống: kết quả tìm, thông báo định vị, địa điểm đã lưu */
   .bar-dropdown { position: absolute; top: calc(100% + 10px); left: 0; z-index: 30; width: min(380px, calc(100vw - 32px)); max-height: min(70vh, 520px); overflow-y: auto; padding: 12px; border: 1px solid rgba(255, 255, 255, .14); border-radius: var(--radius); background: rgba(8, 20, 38, .97); box-shadow: 0 18px 40px rgba(0, 0, 0, .35); }
   .bar-dropdown > :first-child, .bar-dropdown .search-results { margin-top: 0; }
-  .search-dropdown:not(:has(> :not(:empty))), .search-panel[data-dismissed] .search-dropdown, .location-tools[data-dismissed] .locate-dropdown { display: none; }
+  .search-dropdown:not(:has(> :not(:empty):not([hidden]))), .search-panel[data-dismissed] .search-dropdown { display: none; } /* khung "Gần bạn" ẩn thì không tính */
   .search-dropdown .search-status:not(:empty) + .search-results:not(:empty) { margin-top: 10px; }
-  .locate-dropdown:not(:has(> :not([hidden]):not(:empty))) { display: none; }
-  .locate-dropdown { left: auto; right: 0; }
-  .personal-dropdown { left: auto; right: 0; width: 330px; }
-  .personal-dropdown > .personal-caption:first-child { margin-top: 0; }
 }
 @media (min-width: 761px) and (max-width: 1180px) {
   /* Thanh hẹp: nút chỉ còn biểu tượng, chữ vẫn là tên đọc cho trình đọc màn hình. */
-  .locate-button > span, .personal-section > summary > span, .search-button > span { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .search-button > span { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
   .brand > span { display: none; }
   .sidebar { gap: 10px; }
 }
@@ -512,7 +478,6 @@ dd { font-size: 15px; font-weight: 650; }
   .location-drawer > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 64px; padding: 10px 14px 10px 56px; list-style: none; cursor: pointer; border: 1px solid rgba(255, 255, 255, .25); border-radius: var(--radius); background: rgba(255, 255, 255, .1); }
   .search-row { gap: 8px; }
   .search-row .search-button { flex-shrink: 0; }
-  .location-tool-buttons { grid-template-columns: 1fr 1fr; gap: 12px; }
   .location-drawer > summary::-webkit-details-marker { display: none; }
   .drawer-label { display: flex; flex-direction: column; font-weight: 650; }
   .drawer-hint { font-size: 12px; font-weight: 400; }
@@ -565,7 +530,6 @@ dd { font-size: 15px; font-weight: 650; }
   .sidebar { padding: 10px max(16px, calc((100% - 1100px) / 2 + 16px)); }
   /* Một hàng: tìm kiếm bên trái; Gần tôi, Bản đồ, Đã lưu bên phải. */
   .drawer-body { flex-wrap: wrap; row-gap: 8px; }
-  .location-tools { margin-left: auto; } /* Gần tôi · Bản đồ · Đã lưu gom thành một cụm bên phải */
   html { scroll-padding-top: 124px; }
   .weather-content, .weather-group { scroll-margin-top: 124px; }
   .control-bar { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 12px; width: fit-content; max-width: 100%; margin: 0 auto 16px; padding: 8px;
