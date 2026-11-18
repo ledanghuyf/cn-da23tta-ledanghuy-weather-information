@@ -246,13 +246,15 @@ async function searchLocations(rawQuery) {
 
 // Nominatim (OSM) tìm được đến xã/phường, có dấu hoặc không dấu. Lỗi, bị chặn hay không có kết quả → Open-Meteo như trước.
 async function findPlaces(query, signal) {
+  const started = Date.now();
   try {
     const places = await searchNominatim(query, signal);
     if (places.length) return places;
   } catch (error) {
     if (signal.aborted) throw error;
   }
-  return searchOpenMeteo(query, signal);
+  // Tổng thời gian chờ vẫn khoảng 15 giây kể cả khi Nominatim chậm rồi mới chuyển nguồn.
+  return searchOpenMeteo(query, signal, Math.max(5000, 15000 - (Date.now() - started)));
 }
 
 let lastNominatim = 0;
@@ -282,8 +284,8 @@ async function nameCoordinates(latitude, longitude) {
   return MayVietnam.nearest(latitude, longitude);
 }
 
-async function searchOpenMeteo(query, signal) {
-  const data = await fetchJSON(geocodingURL(query), signal);
+async function searchOpenMeteo(query, signal, timeout) {
+  const data = await fetchJSON(geocodingURL(query), signal, { timeout });
   if (data.results !== undefined && !Array.isArray(data.results)) {
     throw new Error("Danh sách địa điểm trả về không hợp lệ. Vui lòng thử lại.");
   }

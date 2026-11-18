@@ -25,6 +25,7 @@ const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); c
     if (typeof f === 'number') return route.fulfill({ status: f, contentType: 'application/json', body: '{"error":true}' });
   };
   await page.route(/geocoding-api\.open-meteo\.com/, apply('geo'));
+  await page.route(/nominatim\.openstreetmap\.org/, apply('geo')); // tìm kiếm dùng Nominatim rồi mới tới Open-Meteo: lỗi áp cho cả hai
   await page.route(/api\.open-meteo\.com\/v1\/forecast/, apply('wx'));
   await page.route(/air-quality-api\.open-meteo\.com/, apply('air'));
   const idle = () => page.waitForFunction(() => document.querySelector('#weather-content').getAttribute('aria-busy') === 'false', null, { timeout: 40000 });
