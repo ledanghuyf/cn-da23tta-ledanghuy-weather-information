@@ -667,14 +667,14 @@ dd { font-size: 15px; font-weight: 650; }
 body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời tiết hiện tại, không áp cho ngày khác */
 .outfit-title { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 13px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--ink-soft); }
 .outfit-title .icon { width: 18px; height: 18px; color: var(--level); }
-/* Mức nhiệt (theo nhiệt độ cảm nhận) quyết định màu của cả khung — lạnh xanh dương, mát xanh lá, nóng đỏ cam:
+/* Mức nhiệt (ngưỡng khí tượng Việt Nam) quyết định màu của cả khung — lạnh xanh dương, bình thường xanh lá, nóng đỏ:
    viền trái, ánh màu loang từ góc, vòng sáng quanh biểu tượng, chấm trên thang. (Trình duyệt cũ không có color-mix vẫn có nền kính mặc định.) */
 .outfit-card.glass-card { --level: #ffb347; position: relative; overflow: hidden; border-left: 4px solid var(--level); box-shadow: 0 12px 32px rgba(0, 0, 0, .2), inset 0 1px 0 rgba(255, 255, 255, .08); }
 .outfit-card.glass-card { border-color: color-mix(in srgb, var(--level) 40%, transparent); border-left-color: var(--level);
   background: radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--level) 24%, transparent), transparent 58%), rgba(10, 24, 48, .34); }
 .outfit-card[data-level="cold"] { --level: #5aaeff; }
-.outfit-card[data-level="cool"] { --level: #5fd38d; }
-.outfit-card[data-level="hot"] { --level: #ff7a59; }
+.outfit-card[data-level="normal"] { --level: #5fd38d; }
+.outfit-card[data-level="hot"] { --level: #ff5a4f; }
 /* Đầu khung: biểu tượng nhiệt kế phát sáng + mức nhiệt (to) + thang cảm nhận */
 .outfit-head { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px 14px; margin-bottom: 14px; }
 .outfit-badge { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; color: var(--level); background: rgba(255, 255, 255, .1);
@@ -685,13 +685,13 @@ body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời 
 .outfit-summary span { font-size: 14px; color: rgba(255, 255, 255, .82); }
 .outfit-scale { grid-column: 1 / -1; }
 .outfit-track { position: relative; display: block; height: 6px; border-radius: 99px;
-  /* Thang 14–38°C, ranh giới đúng ngưỡng phân loại: 20° (25%), 26,5° (52%); vùng nóng đậm dần từ cam sang đỏ. */
-  background: linear-gradient(90deg, #5aaeff 0%, #5aaeff 21%, #5fd38d 29%, #5fd38d 48%, #ffb347 56%, #ff7a59 75%, #ff5252 100%); }
+  /* Thang 5–40°C, ranh giới đúng ngưỡng khí tượng: 15°C (28,6%) và 35°C (85,7%); vùng bình thường ấm dần từ xanh lá sang vàng. */
+  background: linear-gradient(90deg, #5aaeff 0%, #5aaeff 25%, #5fd38d 32%, #5fd38d 55%, #ffd166 80%, #ff5a4f 88%, #ff3b30 100%); }
 .outfit-track i { position: absolute; top: 50%; left: calc(var(--pos, .5) * 100%); width: 14px; height: 14px; border: 3px solid var(--level); border-radius: 50%; background: #fff;
   transform: translate(-50%, -50%); box-shadow: 0 0 10px rgba(0, 0, 0, .35); transition: left .6s ease; }
 .outfit-ticks { position: relative; display: block; height: 14px; margin-top: 6px; font-size: 11px; letter-spacing: .3px; color: rgba(255, 255, 255, .65); }
 .outfit-ticks b { position: absolute; top: 0; font-weight: 600; white-space: nowrap; transform: translateX(-50%); } /* nhãn nằm giữa vùng màu của mức */
-.outfit-ticks b:nth-child(1) { left: 12.5%; } .outfit-ticks b:nth-child(2) { left: 38.5%; } .outfit-ticks b:nth-child(3) { left: 76%; }
+.outfit-ticks b:nth-child(1) { left: 0; transform: none; } .outfit-ticks b:nth-child(2) { left: 57%; } .outfit-ticks b:nth-child(3) { left: auto; right: 0; transform: none; }
 @media (min-width: 761px) {
   .outfit-head { grid-template-columns: auto minmax(0, 1fr) minmax(220px, 300px); }
   .outfit-scale { grid-column: auto; }

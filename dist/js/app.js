@@ -311,7 +311,7 @@ function forecastURL(location, includeHourly = false) {
   url.search = new URLSearchParams({
     latitude: String(location.latitude), longitude: String(location.longitude),
     current: "temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,precipitation_probability,uv_index,cloud_cover,surface_pressure,visibility,wind_direction_10m,wind_gusts_10m,sunshine_duration",
-    daily: "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max,precipitation_sum,sunrise,sunset,daylight_duration,sunshine_duration",
+    daily: "weather_code,temperature_2m_max,temperature_2m_min,temperature_2m_mean,precipitation_probability_max,wind_speed_10m_max,uv_index_max,precipitation_sum,sunrise,sunset,daylight_duration,sunshine_duration",
     temperature_unit: "celsius", wind_speed_unit: "kmh", precipitation_unit: "mm",
     timezone: "auto", forecast_days: "7",
   });
@@ -382,9 +382,9 @@ function renderOutfit(data) {
   const advice = MayAdvice.outfitAdvice(data);
   $("outfit-card").hidden = !advice;
   if (!advice) return;
-  $("outfit-card").dataset.level = advice.level; // màu theo mức: lạnh/mát/nóng
-  // Chấm trên thang cảm nhận 14–38°C (ngoài khoảng thì nằm ở mép).
-  $("outfit-card").style.setProperty("--pos", String(Math.min(1, Math.max(0, (advice.feels - 14) / 24))));
+  $("outfit-card").dataset.level = advice.level; // màu theo mức khí tượng: lạnh/bình thường/nóng
+  // Chấm trên thang 5–40°C (15°C ở 28,6%, 35°C ở 85,7%); ngoài khoảng thì nằm ở mép.
+  $("outfit-card").style.setProperty("--pos", String(Math.min(1, Math.max(0, (advice.scale - 5) / 35))));
   $("outfit-level").textContent = advice.title;
   $("outfit-detail").textContent = advice.detail;
   $("outfit-list").replaceChildren(...advice.lines.map(line => {
