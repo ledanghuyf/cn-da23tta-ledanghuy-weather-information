@@ -83,9 +83,6 @@ globalThis.MayDashboardData = (() => {
     // Thang US AQI: trên 100 là kém với nhóm nhạy cảm, trên 150 là không tốt cho mọi người.
     if (air?.aqi > 100) items.push({ kind: "air", icon: "i-wind", title: `Không khí ${air.label.toLowerCase()} (AQI ${num(air.aqi)})`,
       text: air.aqi > 150 ? "Hạn chế ra ngoài, đeo khẩu trang khi cần" : "Người nhạy cảm nên hạn chế ở ngoài lâu" });
-    const temp = now("temperature_2m"), feels = now("apparent_temperature");
-    const gap = feelsGap(temp, feels);
-    if (gap) items.push({ kind: gap > 0 ? "heat" : "cold", icon: "i-temp", title: `Cảm giác ${gap > 0 ? "nóng" : "lạnh"} hơn ${Math.abs(gap)}°`, text: `Nhiệt độ ${num(temp)}° nhưng cảm nhận ${num(feels)}°` });
     const uv = [{ time: "", uv_index: now("uv_index") }, ...next].filter(r => r.uv_index !== null).sort((a, b) => b.uv_index - a.uv_index)[0];
     if (uv?.uv_index >= 6) items.push({ kind: "uv", icon: "i-sun", title: `UV ${uvLevel(uv.uv_index).toLowerCase()} (${num(uv.uv_index)})`, text: uv.time ? `Mạnh nhất lúc ${uv.time.slice(11)} · che nắng khi ra ngoài` : "Đang ở mức này · che nắng khi ra ngoài" });
     const gust = now("wind_gusts_10m");

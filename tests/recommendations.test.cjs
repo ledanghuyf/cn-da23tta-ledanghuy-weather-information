@@ -31,12 +31,12 @@ test('Chỉ số bổ sung đúng miền và hướng gió khớp góc',()=>{
   for(const [angle,name] of [[0,'Bắc'],[90,'Đông'],[180,'Nam'],[270,'Tây'],[360,'Bắc']])assert.equal(context.MayDashboardData.direction(angle),name);
   assert.equal(context.MayDashboardData.direction(null),null);
 });
-test('Điểm cần chú ý: mưa, cảm nhận lệch, UV, gió giật; không có gì thì ẩn hẳn; không kết luận khi thiếu dữ liệu',()=>{
+test('Điểm cần chú ý: mưa, UV, gió giật (không còn mục cảm nhận lệch); không có gì thì ẩn hẳn; không kết luận khi thiếu dữ liệu',()=>{
   const h=d=>Array.from(context.MayDashboardData.highlights(d),i=>i.title);
   let d=fixture();assert.deepEqual(h(d),[]);
   d.hourly.precipitation_probability[17]=70;d.current.apparent_temperature=33;d.hourly.uv_index[16]=8.4;
   d.current_units.wind_gusts_10m='km/h';d.current.wind_gusts_10m=45;
-  assert.deepEqual(h(d),['Có thể mưa lúc 17:00','Cảm giác nóng hơn 8°','UV rất cao (8,4)']);
+  assert.deepEqual(h(d),['Có thể mưa lúc 17:00','UV rất cao (8,4)','Gió giật 45 km/h']);
   d.current.precipitation=1.2;assert.equal(h(d)[0],'Đang có mưa');
   d=fixture();d.hourly_units.precipitation_probability='mm';assert.deepEqual(h(d),[]);
   d=fixture();d.current.weather_code=61;assert.equal(h(d)[0],'Đang có mưa');d.current.weather_code=95;assert.equal(h(d)[0],'Đang có giông');
