@@ -96,24 +96,36 @@ async function main(){
     assert.equal(await page.locator('#location-input').isEnabled(),true);
     forecast=r=>json(r,fixture);await openDrawer();
   });
-  await test('G2 Bấm ô tìm kiếm: gợi ý vị trí hiện tại + xã/phường lân cận (không trùng); gõ chữ thì ẩn; bấm gợi ý mở nơi đó',async()=>{
+  await test('G2 Gợi ý gần bạn: tải sẵn sau khi có thời tiết (không tự bật bảng), bấm vào ô là có đủ danh sách cùng lúc; nhớ trên máy cho lần sau',async()=>{
     const names=['Xã Tân Hạnh','Phường Long Châu','Xã Tân Hạnh','Vĩnh Long','Xã Thanh Đức','Phường Phước Hậu'];let call=0,zooms=[];
     nominatim=r=>{const u=new URL(r.request().url());if(u.pathname!=='/reverse')return r.abort();zooms.push(u.searchParams.get('zoom'));
       if(u.searchParams.get('zoom')==='18')return json(r,hereOSM);
       const n=names[call++%names.length];return json(r,{lat:u.searchParams.get('lat'),lon:u.searchParams.get('lon'),address:{county:n,state:'Tỉnh Vĩnh Long',country_code:'vn'}});};
-    await page.goto(base);await ready();await openDrawer();
-    await page.locator('#location-input').click();assert.equal(await page.locator('#nearby').isVisible(),true);
-    assert.match(await page.locator('#nearby-list .result-name').first().innerText(),/Vị trí hiện tại · Vĩnh Long/);
-    await page.waitForFunction(()=>document.getElementById('nearby-status').textContent==='',null,{timeout:15000});
-    assert.deepEqual((await page.locator('#nearby-list .result-name').allInnerTexts()).slice(1),['Xã Tân Hạnh','Phường Long Châu','Xã Thanh Đức','Phường Phước Hậu']);
-    assert.equal(zooms.filter(z=>z==='10').length,6,'6 điểm quanh vị trí');
+    await page.evaluate(()=>localStorage.removeItem('may.nearby.v1'));await page.goto(base);await ready();await openDrawer();
+    await page.waitForFunction(()=>JSON.parse(localStorage.getItem('may.nearby.v1')||'null')?.places?.length===4,null,{timeout:15000});
+    assert.equal(zooms.filter(z=>z==='10').length,6,'tải sẵn 6 điểm quanh vị trí mà chưa cần bấm');
+    assert.equal(await page.locator('#nearby').isVisible(),false,'tải sẵn không tự bật bảng gợi ý');
+    const expected=['Vị trí hiện tại · Vĩnh Long','Xã Tân Hạnh','Phường Long Châu','Xã Thanh Đức','Phường Phước Hậu'];
+    await page.locator('#location-input').click();
+    assert.deepEqual(await page.locator('#nearby-list .result-name').allInnerTexts(),expected,'bấm vào là có đủ ngay');
+    assert.equal(await page.locator('#nearby-status').innerText(),'');
     await page.locator('#location-input').fill('Hu');assert.equal(await page.locator('#nearby').isVisible(),false);
     await page.locator('#location-input').fill('');assert.equal(await page.locator('#nearby').isVisible(),true);
+    // Lần mở sau cùng khu vực: lấy từ bộ nhớ, không tra lại
+    zooms=[];await page.goto(base);await ready();await openDrawer();await page.locator('#location-input').click();
+    assert.deepEqual(await page.locator('#nearby-list .result-name').allInnerTexts(),expected);assert.equal(zooms.filter(z=>z==='10').length,0);
     await page.locator('#nearby-list .result-button',{hasText:'Phường Long Châu'}).click();await ready();
     assert.equal(await page.locator('#place-name').innerText(),'Phường Long Châu');
-    nominatim=defaultNominatim;
+    await page.evaluate(()=>localStorage.removeItem('may.nearby.v1'));nominatim=defaultNominatim;
   });
-  await test('03 Từ chối tên trống và một ký tự',async()=>{for(const value of ['',' ','a']){await search(value);assert.match(await page.locator('#search-status').innerText(),/2 đến 120/);assert.equal(await page.locator('#location-input').getAttribute('aria-invalid'),'true');}});
+  await test('03 Ô trống hoặc 1 ký tự: không báo lỗi, không gọi dịch vụ; ô trống thì hiện gợi ý gần bạn',async()=>{
+    let calls=0;geocoding=r=>{calls++;return json(r,{results:locations});};
+    for(const value of ['',' ','a']){
+      await search(value);assert.equal(await page.locator('#search-status').innerText(),'');assert.equal(await page.locator('#location-input').getAttribute('aria-invalid'),null);
+      assert.equal(await page.locator('#nearby').isVisible(),!value.trim(),`gợi ý gần bạn khi ô "${value}"`);
+    }
+    assert.equal(calls,0);assert.doesNotMatch(await page.content(),/2 đến 120/);geocoding=r=>json(r,{results:locations});
+  });
   await test('04 Không tìm thấy địa điểm',async()=>{geocoding=r=>json(r,{});await search('khongtontai');assert.match(await page.locator('#search-status').innerText(),/Không tìm thấy/);});
   await test('04c Gõ tên tỉnh dịch vụ không có (Gia Lai, nghe an) vẫn ra tỉnh lỵ',async()=>{
     geocoding=r=>json(r,{});

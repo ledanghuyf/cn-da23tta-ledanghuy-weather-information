@@ -55,8 +55,8 @@
       state.here = here; nearby = null; lockSearch(false);
       const shared = WeatherDataTools.sharedLocation(window.location.search);
       // Link chia sẻ mở nơi trong link; link trỏ ra nước ngoài thì về nơi đang đứng.
-      if (shared && (await loadWeather({ ...shared, vietnamOnly: true }) || !state.lastError?.outside)) return;
-      await loadWeather({ ...here, vietnamOnly: true });
+      if (!(shared && (await loadWeather({ ...shared, vietnamOnly: true }) || !state.lastError?.outside))) await loadWeather({ ...here, vietnamOnly: true });
+      if (token === serial) void loadNearby(); // tải sẵn gợi ý lân cận để bấm vào ô tìm kiếm là có ngay
     };
     try { navigator.geolocation.getCurrentPosition(onPosition, onError, { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }); }
     catch (error) { onError({ code: error?.name === "SecurityError" ? 1 : 0 }); }
@@ -64,8 +64,22 @@
   retry.addEventListener("click", locate);
 
   // Gợi ý "Gần bạn": nơi đang đứng + xã/phường lân cận. Tra ngược OSM (zoom 10 = cấp xã/phường) tại 6 điểm cách ~6 km
-  // quanh vị trí; mỗi lần gọi cách nhau 1 giây nên danh sách hiện dần. Chỉ tra khi người dùng bấm vào ô tìm kiếm, nhớ trong phiên.
-  let nearby = null;
+  // quanh vị trí (mỗi lần gọi cách nhau 1 giây theo chính sách Nominatim). Tải sẵn ngay sau khi có thời tiết, hiện cả danh sách
+  // một lần khi tra xong, và nhớ trên máy 7 ngày theo ô ~1 km để lần sau có ngay, không phải tra lại.
+  let nearby = null, opened = false; // opened: người dùng đã bấm vào ô tìm kiếm (tải sẵn không tự bật bảng gợi ý)
+  const NEARBY_KEY = "may.nearby.v1", WEEK = 7 * 864e5;
+  const areaKey = here => `${here.latitude.toFixed(2)},${here.longitude.toFixed(2)}`;
+  function cachedNearby(here) {
+    try {
+      const saved = JSON.parse(localStorage.getItem(NEARBY_KEY));
+      if (saved?.key !== areaKey(here) || !(Date.now() - saved.at < WEEK) || !Array.isArray(saved.places)) return null;
+      return saved.places.filter(place => { try { validateLocation(place); return true; } catch { return false; } });
+    } catch { return null; } // dữ liệu hỏng hoặc trình duyệt chặn lưu trữ: tra lại
+  }
+  function saveNearby(here, places) {
+    if (!places.length) return; // không nhớ kết quả rỗng (có thể do mạng lỗi)
+    try { localStorage.setItem(NEARBY_KEY, JSON.stringify({ key: areaKey(here), at: Date.now(), places })); } catch { /* chặn lưu trữ: chỉ nhớ trong phiên */ }
+  }
   function button(place, label) {
     const item = document.createElement("button");
     item.type = "button"; item.className = "result-button";
@@ -77,30 +91,34 @@
     return item;
   }
   function renderNearby() {
-    const show = Boolean(state.here) && !input.value.trim();
+    const show = opened && Boolean(state.here) && !input.value.trim();
     $("nearby").hidden = !show;
     if (!show) { $("nearby-list").replaceChildren(); return; } // không để nút gợi ý ẩn lẫn vào kết quả tìm kiếm
-    $("nearby-list").replaceChildren(button(state.here, "Vị trí hiện tại"), ...(nearby?.places || []).map(place => button(place)));
+    $("nearby-list").replaceChildren(button(state.here, "Vị trí hiện tại"), ...(nearby?.done ? nearby.places : []).map(place => button(place)));
     $("nearby-status").textContent = !nearby || nearby.done ? (nearby?.done && !nearby.places.length ? "Chưa tìm được xã, phường lân cận." : "") : "Đang tìm các xã, phường lân cận…";
   }
   async function loadNearby() {
     const here = state.here;
     if (!here || nearby) return;
+    const cached = cachedNearby(here);
+    if (cached) { nearby = { places: cached, done: true }; renderNearby(); return; }
     const mine = nearby = { places: [], done: false };
     renderNearby();
-    const km = 6, lat0 = here.latitude, lon0 = here.longitude;
+    const km = 6, lat0 = here.latitude, lon0 = here.longitude, found = [];
     for (let i = 0; i < 6 && nearby === mine; i++) {
-      if (input.value.trim()) { nearby = null; return; } // người dùng đang gõ tìm: nhường lượt gọi cho tìm kiếm, lần bấm sau tra tiếp
       const angle = i * Math.PI / 3;
       const lat = lat0 + km / 111 * Math.cos(angle), lon = lon0 + km / 111 * Math.sin(angle) / Math.cos(lat0 * Math.PI / 180);
       try {
         const place = MayVietnam.fromOSM(await nominatimJSON("reverse", { lat: lat.toFixed(5), lon: lon.toFixed(5), zoom: "10" }, new AbortController().signal), true);
-        if (nearby === mine && place && place.name !== here.name && !mine.places.some(p => p.name === place.name)) { mine.places.push(place); renderNearby(); }
+        if (place && place.name !== here.name && !found.some(p => p.name === place.name)) found.push(place);
       } catch { /* điểm lỗi hoặc bị giới hạn: bỏ qua, thử điểm tiếp theo */ }
     }
-    if (nearby === mine) { mine.done = true; renderNearby(); }
+    if (nearby !== mine) return;
+    mine.places = found; mine.done = true; saveNearby(here, found); renderNearby();
   }
-  input.addEventListener("focus", () => { renderNearby(); void loadNearby(); });
+  const openNearby = () => { opened = true; renderNearby(); void loadNearby(); };
+  input.addEventListener("focus", openNearby);
+  $("search-form").addEventListener("submit", () => { if (!input.value.trim()) openNearby(); }); // bấm Tìm khi ô trống: hiện gợi ý thay vì báo lỗi
   input.addEventListener("input", renderNearby);
 
   lockSearch(true);

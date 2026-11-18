@@ -182,13 +182,12 @@ async function searchLocations(rawQuery) {
   const query = typeof rawQuery === "string" ? rawQuery.trim() : "";
   $("search-results").replaceChildren();
   state.results = [];
+  // Quá ngắn (trống/1 ký tự) thì không tìm, không báo lỗi: ô trống đã có gợi ý "Gần bạn" (location.js).
   if (query.length < 2 || query.length > 120) {
-    setStatus("search-status", "Nhập tên địa điểm từ 2 đến 120 ký tự.", "error");
-    $("location-input").setAttribute("aria-invalid", "true");
+    setStatus("search-status", "");
     $("search-button").disabled = false;
     return [];
   }
-  $("location-input").removeAttribute("aria-invalid");
   $("search-button").disabled = true;
   setStatus("search-status", "Đang tìm địa điểm…");
   try {
