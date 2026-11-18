@@ -329,9 +329,6 @@ async function loadWeather(location) {
   $("weather-date").disabled = true;
   $("retry-button").hidden = true;
   MayTheme.apply();
-  $("advice-results").hidden = true;
-  $("advice-unavailable").hidden = false;
-  $("advice-unavailable").textContent = "Đang cập nhật. Gợi ý tạm ẩn để tránh dùng thông tin cũ.";
   if (!state.weather) {
     $("empty-title").textContent = "Đang tải thời tiết";
     $("empty-message").textContent = `Đang kết nối để xem bầu trời tại ${location.name}…`;
@@ -347,7 +344,6 @@ async function loadWeather(location) {
     const data = await fetchJSON(url, controller.signal);
     if (controller.signal.aborted) return null;
     validateWeather(data);
-    if (!isSameLocation(location, state.location)) delete $("activity-date").dataset.userPicked;
     state.location = location;
     state.weather = data;
     rememberLocation(location);
@@ -362,7 +358,6 @@ async function loadWeather(location) {
     state.lastError = error;
     MayTheme.apply();
     window.MayLive?.onError();
-    $("advice-unavailable").textContent = "Chưa tải được dữ liệu mới. Gợi ý tạm ẩn; hãy bấm Thử tải lại.";
     const retained = state.weather ? ` Đang giữ thông tin đã tải của ${state.location.name}.` : "";
     setStatus("weather-status", error.message + retained, "error");
     if (!state.weather) {
@@ -427,9 +422,6 @@ function renderWeather(location, data) {
   $("page-date").textContent = new Date(`${date}T12:00:00Z`).toLocaleDateString("vi-VN", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" });
   renderForecast(data.daily);
   renderTemperatureChart(data.daily);
-  MayAdvice.render(data, location, $("activity-select").value);
-  $("advice-results").hidden = false;
-  $("advice-unavailable").hidden = true;
   $("weather-view").hidden = false;
   $("empty-view").hidden = true;
   window.MayDaily?.onWeatherLoaded();
@@ -565,11 +557,6 @@ $("search-form").addEventListener("submit", (event) => {
 $("refresh-button").addEventListener("click", () => loadWeather(state.location));
 $("cards-button").addEventListener("click", () => setForecastView("cards"));
 $("chart-button").addEventListener("click", () => setForecastView("chart"));
-for (const id of ["activity-select", "activity-date"]) $(id).addEventListener("change", () => {
-  // Người dùng đã tự chọn ngày thì không tự chuyển sang ngày mai nữa (xem MayAdvice.render).
-  if (id === "activity-date") $("activity-date").dataset.userPicked = "true";
-  if (state.weather && !$("advice-results").hidden) MayAdvice.render(state.weather, state.location, $("activity-select").value, { keepHour: id === "activity-select" });
-});
 $("page-date").textContent = "Đang cập nhật";
 
 function updateConnectionStatus() {

@@ -366,25 +366,16 @@ async function main(){
     await livePage.locator('#favorite-list .personal-place').click();await liveReady();
     assert.match(await livePage.locator('#place-name').innerText(),/Hu[eế]/i);
   });
-  await test('42 API thật có hourly/UV, gợi ý khớp số liệu và chủ đề khớp mã',async()=>{
+  await test('42 API thật có hourly/UV; chủ đề khớp mã; thẻ trang phục khớp số liệu trả về',async()=>{
     const response=[...liveResponses].reverse().find(r=>new URL(r.url).searchParams.has('hourly'));
     assert.ok(response);assert.equal(response.status,200);assert.ok(response.data.hourly.time.length>=24);
     assert.equal(response.data.hourly_units.uv_index,'');assert.ok('uv_index' in response.data.current);
-    const expected=await livePage.evaluate(data=>({theme:MayTheme.select(data.current),...MayAdvice.chooseSlots(data,'walk',data.current.time.slice(0,10))}),response.data);
+    const expected=await livePage.evaluate(data=>({theme:MayTheme.select(data.current),outfit:MayAdvice.outfitAdvice(data).map(g=>g.title)}),response.data);
     assert.equal(await livePage.locator('body').getAttribute('data-weather'),expected.theme.weather);
     assert.equal(await livePage.locator('body').getAttribute('data-phase'),expected.theme.phase);
-    assert.equal(await livePage.locator('.activity-slot').count(),0);
-    await livePage.locator('#activity-select').selectOption('walk');
-    assert.equal(await livePage.locator('#activity-hour-detail').isVisible(),false);
-    if(expected.allSlots.length){await livePage.locator('#activity-hour').selectOption(expected.allSlots[0].start);assert.match(await livePage.locator('#activity-hour-detail').innerText(),/Đi bộ/);}
-    for(const slot of expected.slots){const index=response.data.hourly.time.indexOf(slot.start);assert.ok(index>=0);assert.equal(response.data.hourly.is_day[index],1);assert.equal(response.data.hourly.is_day[index+1],1);assert.equal(slot.rain,Math.max(...response.data.hourly.precipitation_probability.slice(index,index+2)));}
-    await livePage.locator('#advice-section').screenshot({path:path.join(evidence,'goi-y-api-that.png')});
-    const lastDate=response.data.daily.time[6];
-    await livePage.locator('#activity-date').selectOption(lastDate);
-    const later=await livePage.evaluate(({data,date})=>MayAdvice.chooseSlots(data,'walk',date).slots,{data:response.data,date:lastDate});
-    assert.equal(await livePage.locator('.activity-slot').count(),0);assert.equal(await livePage.locator('#activity-hour-detail').isVisible(),false);
-    assert.match(await livePage.locator('#activity-period').innerText(),new RegExp(lastDate.slice(8)+'/'+lastDate.slice(5,7)));
-    await livePage.locator('#activity-date').selectOption('');
+    assert.ok(expected.outfit.length);assert.deepEqual(await livePage.locator('#outfit-list .outfit-item > div > strong').allInnerTexts(),expected.outfit);
+    assert.equal(await livePage.locator('#advice-section, #activity-select').count(),0,'đã bỏ phần hoạt động ngoài trời');
+    await livePage.locator('#outfit-card').screenshot({path:path.join(evidence,'goi-y-api-that.png')});
   });
   await test('45 Xem ngày API thật khớp nhiệt độ, gió và UV trả về',async()=>{
     const response=[...liveResponses].reverse().find(r=>new URL(r.url).searchParams.has('hourly'));

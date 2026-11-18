@@ -122,7 +122,7 @@
           <div class="day-navigation"><button id="date-prev" type="button" aria-label="Xem ngày trước" disabled>‹</button><span class="date-badge"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-calendar"/></svg><select id="weather-date" disabled><option value="">Đang tải…</option></select><span id="page-date" class="visually-hidden"></span></span><button id="date-next" type="button" aria-label="Xem ngày tiếp theo" disabled>›</button></div>
         </div>
       </header>
-      <nav class="weather-tabs" aria-label="Các mục trên trang"><a href="#weather-content" aria-current="location">Tổng quan</a><a href="#forecast-group">Dự báo</a><a href="#conditions-group">Chỉ số</a><a href="#advice-section">Hoạt động</a></nav>
+      <nav class="weather-tabs" aria-label="Các mục trên trang"><a href="#weather-content" aria-current="location">Tổng quan</a><a href="#forecast-group">Dự báo</a><a href="#conditions-group">Chỉ số</a></nav>
       </div>
 
       <section id="weather-content" class="weather-content" aria-labelledby="place-name" aria-busy="true">
@@ -220,22 +220,6 @@
             <p id="indices-note" class="dashboard-footnote" hidden></p>
           </section>
 
-          <section id="advice-section" class="advice-section glass-card" aria-labelledby="advice-title">
-            <div class="feature-heading"><img class="feature-illustration" src="assets/plan-weather.svg?v=3.0.0" width="44" height="44" alt="" loading="lazy"><div><h3 id="advice-title">Thời tiết cho hoạt động ngoài trời</h3><p id="advice-location" class="advice-location"></p></div></div>
-            <p id="advice-unavailable" class="notice" role="status" hidden>Đang cập nhật. Gợi ý tạm ẩn để tránh dùng thông tin cũ.</p>
-            <div id="advice-results">
-              <p id="activity-period" class="visually-hidden"></p>
-              <div class="activity-planner" role="group" aria-label="Chọn ngày, giờ và hoạt động">
-                <div><label for="activity-date" class="field-label">Ngày</label><select id="activity-date"><option value="">Hôm nay</option></select></div>
-                <div id="activity-hour-picker"><label for="activity-hour" class="field-label">Khung giờ</label><select id="activity-hour" aria-controls="activity-hour-detail"><option value="">Chọn giờ</option></select></div>
-                <div><label for="activity-select" class="field-label">Hoạt động</label><select id="activity-select" aria-controls="activity-hour-detail"><option value="">Chọn hoạt động</option><option value="walk">Đi bộ</option><option value="run">Chạy bộ</option><option value="cycle">Đạp xe</option></select></div>
-              </div>
-              <p id="activity-status" class="notice" role="status" aria-live="polite">Chọn ngày, giờ và hoạt động để xem đánh giá.</p>
-              <div id="activity-hour-detail" class="activity-hour-detail" tabindex="-1" role="region" aria-label="Đánh giá hoạt động đã chọn" aria-live="polite" hidden></div>
-              <details id="advice-current-block" class="planner-current" hidden><summary>Lưu ý nếu ra ngoài ngay</summary><div id="current-advice" class="current-advice"></div></details>
-              <details class="advice-method" hidden><summary>Cách đánh giá khung giờ</summary><p id="activity-criteria"></p></details>
-            </div>
-          </section>
 
         </div>
 

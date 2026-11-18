@@ -55,8 +55,6 @@
       card.append(node("h3", "", label), node("p", "daily-value", valid ? `${formatNumber(value)}${unit ? ` ${unit}` : ""}` : "Chưa có dữ liệu"), node("span", "", note));
       return card;
     }));
-    $("activity-date").value = selectedDate;
-    MayAdvice.render(data, state.location, $("activity-select").value);
   }
   $("weather-date").addEventListener("change", () => {
     selectDate($("weather-date").value);
@@ -64,10 +62,6 @@
   function selectDate(date) {
     if (!state.weather || (date && !state.weather.daily.time.includes(date))) return;
     selectedDate = date === state.weather.daily.time[0] ? "" : date;
-    if (!selectedDate) {
-      $("activity-date").value = "";
-      MayAdvice.render(state.weather, state.location, $("activity-select").value);
-    }
     render();
   }
   window.MayDaily = { onWeatherLoaded: render, selectDate };

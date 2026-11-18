@@ -44,7 +44,7 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
 
   await page.locator('#current-panel').evaluate(el=>el.scrollIntoView({block:'start'}));await page.screenshot({path:path.join(out,'mobile-current-api-that.png')});
   await page.locator('#daily-card').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(out,'mobile-forecast-api-that.png')});
-  assert.equal(await page.locator('.weather-tabs a').count(),4);
+  assert.equal(await page.locator('.weather-tabs a').count(),3); // Tổng quan, Dự báo, Chỉ số
   // Như ứng dụng điện thoại: theo giờ, 7 ngày, chỉ số và không khí hiện cùng lúc (không còn tab ẩn bớt).
   for(const id of ['#hourly-section','#forecast-section','#details-section','#current-metrics'])assert.equal(await page.locator(id).isVisible(),true,id);
   await page.locator('#weather-date').selectOption(weather.data.daily.time[1]);

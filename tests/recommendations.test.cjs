@@ -7,7 +7,6 @@ const fixture=require('./weather-fixture.cjs');
 const context=vm.createContext({Intl,Date});
 for(const file of ['weather-config.js','weather-theme.js','recommendations.js','dashboard.js'])vm.runInContext(fs.readFileSync(path.join(__dirname,'../dist/js',file),'utf8'),context);
 const {MayAdvice:advice,MayTheme:theme}=context;
-const ids=data=>Array.from(advice.currentAdvice(data),item=>item.id);
 test('Bảng giờ: 24 giờ tới, qua ngày theo địa phương, chọn ngày cuối đúng 24 mốc',()=>{
   const d=fixture();let rows=context.MayDashboardData.hours(d);assert.equal(rows.length,24);assert.equal(rows[0].time,'2026-10-09T15:00');assert.equal(rows[23].time,'2026-10-10T14:00');
   rows=context.MayDashboardData.hours(d,'2026-10-15');assert.equal(rows.length,24);assert.ok(rows.every(row=>row.time.startsWith('2026-10-15')));
@@ -47,104 +46,6 @@ test('Điểm cần chú ý: mưa, cảm nhận lệch, UV, gió giật; không 
   assert.deepEqual(ha(d,{aqi:100,label:'Trung bình'}),[]);assert.deepEqual(ha(d,{aqi:null,label:'Chưa có chỉ số'}),[]);
   assert.equal(context.MayDashboardData.feelsGap(27.4,34.5),8);assert.equal(context.MayDashboardData.feelsGap(29.6,31),0);assert.equal(context.MayDashboardData.feelsGap(20,16.6),-3);
   assert.equal(context.MayDashboardData.uvLevel(5.9),'Trung bình');assert.equal(context.MayDashboardData.uvLevel(11),'Cực cao');
-});
-test('Chọn ngày khác lấy đúng ngày ngoài 24h và hỗ trợ ngày cuối dự báo',()=>{
-  const d=fixture();
-  for(const day of ['2026-10-10','2026-10-12','2026-10-15']){
-    const r=advice.chooseSlots(d,'walk',day);assert.equal(r.slots.length,3);
-    for(const slot of r.slots){assert.equal(slot.start.slice(0,10),day);assert.equal(slot.end.slice(0,10),day);}
-  }
-  assert.equal(advice.chooseSlots(d,'walk','2026-10-16').status,'missing');
-});
-test('Chọn hôm nay bỏ giờ đã qua; ngày lỗi hoặc quá khứ không sinh gợi ý',()=>{
-  const d=fixture();const r=advice.chooseSlots(d,'walk','2026-10-09');
-  assert.ok(r.slots.length>0);for(const slot of r.slots)assert.ok(slot.start>=d.current.time);
-  for(const day of ['2026-02-30','2026-10-08','not-a-date'])assert.equal(advice.chooseSlots(d,'walk',day).slots.length,0);
-});
-test('Lý do không chọn giờ bám dữ liệu ban ngày, không quy mưa đêm sang ban ngày',()=>{
-  const d=fixture();d.hourly.apparent_temperature.fill(34);
-  d.hourly.weather_code=d.hourly.is_day.map(day=>day?0:95);
-  const r=advice.chooseSlots(d);assert.equal(r.status,'ok');assert.equal(r.slots[0].level,'caution');assert.match(r.reasons.join(' '),/34°C/);assert.doesNotMatch(r.reasons.join(' '),/giông/);
-  d.hourly.weather_code.fill(61);assert.match(advice.chooseSlots(d).reasons.join(' '),/Dự báo có mưa/);
-});
-test('Không có ban ngày hoặc thiếu dữ liệu được giải thích riêng, không đổ lỗi thời tiết',()=>{
-  const d=fixture();d.hourly.is_day.fill(0);assert.match(advice.chooseSlots(d).reasons.join(' '),/Chưa có khung đủ một giờ ban ngày/);
-  delete d.hourly;assert.equal(advice.chooseSlots(d).reasons.length,0);assert.equal(advice.chooseSlots(d).status,'missing');
-});
-test('Nóng/lạnh dựa trên nhiệt độ cảm nhận, ngưỡng bao gồm biên',()=>{
-  const d=fixture();d.current.apparent_temperature=32;assert.ok(ids(d).includes('heat'));
-  d.current.apparent_temperature=18;assert.ok(ids(d).includes('cold'));assert.ok(!ids(d).includes('heat'));
-});
-test('Mưa, xác suất cao, giông 95/96/97/99, gió và UV',()=>{
-  const d=fixture();d.current.precipitation_probability=60;assert.ok(ids(d).includes('rain-risk'));
-  for(const code of [51,61,65,82]){d.current.weather_code=code;assert.ok(ids(d).includes('rain'));}
-  for(const code of [95,96,97,99]){d.current.weather_code=code;assert.ok(ids(d).includes('storm'));}
-  d.current.wind_speed_10m=30;d.current.uv_index=6;assert.ok(ids(d).includes('wind'));assert.ok(ids(d).includes('uv'));
-});
-test('Thiếu dữ liệu/đơn vị sai không sinh số liệu hoặc gợi ý vô căn cứ',()=>{
-  const d=fixture();d.current={};assert.equal(ids(d).length,0);
-  d.current={apparent_temperature:40,wind_speed_10m:null,precipitation_probability:101};d.current_units.apparent_temperature='°F';assert.equal(ids(d).length,0);
-  d.current.weather_code=61;assert.deepEqual(ids(d),['rain']);
-});
-test('Tối đa 3 khung một giờ, trong 24h, ban ngày ở cả hai đầu, không lấy giờ đã qua',()=>{
-  const d=fixture();const result=advice.chooseSlots(d);assert.equal(result.slots.length,3);
-  const now=advice.localStamp(d.current.time);let end=now;
-  for(const slot of result.slots){assert.ok(slot.stamp>=now&&slot.stamp>=end);end=advice.localStamp(slot.end);assert.equal(end-slot.stamp,3600000);assert.ok(end<=now+86400000);}
-  assert.equal(result.slots[0].start,'2026-10-09T15:00');assert.equal(result.incomplete,false);
-});
-test('Loại toàn bộ giờ giông, mưa lớn, gió mạnh, mã lạ, sương mù và tuyết',()=>{
-  for(const code of [65,67,82,95,96,97,99,45,71,123]){const d=fixture();d.hourly.weather_code.fill(code);assert.equal(advice.chooseSlots(d).slots.length,0);}
-  const d=fixture();d.hourly.wind_speed_10m.fill(30);assert.equal(advice.chooseSlots(d).status,'none');
-});
-test('Kiểm tra cả cuối giờ để không đề xuất khung bắt đầu tốt nhưng kết thúc giông',()=>{
-  const d=fixture();d.hourly.weather_code=d.hourly.weather_code.map((_,i)=>i%2?0:95);assert.equal(advice.chooseSlots(d).slots.length,0);
-});
-test('Mức ưu tiên riêng từng hoạt động; vượt mức thoải mái được ghi cần cân nhắc',()=>{
-  let d=fixture();d.hourly.apparent_temperature.fill(29);assert.equal(advice.chooseSlots(d,'run').slots[0].level,'caution');assert.equal(advice.chooseSlots(d,'walk').slots[0].level,'favorable');
-  for(const [key,value] of [['apparent_temperature',5],['apparent_temperature',35],['wind_speed_10m',25],['precipitation_probability',41],['uv_index',6]]){d=fixture();d.hourly[key].fill(value);const r=advice.chooseSlots(d);assert.equal(r.slots.length,3,key);assert.equal(r.slots[0].level,'caution',key);assert.ok(r.slots[0].notes.length);}
-});
-test('Cùng một khung giờ có kết quả riêng theo nhiệt, gió và mưa của từng hoạt động',()=>{
-  const d=fixture();
-  const levels=()=>['walk','run','cycle'].map(activity=>advice.chooseSlots(d,activity,'2026-10-12').allSlots[0].level);
-  d.hourly.apparent_temperature.fill(24);
-  assert.deepEqual(levels(),['favorable','favorable','favorable']);
-  d.hourly.apparent_temperature.fill(35);
-  assert.deepEqual(levels(),['caution','blocked','caution']);
-  d.hourly.apparent_temperature.fill(24);d.hourly.wind_speed_10m.fill(25);
-  assert.deepEqual(levels(),['caution','caution','blocked']);
-  d.hourly.wind_speed_10m.fill(10);d.hourly.weather_code.fill(63);
-  assert.deepEqual(levels(),['caution','caution','blocked']);
-  d.hourly.weather_code.fill(95);
-  assert.deepEqual(levels(),['blocked','blocked','blocked']);
-});
-test('Giới hạn loại trừ kiểm tra cả hai đầu; giờ bị loại vẫn có dữ liệu và lý do để xem',()=>{
-  for(const [key,value] of [['apparent_temperature',38],['apparent_temperature',4.9],['wind_speed_10m',30],['uv_index',8],['weather_code',95],['weather_code',65],['weather_code',56]]){
-    const d=fixture();d.hourly[key]=d.hourly[key].map((old,i)=>i%2?old:value);
-    const r=advice.chooseSlots(d);assert.equal(r.slots.length,0,key);assert.ok(r.allSlots.length);for(const s of r.allSlots){assert.equal(s.level,'blocked');assert.ok(s.blockers.length);}
-  }
-});
-test('Ưu tiên giờ thuận lợi trước giờ cần cân nhắc dù điểm số cao hơn',()=>{
-  const d=fixture();d.hourly.precipitation_probability.fill(30);d.hourly.apparent_temperature.fill(30);
-  for(let i=0;i<24;i++){d.hourly.weather_code[i]=61;d.hourly.precipitation_probability[i]=0;d.hourly.apparent_temperature[i]=23;}
-  const r=advice.chooseSlots(d);assert.equal(r.slots.length,3);for(const slot of r.slots){assert.equal(slot.level,'favorable');assert.match(slot.start,/2026-10-10/);}
-});
-test('Không có dữ liệu giờ, mảng lệch, sai đơn vị, null không được hiểu là 0',()=>{
-  let d=fixture();delete d.hourly;assert.equal(advice.chooseSlots(d).status,'missing');
-  d=fixture();d.hourly.precipitation_probability.fill(null);assert.equal(advice.chooseSlots(d).status,'missing');
-  d=fixture();d.hourly.wind_speed_10m.pop();assert.equal(advice.chooseSlots(d).status,'missing');
-  d=fixture();d.hourly_units.wind_speed_10m='m/s';assert.equal(advice.chooseSlots(d).status,'missing');
-});
-test('UV thiếu vẫn minh bạch và không che bỏ UV cao ở đầu còn lại',()=>{
-  const d=fixture();d.hourly.uv_index.fill(null);const result=advice.chooseSlots(d);assert.equal(result.slots.length,3);assert.equal(result.slots[0].uv,null);
-  d.hourly.uv_index=d.hourly.uv_index.map((_,i)=>i%2?null:8);assert.equal(advice.chooseSlots(d).slots.length,0);
-});
-test('Không suy đoán ban ngày bằng giờ thiết bị; đêm cực hoặc thiếu is_day không có khung',()=>{
-  const d=fixture();d.hourly.is_day.fill(0);assert.equal(advice.chooseSlots(d).status,'none');
-  d.hourly.is_day.fill(null);assert.equal(advice.chooseSlots(d).status,'missing');
-});
-test('Thời gian lỗi, trùng hoặc thiếu giờ không ghép sai khung',()=>{
-  const d=fixture();d.current.time='2026-02-30T12:00';assert.equal(advice.chooseSlots(d).status,'missing');
-  d.current.time='2026-10-09T14:15';d.hourly.time.fill('2026-10-09T15:00');assert.equal(advice.chooseSlots(d).slots.length,0);
 });
 test('Ngày/đêm tách khỏi mưa/mây/giông; mã không biết có giao diện mặc định',()=>{
   // [mã, chủ đề ban đêm, chủ đề ban ngày]: mã 2 ban ngày là "Nhiều nắng" (nền xanh), ban đêm vẫn là mây.
@@ -216,4 +117,8 @@ test('Ban đêm gọi tên theo mây che phủ: Song Lộc mã 2 + mây 62% → 
   assert.equal(n(2,0,62),3);assert.equal(n(0,0,5),0);assert.equal(n(0,0,15),1);assert.equal(n(3,0,40),2);
   assert.equal(n(2,1,62),2,'ban ngày dùng tỉ lệ nắng');assert.equal(n(61,0,95),61,'mưa giữ mã');assert.equal(n(2,0,undefined),2);assert.equal(n(2,0,140),2);
   assert.equal(theme.select({weather_code:2,is_day:0,cloud_cover:62}).weather,'cloudy');assert.equal(theme.select({weather_code:2,is_day:0,cloud_cover:5}).weather,'sunny');
+});
+test('Giờ địa phương từ API: ngày không có thật, sai định dạng hoặc thiếu thì không thành mốc thời gian',()=>{
+  assert.equal(advice.localStamp('2026-10-09T15:00'),Date.UTC(2026,9,9,15));
+  for(const bad of ['2026-02-30T12:00','2026-10-09T24:00','2026-10-09 15:00','',null,undefined])assert.ok(Number.isNaN(advice.localStamp(bad)),String(bad));
 });

@@ -265,7 +265,7 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .weather-tabs a { flex: none; padding: 8px 15px; border-radius: 999px; color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; }
 .weather-tabs a:hover { background: rgba(255, 255, 255, .12); }
 .weather-tabs a[aria-current="location"] { background: #fff; color: #142f3b; }
-.weather-content, .weather-group, #advice-section { scroll-margin-top: 85px; }
+.weather-content, .weather-group { scroll-margin-top: 85px; }
 
 /* ---------- Trạng thái ---------- */
 /* Nền kính tối: chữ trắng vẫn rõ khi nằm trên vùng tia nắng sáng. */
@@ -344,12 +344,9 @@ body[data-weather="storm"]  { --weather-accent: #c9a7ff; }
 .glass-card { padding: 14px 18px 18px; }
 .glass-card :focus-visible, .metric:focus-visible { outline-color: #ffd27a; }
 /* Tiêu đề thẻ: chữ nhỏ viết hoa + đường kẻ, các nút chuyển chế độ bên phải */
-.group-header, .feature-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
-.group-header h3, .feature-heading h3 { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--ink-soft); }
+.group-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.group-header h3 { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; color: var(--ink-soft); }
 .group-header h3 .icon { width: 16px; height: 16px; }
-.feature-heading { justify-content: flex-start; }
-.feature-illustration { flex: none; width: 30px; height: 30px; }
-.advice-location { font-size: 13px; color: var(--ink-soft); }
 .group-tabs, .view-switch, .hour-modes { display: flex; gap: 2px; padding: 3px; border-radius: 10px; background: rgba(255, 255, 255, .1); flex-wrap: wrap; }
 .group-tabs button, .view-switch button, .hour-modes button { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 5px 12px; border: 0; border-radius: 8px; background: transparent; color: #fff; font-size: 13px; font-weight: 600; }
 .group-tabs button[aria-selected="true"], .view-switch button[aria-pressed="true"], .hour-modes button[aria-pressed="true"] { background: #fff; color: #142f3b; }
@@ -394,7 +391,7 @@ dd { font-size: 15px; font-weight: 650; }
 .hourly-detail { margin-top: 8px; padding: 12px 14px; border-radius: 14px; background: var(--tile); }
 .hour-detail-heading { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
 .hour-detail-heading span { color: var(--ink-soft); font-size: 14px; }
-.hour-detail-metrics, .activity-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px 14px; }
+.hour-detail-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px 14px; }
 
 /* 7 ngày: danh sách hàng — thứ | biểu tượng | mưa | thấp | thanh nhiệt độ | cao | xem */
 .forecast-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
@@ -489,36 +486,7 @@ dd { font-size: 15px; font-weight: 650; }
 .source-details summary { cursor: pointer; font-weight: 600; }
 .source-details p { margin-top: 6px; }
 
-/* ---------- Hoạt động ngoài trời ---------- */
-.activity-planner { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 14px; border-radius: 16px; background: var(--tile); }
 .glass-card .notice { background: var(--tile); border-color: var(--line); }
-#activity-status { margin: 12px 0 0; }
-.activity-hour-detail { margin-top: 12px; padding: 16px; border-radius: 16px; border: 1px solid var(--line); border-left: 5px solid #7ee2a8; background: var(--tile); }
-.activity-hour-detail[data-level="caution"] { border-left-color: var(--accent); }
-.activity-hour-detail[data-level="blocked"] { border-left-color: #ff8a73; }
-.activity-result-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.activity-result-heading h4 { font-size: 18px; font-weight: 650; }
-.slot-level { padding: 3px 10px; border-radius: 999px; background: #d8f2e3; color: #1f5a3c; font-size: 13px; font-weight: 650; }
-[data-level="caution"] > .slot-level, [data-level="caution"] .activity-result-heading .slot-level { background: #fff1c7; color: #6b4e00; }
-[data-level="blocked"] > .slot-level, [data-level="blocked"] .activity-result-heading .slot-level { background: #ffd6d0; color: #7d1f12; }
-.activity-condition { margin: 6px 0 12px; color: var(--ink-soft); }
-.activity-metrics { margin-bottom: 12px; }
-.hour-notes { display: grid; gap: 4px; margin: 0 0 12px; padding-left: 18px; font-size: 14px; }
-.activity-comparison h5 { margin: 4px 0 8px; font-size: 14px; font-weight: 650; }
-.activity-levels { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; }
-.activity-levels li { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; }
-.activity-levels li[data-selected="true"] { border-color: #fff; }
-.activity-levels li .slot-level { font-size: 12px; padding: 2px 8px; }
-.activity-levels li[data-level="caution"] .slot-level { background: #fff1c7; color: #6b4e00; }
-.activity-levels li[data-level="blocked"] .slot-level { background: #ffd6d0; color: #7d1f12; }
-.activity-result-note { margin-top: 10px; font-size: 12px; color: var(--ink-faint); }
-.planner-current, .advice-method { margin-top: 12px; padding: 12px 14px; border-radius: 16px; background: var(--tile); font-size: 14px; }
-.planner-current summary, .advice-method summary { cursor: pointer; font-weight: 650; }
-.current-advice { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; margin-top: 10px; }
-.advice-card { padding: 12px; border-radius: 12px; background: var(--tile); border-left: 4px solid var(--accent); }
-.advice-card h5 { margin-bottom: 4px; font-size: 14px; font-weight: 650; }
-.advice-card p { font-size: 13px; color: var(--ink-soft); }
-.advice-method p { margin-top: 6px; color: var(--ink-soft); }
 
 /* ---------- Chân trang ---------- */
 .site-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; padding: 14px 18px; border-radius: 18px; background: rgba(5, 16, 32, .42); font-size: 13px; }
@@ -531,7 +499,6 @@ dd { font-size: 15px; font-weight: 650; }
   .air-values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .air-score { grid-column: 1 / -1; }
   .main-content { padding: 22px 20px 28px; }
-  .activity-planner { grid-template-columns: 1fr; }
 }
 
 /* ---------- Điện thoại: thanh địa điểm thành ngăn kéo ---------- */
@@ -600,7 +567,7 @@ dd { font-size: 15px; font-weight: 650; }
   .drawer-body { flex-wrap: wrap; row-gap: 8px; }
   .location-tools { margin-left: auto; } /* Gần tôi · Bản đồ · Đã lưu gom thành một cụm bên phải */
   html { scroll-padding-top: 124px; }
-  .weather-content, .weather-group, #advice-section { scroll-margin-top: 124px; }
+  .weather-content, .weather-group { scroll-margin-top: 124px; }
   .control-bar { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 12px; width: fit-content; max-width: 100%; margin: 0 auto 16px; padding: 8px;
     border: 1px solid rgba(255, 255, 255, .18); border-radius: 16px; background: rgba(255, 255, 255, .12); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
   .control-bar .page-header { margin: 0; }
@@ -697,14 +664,13 @@ body[data-view="daily"] #outfit-card { display: none; } /* gợi ý theo thời 
 @media (max-width: 599px) { .tiles-group .metric, .tiles-group .extra-metric { aspect-ratio: 1; } }
 @media (min-width: 600px) { .tiles-group { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
-/* Máy tính: khối chính căn giữa trên cùng; theo giờ (rộng) cạnh 7 ngày; dưới là lưới ô 4 cột; cuối cùng là hoạt động. */
+/* Máy tính: khối chính căn giữa trên cùng; theo giờ (rộng) cạnh 7 ngày; dưới là lưới ô 4 cột. */
 @media (min-width: 1024px) {
-  #weather-view.bento { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: "main main" "hourly daily" "tiles tiles" "advice advice"; gap: 16px; align-items: stretch; }
+  #weather-view.bento { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); grid-template-areas: "main main" "hourly daily" "tiles tiles"; gap: 16px; align-items: stretch; }
   .bento-main { grid-area: main; }
   .bento #forecast-group { grid-area: hourly; }
   .bento #daily-card { grid-area: daily; }
   .bento #conditions-group { grid-area: tiles; grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .bento #advice-section { grid-area: advice; }
   .bento .weather-highlights { width: min(100%, 760px); }
   .bento .outfit-list { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
   .bento .forecast-day { grid-template-columns: minmax(64px, 1fr) 32px minmax(34px, auto) 34px minmax(50px, 2fr) 34px; column-gap: 8px; }
