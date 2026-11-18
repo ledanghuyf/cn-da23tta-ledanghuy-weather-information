@@ -53,41 +53,54 @@ a { color: inherit; }
   background-image: radial-gradient(1.5px 1.5px at 12% 18%, #fff, transparent), radial-gradient(1px 1px at 28% 42%, #fff, transparent), radial-gradient(1.5px 1.5px at 46% 12%, #fff, transparent), radial-gradient(1px 1px at 63% 33%, #fff, transparent), radial-gradient(1.5px 1.5px at 78% 9%, #fff, transparent), radial-gradient(1px 1px at 88% 48%, #fff, transparent), radial-gradient(1px 1px at 6% 62%, #fff, transparent), radial-gradient(1.5px 1.5px at 55% 70%, #fff, transparent); }
 body[data-phase="night"] .sky-stars { opacity: .75; }
 body[data-phase="night"][data-weather="rain"] .sky-stars, body[data-phase="night"][data-weather="storm"] .sky-stars { opacity: .2; }
-/* Mây: 4 lớp đám mây tích (SVG có khối, mặt dưới hơi xám) trôi ngang. Lớp xa nhỏ/mờ/chậm, lớp gần to/nhòe/nhanh;
-   độ trễ âm để vừa mở trang đã có mây giữa màn hình. --cloud-light làm mây xám đi khi mưa, dông, ban đêm. */
+/* ---------- Mây ----------
+   Hình mây vẽ bằng nhiễu fractal + chiếu sáng (SVG feTurbulence/feDiffuseLighting, chỉ vẽ một lần khi tải):
+   mây tích bông xốp (mặt trên sáng, mặt dưới xám), tấm mây dày phủ trời, mây ti mảnh trên cao, dải sương sát đất.
+   Lượng mây do weather-theme.js đặt vào data-clouds: few (ít mây) · scattered (mây rải rác) · overcast (nhiều mây/mưa).
+   Lớp xa nhỏ, chậm; lớp gần to, nhòe, nhanh. Độ trễ âm để vừa mở trang đã có mây giữa màn hình.
+   --cloud-light: độ sáng của mây (nắng rọi > 1; u ám, mưa, ban đêm < 1). */
 .sky-cloud { left: -70vmax; aspect-ratio: 2 / 1; background: url("../assets/cloud.svg") center / contain no-repeat; opacity: 0;
   filter: blur(var(--blur, 0px)) brightness(var(--cloud-light, 1)); transition: opacity .8s, filter .8s; will-change: transform;
   animation: drift var(--speed, 90s) linear infinite, billow var(--billow, 16s) ease-in-out infinite alternate; } /* trôi ngang + phồng nhẹ như mây thật */
-@keyframes billow { to { scale: 1.06 1.1; } }
-.cloud-a { --billow: 19s; } .cloud-d { --billow: 14s; } .cloud-b { --billow: 17s; } .cloud-c { --billow: 12s; }
-.cloud-a { top: 4%; width: 38vmax; --blur: 1px; --speed: 140s; animation-delay: -70s; }
-.cloud-d { top: 16%; width: 46vmax; --blur: 1.5px; --speed: 115s; animation-delay: -20s; background-image: url("../assets/cloud-wide.svg"); }
-.cloud-b { top: 30%; width: 60vmax; --blur: 3px; --speed: 85s; animation-delay: -55s; }
-.cloud-c { top: 50%; width: 82vmax; --blur: 6px; --speed: 60s; animation-delay: -15s; background-image: url("../assets/cloud-wide.svg"); }
-/* Lớp mây phủ u ám: dải mây mỏng lặp lại theo chiều ngang, trượt chậm (dịch đúng 1 chu kỳ = 50% nên lặp liền mạch). */
-.sky-overcast { top: -6%; left: 0; width: 200%; height: 62%; opacity: 0; transition: opacity .8s; animation: overcast 160s linear infinite;
-  background: radial-gradient(ellipse 22% 45% at 12% 30%, rgba(225, 232, 240, .55), transparent 72%), radial-gradient(ellipse 18% 35% at 30% 18%, rgba(225, 232, 240, .45), transparent 72%),
-    radial-gradient(ellipse 24% 50% at 48% 34%, rgba(225, 232, 240, .5), transparent 72%), radial-gradient(ellipse 16% 30% at 68% 16%, rgba(225, 232, 240, .4), transparent 72%),
-    radial-gradient(ellipse 22% 42% at 86% 28%, rgba(225, 232, 240, .5), transparent 72%);
-  background-size: 50% 100%; background-repeat: repeat-x; filter: blur(8px) brightness(var(--cloud-light, 1)); }
-@keyframes overcast { to { transform: translateX(-50%); } }
-/* Theo thời tiết: nhiều mây đủ lớp + mây phủ; nắng xen mây vài đám trắng; mưa/dông mây xám đậm; nắng gần như không mây. */
-body[data-weather="cloudy"] { --cloud-light: .9; } /* trời u ám: mây hơi xám, không trắng chói */
-body[data-weather="cloudy"] .cloud-a { opacity: .7; } body[data-weather="cloudy"] .cloud-d { opacity: .62; }
-body[data-weather="cloudy"] .cloud-b { opacity: .52; } body[data-weather="cloudy"] .cloud-c { opacity: .4; }
-body[data-weather="cloudy"] .sky-overcast { opacity: .9; }
-/* Mây rải rác / nắng xen mây: vài đám mây tách rời ở các độ sâu, giữa các đám thấy trời (ban đêm thấy sao); ban ngày mây được nắng rọi sáng hơn. */
-body[data-weather="partly"] .cloud-a { opacity: .7; } body[data-weather="partly"] .cloud-d { opacity: .45; top: 20%; left: -40vmax; }
-body[data-weather="partly"] .cloud-b { opacity: .5; } body[data-weather="partly"] .cloud-c { opacity: .22; }
-body[data-weather="partly"]:not([data-phase="night"]) { --cloud-light: 1.06; }
+@keyframes billow { to { scale: 1.05 1.08; } }
+.cloud-a { top: 5%; width: 34vmax; --blur: .5px; --speed: 150s; --billow: 19s; animation-delay: -75s; }
+.cloud-d { top: 17%; width: 44vmax; --blur: 1px; --speed: 118s; --billow: 14s; animation-delay: -22s; background-image: url("../assets/cloud-wide.svg"); }
+.cloud-b { top: 31%; width: 58vmax; --blur: 2px; --speed: 88s; --billow: 17s; animation-delay: -52s; }
+.cloud-c { top: 52%; width: 80vmax; --blur: 5px; --speed: 62s; --billow: 12s; animation-delay: -14s; background-image: url("../assets/cloud-wide.svg"); }
+/* Tấm mây, mây ti, sương: một hình liền rộng 2,3 lần màn hình (mép ảnh luôn ngoài khung nhìn, không có chỗ nối),
+   trôi qua lại rất chậm (vài phút một chiều) nên mắt không nhận ra lúc đổi chiều. */
+.sky-sheet, .sky-wisps, .sky-fog { left: -10vw; width: 230vw; opacity: 0; background-repeat: no-repeat; background-size: 100% 100%;
+  filter: brightness(var(--cloud-light, 1)); transition: opacity .8s, filter .8s; animation: sway var(--speed, 200s) ease-in-out infinite alternate; will-change: transform; }
+.sky-sheet { background-image: url("../assets/cloud-sheet.svg"); }
+.sheet-far { top: -6%; height: 60%; --speed: 260s; }
+.sheet-near { top: 14%; height: 66%; --speed: 170s; animation-direction: alternate-reverse; /* trôi ngược lớp xa: hai lớp không trùng nhau */ filter: blur(2px) brightness(calc(var(--cloud-light, 1) * .92)); }
+.sky-wisps { top: 1%; height: 42%; --speed: 320s; background-image: url("../assets/cloud-wisps.svg"); }
+.sky-fog { top: auto; bottom: -4%; height: 46%; --speed: 95s; background-image: url("../assets/cloud-sheet.svg"); filter: blur(7px) brightness(1.15);
+  -webkit-mask-image: linear-gradient(to top, #000 35%, transparent); mask-image: linear-gradient(to top, #000 35%, transparent); }
+@keyframes sway { to { transform: translateX(-50%); } } /* transform: không đụng thuộc tính translate của hiệu ứng chiều sâu */
+/* Ít mây: trời thoáng, vài vệt mây ti trên cao + một đám mây tích nhỏ ở xa. */
+body[data-clouds="few"] .sky-wisps { opacity: .6; }
+body[data-clouds="few"] .cloud-a { opacity: .75; }
+body[data-clouds="few"] .cloud-b { opacity: .3; top: 40%; }
+/* Mây rải rác / nắng xen mây: các đám mây tích tách rời ở nhiều độ sâu, giữa các đám thấy trời (đêm thấy sao). */
+body[data-clouds="scattered"] .sky-wisps { opacity: .35; }
+body[data-clouds="scattered"] .cloud-a { opacity: .9; } body[data-clouds="scattered"] .cloud-d { opacity: .75; }
+body[data-clouds="scattered"] .cloud-b { opacity: .7; } body[data-clouds="scattered"] .cloud-c { opacity: .35; }
+body[data-weather="partly"]:not([data-phase="night"]) { --cloud-light: 1.06; } /* nắng rọi lên mây */
 body[data-weather="partly"][data-phase="night"] .sky-stars { opacity: .6; }
-/* Mây có thể trôi ngay sau chữ: bóng chữ mềm giữ chữ trắng đọc rõ trên mây sáng. */
-.hero-card .location-heading, .hero-card .condition-line, .hero-card .current-bottom, .daily-hero { text-shadow: 0 1px 3px rgba(0, 0, 0, .35), 0 0 14px rgba(0, 0, 0, .25); }
-body[data-weather="rain"] .sky-cloud, body[data-weather="storm"] .sky-cloud { opacity: .55; --cloud-light: .62; }
-body[data-weather="rain"] .sky-overcast, body[data-weather="storm"] .sky-overcast { opacity: .8; --cloud-light: .55; }
-body[data-weather="storm"] .sky-cloud { --cloud-light: .45; }
+/* Nhiều mây: hai tấm mây dày trôi lệch tốc độ che gần kín trời + vài đám mây sẫm thấp phía trước. */
+body[data-clouds="overcast"] { --cloud-light: .88; }
+body[data-clouds="overcast"] .sheet-far { opacity: .95; } body[data-clouds="overcast"] .sheet-near { opacity: .7; }
+body[data-clouds="overcast"] .cloud-b { opacity: .45; } body[data-clouds="overcast"] .cloud-c { opacity: .4; }
+/* Mưa, dông: mây chì sẫm; mưa phùn thêm dải sương trôi sát mặt đất. */
+body[data-weather="rain"] { --cloud-light: .66; } body[data-weather="storm"] { --cloud-light: .48; }
+body[data-rain="drizzle"] { --cloud-light: .78; }
+body[data-rain="drizzle"] .sky-fog { opacity: .75; }
+body[data-rain="drizzle"] .sheet-near { opacity: .85; filter: blur(4px) brightness(.8); }
+/* Trời nắng: chỉ một đám mây xa thật mờ. Ban đêm: mây xám tối. */
 body[data-weather="sunny"] .cloud-a, body[data-weather="default"] .cloud-a { opacity: .12; }
-body[data-phase="night"] { --cloud-light: .5; } /* mây ban đêm: xám tối, không trắng sáng */
+body[data-phase="night"] { --cloud-light: .5; }
+body[data-phase="night"][data-weather="rain"], body[data-phase="night"][data-weather="storm"] { --cloud-light: .4; }
 body[data-phase="night"][data-weather="sunny"] .cloud-a { opacity: .06; }
 /* Mưa: hai lớp hạt (xa: nhỏ, chậm, mờ; gần: dài, nhanh, rõ) rơi nghiêng theo gió.
    Mỗi hạt là một elip rất hẹp nên tự mờ ở hai đầu; vị trí lệch nhau trong ô lặp để không thành sọc đều. */
@@ -118,7 +131,10 @@ body[data-rain="drizzle"] .sky-rain::before {
     radial-gradient(.7px 4px at 49% 28%, rgba(225, 236, 250, .65), transparent), radial-gradient(.7px 5px at 66% 83%, rgba(225, 236, 250, .6), transparent),
     radial-gradient(.7px 4px at 83% 47%, rgba(225, 236, 250, .7), transparent), radial-gradient(.7px 4px at 38% 92%, rgba(225, 236, 250, .55), transparent);
   background-size: 70px 90px; opacity: .9; animation-duration: 2.2s; }
-body[data-rain="drizzle"] .sky-rain::after { background: linear-gradient(to top, rgba(205, 218, 232, .22), transparent 55%); animation: none; transform: none; }
+body[data-rain="drizzle"] .sky-rain::after { /* lớp gần: vệt mưa bụi mảnh, rơi chậm (sương mù ở .sky-fog) */
+  background-image: radial-gradient(.6px 9px at 12% 20%, rgba(232, 240, 250, .55), transparent), radial-gradient(.6px 11px at 41% 66%, rgba(232, 240, 250, .5), transparent),
+    radial-gradient(.6px 8px at 63% 12%, rgba(232, 240, 250, .5), transparent), radial-gradient(.6px 10px at 86% 54%, rgba(232, 240, 250, .55), transparent);
+  background-size: 110px 150px; animation-duration: 1.4s; }
 /* Mưa to: dày, nhanh hơn. Giông: mưa to nghiêng mạnh theo gió + tia chớp. */
 body[data-rain="heavy"] .sky-rain { opacity: .8; transform: rotate(14deg); }
 body[data-rain="heavy"] .sky-rain::before { animation-duration: .6s; }
@@ -172,7 +188,6 @@ body[data-weather="sunny"]:not([data-phase="night"]) .sky-rain::after {
   background-size: 300px 340px; animation: sun-dust-near 8s linear infinite, sun-glint 2.6s ease-in-out infinite alternate; }
 body[data-weather="partly"]:not([data-phase="night"]) .sky-rain { opacity: .5; transform: rotate(35deg); }
 body[data-weather="partly"]:not([data-phase="night"]) .sky-rain::before, body[data-weather="partly"]:not([data-phase="night"]) .sky-rain::after { background: none; }
-body[data-weather="sunny"]:not([data-phase="night"]) .cloud-a { opacity: .14; } /* trời nắng: chỉ một đám mây xa thật mờ */
 body[data-weather="sunny"]:not([data-phase="night"]) .sky-rays { opacity: .5; animation: sun-rays 60s linear infinite, ray-shimmer 4.5s ease-in-out infinite alternate; }
 /* Lóa ống kính: vài quầng mờ trên đường từ nguồn nắng vào giữa, dịch ngược chiều nghiêng máy nhiều hơn mặt trời → cảm giác chiều sâu. */
 body[data-weather="sunny"]:not([data-phase="night"]) .sky-glow::after { content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -752,10 +767,11 @@ body[data-phase="night"]:not([data-weather="rain"]):not([data-weather="storm"]) 
    --mx/--my: vị trí chuột (-0.5..0.5), --sy: độ cuộn (0..1), do usability.js ghi. Lớp càng gần càng dịch nhiều (thị sai).
    Dùng thuộc tính `translate` riêng nên không đè các hoạt ảnh `transform` sẵn có (mây trôi, tia nắng xoay, mặt trời thở). */
 .sky > i, .sky-rain::before, .sky-rain::after { transition: translate .4s ease-out; }
-.sky > .sky-cloud, .sky > .sky-overcast { transition: translate .4s ease-out, opacity .8s, filter .8s; } /* đổi thời tiết: mây hiện/tắt dần */
+.sky > .sky-cloud, .sky > .sky-sheet, .sky > .sky-wisps, .sky > .sky-fog { transition: translate .4s ease-out, opacity .8s, filter .8s; } /* đổi thời tiết: mây hiện/tắt dần */
 .sky-glow, .sky-rays { translate: calc(var(--mx, 0) * -14px) calc(var(--my, 0) * -10px + var(--sy, 0) * -24px); }        /* rất xa */
 .sky-stars { translate: calc(var(--mx, 0) * -8px) calc(var(--my, 0) * -6px + var(--sy, 0) * -16px); }
-.sky-overcast { translate: calc(var(--mx, 0) * -10px) calc(var(--sy, 0) * -20px); }                                     /* mây phủ: xa nhất */
+.sky-wisps, .sheet-far { translate: calc(var(--mx, 0) * -10px) calc(var(--sy, 0) * -20px); }                               /* mây ti, tấm mây xa: xa nhất */
+.sheet-near, .sky-fog { translate: calc(var(--mx, 0) * -40px) calc(var(--sy, 0) * -60px); }
 .cloud-a { translate: calc(var(--mx, 0) * -20px) calc(var(--my, 0) * -12px + var(--sy, 0) * -40px); }                    /* mây xa */
 .cloud-d { translate: calc(var(--mx, 0) * -32px) calc(var(--my, 0) * -18px + var(--sy, 0) * -70px); }
 .cloud-b { translate: calc(var(--mx, 0) * -50px) calc(var(--my, 0) * -28px + var(--sy, 0) * -110px); }

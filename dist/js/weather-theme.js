@@ -21,7 +21,7 @@ globalThis.MayTheme = (() => {
   }
   const DRIZZLE = [51, 53, 55, 56, 57], HEAVY = [65, 67, 82];
   function select(current) {
-    if (!current || ![0, 1].includes(current.is_day)) return { weather: "default", phase: "unknown", rain: "", scene: "default" };
+    if (!current || ![0, 1].includes(current.is_day)) return { weather: "default", phase: "unknown", rain: "", clouds: "", scene: "default" };
     const code = nightCode(current.weather_code, current.is_day, current.cloud_cover);
     const state = sky(code, current.is_day, ratio(current.sunshine_duration, current.interval));
     const weather = config.stormCodes.includes(code) ? "storm"
@@ -33,13 +33,17 @@ globalThis.MayTheme = (() => {
     const phase = current.is_day === 0 ? "night" : "day";
     // Cường độ mưa cho hiệu ứng: mưa phùn (hạt li ti, sương) khác hẳn mưa to/giông (hạt dài, nghiêng, nhanh).
     const rain = DRIZZLE.includes(code) ? "drizzle" : HEAVY.includes(code) ? "heavy" : "";
-    return { weather, phase, rain, scene: phase === "night" ? "night" : weather === "sunny" ? "day" : weather };
+    // Lượng mây cho hiệu ứng: nắng (gần như không mây) · ít mây · mây rải rác · u ám (nhiều mây, mưa, dông).
+    const clouds = ["cloudy", "rain", "storm"].includes(weather) ? "overcast" : weather === "partly" ? (code === 1 ? "few" : "scattered")
+      : weather === "sunny" ? (code === 0 ? "none" : "few") : "";
+    return { weather, phase, rain, clouds, scene: phase === "night" ? "night" : weather === "sunny" ? "day" : weather };
   }
   function apply(current = null) {
     const theme = select(current);
     document.body.dataset.weather = theme.weather;
     document.body.dataset.phase = theme.phase;
     document.body.dataset.rain = theme.rain;
+    document.body.dataset.clouds = theme.clouds;
     const panel = document.getElementById("current-panel");
     panel.dataset.scene = theme.scene;
     panel.dataset.weather = theme.weather;

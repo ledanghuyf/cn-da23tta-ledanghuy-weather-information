@@ -108,3 +108,11 @@ test('Giờ địa phương từ API: ngày không có thật, sai định dạn
   assert.equal(advice.localStamp('2026-10-09T15:00'),Date.UTC(2026,9,9,15));
   for(const bad of ['2026-02-30T12:00','2026-10-09T24:00','2026-10-09 15:00','',null,undefined])assert.ok(Number.isNaN(advice.localStamp(bad)),String(bad));
 });
+test('Lượng mây cho hiệu ứng: quang · ít mây · mây rải rác · u ám (nhiều mây, mưa, dông)',()=>{
+  const c=(code,day,extra={})=>theme.select({weather_code:code,is_day:day,...extra}).clouds;
+  assert.equal(c(0,1),'none');assert.equal(c(1,1),'few');assert.equal(c(0,0),'none');
+  assert.equal(c(1,0),'few');assert.equal(c(2,0),'scattered');assert.equal(c(3,0),'overcast');
+  assert.equal(c(3,1,{sunshine_duration:300,interval:900}),'scattered','ban ngày nắng xen mây');assert.equal(c(3,1,{sunshine_duration:60,interval:900}),'overcast');
+  for(const code of [51,61,95])assert.equal(c(code,1),'overcast');
+  assert.equal(theme.select(null).clouds,'');
+});
