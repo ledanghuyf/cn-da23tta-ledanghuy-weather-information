@@ -228,6 +228,10 @@ async function main(){
     await page.locator('#save-location').click();
     assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
     assert.equal(await page.locator('#save-location').getAttribute('aria-pressed'),'true');
+    // Thông báo "Đã lưu…" hiện ngay rồi tự tắt sau khoảng 2 giây.
+    const t0=Date.now();assert.match(await page.locator('#saved-status').innerText(),/Đã lưu Vĩnh Long/);
+    await page.waitForFunction(()=>document.getElementById('saved-status').textContent==='',null,{timeout:4000});
+    assert.ok(Date.now()-t0>=1500,'không tắt quá sớm');assert.equal(await page.locator('#saved-status').isVisible(),false);
     await page.reload();await ready();await openDrawer();assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('may.locations.v1')));
     assert.equal(saved.favorites[0].name,'Vĩnh Long');assert.equal(saved.history.length,1);

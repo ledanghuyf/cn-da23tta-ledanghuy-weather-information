@@ -33,7 +33,11 @@
   function persist(message = "") {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ version: 1, ...saved }));
-      if (message) setStatus("saved-status", message, "success");
+      if (message) {
+        // Thông báo thành công chỉ hiện 2 giây; nếu đã bị thay bằng thông báo khác (vd. lỗi) thì giữ nguyên.
+        setStatus("saved-status", message, "success");
+        setTimeout(() => { if ($("saved-status").textContent === message) setStatus("saved-status", ""); }, 2000);
+      }
     } catch {
       setStatus("saved-status", "Trình duyệt không cho lưu. Danh sách chỉ được giữ trong lần mở trang này.", "error");
     }
