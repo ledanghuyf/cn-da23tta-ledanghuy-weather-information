@@ -31,7 +31,7 @@
   // cuộn lên đầu để thấy nơi mới và đưa focus tới tên nơi (trình đọc màn hình đọc ngay). Lỗi tải thì giữ nguyên để thử lại.
   let picked = false;
   document.addEventListener('click', event => {
-    if (event.target.closest('.result-button, .quick-button, .personal-place')) picked = true;
+    if (event.target.closest('.result-button, .personal-place')) picked = true;
   });
   new MutationObserver(() => {
     const content = document.getElementById('weather-content');

@@ -1,3 +1,4 @@
+const pick=require('./places.cjs');
 const assert=require('node:assert/strict');
 const path=require('node:path');
 const fixture=require('./weather-fixture.cjs');
@@ -97,7 +98,7 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     assert.equal(await page.locator('#activity-hour option').count(),12);
     await page.locator('#activity-select').selectOption('walk');assert.equal(await page.locator('#activity-hour').inputValue(),'2026-10-12T09:00');
     await page.locator('#activity-date').selectOption('2026-10-13');assert.equal(await page.locator('#activity-hour').inputValue(),'');assert.equal(await page.locator('#activity-hour-detail').isVisible(),false);
-    await page.locator('#activity-hour').selectOption('2026-10-13T06:00');await page.locator('.quick-button').nth(1).click();await ready();assert.equal(await page.locator('#activity-hour').inputValue(),'');assert.equal(await page.locator('#activity-hour-detail').isVisible(),false);
+    await page.locator('#activity-hour').selectOption('2026-10-13T06:00');await pick(page,1);await ready();assert.equal(await page.locator('#activity-hour').inputValue(),'');assert.equal(await page.locator('#activity-hour-detail').isVisible(),false);
     await page.locator('#activity-date').selectOption('');await show(fixture(baseFixture));
   });
   await test('39 Thiếu hourly/UV và thời tiết xấu không tạo dữ liệu đánh giá giả',async()=>{
@@ -133,18 +134,18 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
     await page.locator('#activity-date').selectOption('');assert.equal(await page.locator('#activity-date').inputValue(),'');
     assert.match(await page.locator('#activity-status').innerText(),/Chưa có khung giờ/);
     // Trả lại trạng thái các bài sau dựa vào (dữ liệu chuẩn, hoạt động Đi bộ) vì đã tải lại trang.
-    setForecast(route=>json(route,fixture(baseFixture)));await page.locator('.quick-button').first().click();await ready();
+    setForecast(route=>json(route,fixture(baseFixture)));await pick(page,0);await ready();
     await page.locator('#activity-select').selectOption('walk');
   });
   await test('40 Đổi địa điểm cập nhật gợi ý/chủ đề; tải/lỗi về mặc định và ẩn gợi ý cũ',async()=>{
-    let pending;setForecast(route=>{pending=route;});await page.locator('.quick-button').first().click();
+    let pending;setForecast(route=>{pending=route;});await pick(page,0);
     await page.waitForFunction(()=>document.getElementById('weather-content').getAttribute('aria-busy')==='true');
     assert.equal(await page.locator('body').getAttribute('data-weather'),'default');assert.equal(await page.locator('#advice-results').isVisible(),false);
     await page.waitForFunction(()=>document.getElementById('refresh-button').disabled);
     while(!pending)await new Promise(resolve=>setTimeout(resolve,10));
     await json(pending,{},500);await ready();assert.equal(await page.locator('body').getAttribute('data-weather'),'default');assert.match(await page.locator('#advice-unavailable').innerText(),/Chưa tải được/);
     const d=fixture(baseFixture);d.current.weather_code=61;setForecast(route=>json(route,d));
-    await page.locator('.quick-button').nth(1).click();await ready();assert.match(await page.locator('#advice-location').innerText(),/Hà Nội/);assert.equal(await page.locator('body').getAttribute('data-weather'),'rain');assert.equal(await page.locator('#advice-results').isVisible(),true);
+    await pick(page,1);await ready();assert.match(await page.locator('#advice-location').innerText(),/Hà Nội/);assert.equal(await page.locator('body').getAttribute('data-weather'),'rain');assert.equal(await page.locator('#advice-results').isVisible(),true);
   });
   await test('44 Chọn ngày ở đầu trang đổi tổng quan, số liệu và gợi ý đúng ngày',async()=>{
     const d=fixture(baseFixture);
@@ -168,7 +169,7 @@ module.exports=async function({page,test,baseFixture,setForecast,json,ready,evid
       if(width===390||width===1440){await page.locator('.page-header').screenshot({path:path.join(evidence,`ngay-header-${width}.png`)});await page.locator('#daily-view').screenshot({path:path.join(evidence,`du-bao-ngay-${width}.png`)});}
     }
     for(const date of d.daily.time.slice(1)){await page.locator('#weather-date').selectOption(date);assert.match(await page.locator('#daily-date').innerText(),new RegExp(date.slice(8)+'[-/]'+date.slice(5,7)));}
-    await page.locator('.quick-button').nth(3).click();await ready();assert.equal(await page.locator('#daily-place').innerText(),'Đà Nẵng');assert.equal(await page.locator('#weather-date').inputValue(),'2026-10-15');
+    await pick(page,3);await ready();assert.equal(await page.locator('#daily-place').innerText(),'Đà Nẵng');assert.equal(await page.locator('#weather-date').inputValue(),'2026-10-15');
     const missing=structuredClone(d);missing.daily.wind_speed_10m_max[6]=null;missing.daily_units.uv_index_max='wrong';await show(missing);
     assert.equal(await page.locator('[data-metric="wind_speed_10m_max"] .daily-value').innerText(),'Chưa có dữ liệu');
     assert.equal(await page.locator('[data-metric="uv_index_max"] .daily-value').innerText(),'Chưa có dữ liệu');

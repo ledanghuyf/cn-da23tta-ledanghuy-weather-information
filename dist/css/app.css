@@ -178,9 +178,9 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .search-status[data-kind="error"], .search-status[data-error]:not([data-error=""]) { color: #ffd0c2; }
 .search-results { display: grid; gap: 6px; margin-top: 10px; }
 .search-results:empty { display: none; }
-.result-button, .quick-button, .personal-place { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid rgba(255, 255, 255, .18); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); text-align: left; }
-.result-button:hover, .quick-button:hover, .personal-place:hover { background: rgba(255, 255, 255, .16); }
-.result-button[aria-pressed="true"], .quick-button[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 160, 75, .2); }
+.result-button, .personal-place { display: flex; flex-direction: column; align-items: flex-start; width: 100%; min-height: 44px; padding: 9px 12px; border: 1px solid rgba(255, 255, 255, .18); border-radius: var(--radius-sm); background: rgba(255, 255, 255, .08); text-align: left; }
+.result-button:hover, .personal-place:hover { background: rgba(255, 255, 255, .16); }
+.result-button[aria-pressed="true"] { border-color: var(--accent); background: rgba(240, 160, 75, .2); }
 .result-name { font-weight: 600; }
 .result-region, .personal-place small { font-size: 12px; color: rgba(255, 255, 255, .85); }
 .eyebrow { margin: 22px 0 8px; font-size: 12px; font-weight: 700; letter-spacing: .6px; text-transform: uppercase; color: rgba(255, 255, 255, .9); }
@@ -197,10 +197,6 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
 .locate-help ol { padding-left: 18px; margin: 8px 0; }
 .locate-help input { margin-bottom: 6px; }
 .locate-help p { margin-top: 8px; }
-.quick-locations { display: grid; gap: 6px; }
-.quick-button { flex-direction: row; align-items: center; gap: 10px; }
-.quick-button > .icon { width: 15px; height: 15px; color: rgba(255, 255, 255, .85); }
-.quick-button[aria-pressed="true"] > .icon { color: var(--accent); }
 .personal-section { margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .16); }
 .personal-section > summary { cursor: pointer; font-weight: 650; }
 .personal-caption { display: flex; justify-content: space-between; margin: 12px 0 6px; font-size: 13px; color: rgba(255, 255, 255, .9); }
@@ -224,14 +220,11 @@ input[type="search"], input[type="text"], select { width: 100%; min-height: 44px
   .sidebar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 18px; padding: 10px max(24px, calc((100% - 1440px) / 2 + 34px)); }
   .location-drawer { flex: 1; min-width: 0; }
   .drawer-body { display: flex; align-items: center; gap: 10px; min-width: 0; }
-  .panel-title, .search-form .field-label, .field-help, .location-tools .eyebrow, .quick-section .eyebrow { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  .panel-title, .search-form .field-label, .field-help, .location-tools .eyebrow { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
   .search-panel { position: relative; flex: 0 1 340px; min-width: 220px; }
   .location-tools { position: relative; flex: none; }
   .location-tool-buttons { display: flex; gap: 6px; }
   .locate-button { flex-direction: row; gap: 6px; width: auto; min-height: 44px; padding: 8px 12px; white-space: nowrap; }
-  .quick-section { flex: 1; min-width: 0; }
-  .quick-locations { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); padding-right: 24px; }
-  .quick-button { flex: none; width: auto; min-height: 40px; padding: 8px 12px; border-radius: 999px; white-space: nowrap; }
   .personal-section { position: relative; flex: none; margin: 0; padding: 0; border: 0; }
   .personal-section > summary { min-height: 44px; padding: 8px 14px; list-style: none; white-space: nowrap; border: 1px solid rgba(255, 255, 255, .25); border-radius: 999px; background: rgba(6, 18, 36, .4); }
   .personal-section > summary::-webkit-details-marker { display: none; }
@@ -553,7 +546,6 @@ dd { font-size: 15px; font-weight: 650; }
   .search-row { gap: 8px; }
   .search-row .search-button { flex-shrink: 0; }
   .location-tool-buttons { grid-template-columns: 1fr 1fr; gap: 12px; }
-  .quick-button { width: 100%; }
   .location-drawer > summary::-webkit-details-marker { display: none; }
   .drawer-label { display: flex; flex-direction: column; font-weight: 650; }
   .drawer-hint { font-size: 12px; font-weight: 400; }
@@ -604,12 +596,9 @@ dd { font-size: 15px; font-weight: 650; }
 .weather-tabs a { border-radius: 12px; }
 @media (min-width: 761px) {
   .sidebar { padding: 10px max(16px, calc((100% - 1100px) / 2 + 16px)); }
-  /* Hàng 1: tìm kiếm, Gần tôi, Bản đồ, Đã lưu; hàng 2: dải chip tỉnh thành phổ biến ngay dưới ô tìm kiếm. */
+  /* Một hàng: tìm kiếm bên trái; Gần tôi, Bản đồ, Đã lưu bên phải. */
   .drawer-body { flex-wrap: wrap; row-gap: 8px; }
   .location-tools { margin-left: auto; } /* Gần tôi · Bản đồ · Đã lưu gom thành một cụm bên phải */
-  .quick-section { order: 5; flex: 1 1 100%; }
-  .quick-locations { -webkit-mask-image: none; mask-image: none; padding-right: 0; }
-  .quick-button { min-height: 34px; padding: 6px 12px; font-size: 13px; }
   html { scroll-padding-top: 124px; }
   .weather-content, .weather-group, #advice-section { scroll-margin-top: 124px; }
   .control-bar { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 12px; width: fit-content; max-width: 100%; margin: 0 auto 16px; padding: 8px;
@@ -623,10 +612,7 @@ dd { font-size: 15px; font-weight: 650; }
 }
 @media (max-width: 760px) {
   .control-bar { display: contents; } /* điện thoại: thanh ngày và dải mục xếp dọc, dải mục vẫn dính đầu màn hình khi cuộn */
-  /* Dải chip tỉnh thành cuộn ngang, ẩn thanh cuộn. */
-  .quick-locations { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; scroll-snap-type: x proximity; }
-  .quick-locations::-webkit-scrollbar, .weather-tabs::-webkit-scrollbar, .hour-modes::-webkit-scrollbar { display: none; }
-  .quick-button { flex: none; width: auto; min-height: 44px; padding: 8px 14px; border-radius: 999px; white-space: nowrap; scroll-snap-align: start; }
+  .weather-tabs::-webkit-scrollbar, .hour-modes::-webkit-scrollbar { display: none; }
 }
 
 /* Khối nhiệt độ chính là một thẻ; nút phụ thành biểu tượng tròn ở góc phải (có gợi ý khi rê chuột). */

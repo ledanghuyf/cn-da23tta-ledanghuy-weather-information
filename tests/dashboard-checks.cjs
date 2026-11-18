@@ -1,3 +1,4 @@
+const pick=require('./places.cjs');
 const assert=require('node:assert/strict');
 const path=require('node:path');
 const fixture=require('./weather-fixture.cjs');
@@ -56,7 +57,7 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
     await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>ok({coords:{latitude:10.253789,longitude:105.972218}})}}));
     await page.locator('#locate-button').click();await page.waitForFunction(()=>document.getElementById('locate-status').textContent.includes('Đã tải thời tiết'));await ready();assert.equal(await page.locator('#place-name').innerText(),'Gần Vĩnh Long');assert.doesNotMatch(await page.locator('#place-region').innerText(),/\d/); // Nominatim bị chặn → tỉnh lỵ gần nhất, không hiện tọa độ
     await page.evaluate(()=>Object.defineProperty(navigator,'geolocation',{configurable:true,value:{getCurrentPosition:ok=>{window.lateGeo=ok;}}}));
-    await page.locator('#locate-button').click();await page.locator('.quick-button').nth(1).click();await ready();
+    await page.locator('#locate-button').click();await pick(page,1);await ready();
     await page.evaluate(()=>window.lateGeo({coords:{latitude:10,longitude:106}}));assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
   });
   await test('52 Giao diện mới không tràn, điều hướng bàn phím và ảnh desktop/mobile',async()=>{
@@ -66,6 +67,6 @@ module.exports=async({page,test,baseFixture,setForecast,json,ready,evidence})=>{
       if([390,1440].includes(width)){await page.locator('#hourly-section').screenshot({path:path.join(evidence,`dashboard-hourly-${width}.png`)});await page.locator('#conditions-group').screenshot({path:path.join(evidence,`dashboard-details-${width}.png`)});await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:path.join(evidence,`dashboard-preview-${width}.png`)});await page.screenshot({path:path.join(evidence,`dashboard-full-${width}.png`),fullPage:true});}
     }
     await page.locator('.hour-tile').first().focus();await page.keyboard.press('Enter');assert.equal(await page.locator('.hour-tile').first().getAttribute('aria-pressed'),'true');
-    await page.locator('.quick-button').first().click();await ready();
+    await pick(page,0);await ready();
   });
 };

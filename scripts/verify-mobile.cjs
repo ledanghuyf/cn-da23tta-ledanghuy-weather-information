@@ -1,3 +1,4 @@
+const pick=require('../tests/places.cjs');
 const {chromium}=require('playwright');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
@@ -71,7 +72,7 @@ const server=http.createServer((req,res)=>{const pathname=new URL(req.url,'http:
   await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');
   for(const id of ['#hourly-section','#forecast-section','#details-section'])assert.equal(await page.locator(id).isVisible(),true,'sau cập nhật '+id);
   if(!await page.locator('#location-drawer').evaluate(el=>el.open))await page.locator('#location-drawer>summary').click();
-  await page.locator('.quick-button').nth(1).click();
+  await pick(page,1);
   await page.waitForFunction(()=>document.querySelector('#weather-content').getAttribute('aria-busy')==='false');
   assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
   assert.equal(await page.locator('#forecast-section').isVisible(),true);

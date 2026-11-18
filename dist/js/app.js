@@ -10,12 +10,6 @@ const DEFAULT_LOCATION = {
   name: "Vĩnh Long", admin1: "Vĩnh Long", country: "Việt Nam",
   latitude: 10.2537, longitude: 105.9722,
 };
-const QUICK_LOCATIONS = [
-  DEFAULT_LOCATION,
-  { name: "Hà Nội", admin1: "Hà Nội", country: "Việt Nam", latitude: 21.0245, longitude: 105.84117 },
-  { name: "TP. Hồ Chí Minh", admin1: "TP. Hồ Chí Minh", country: "Việt Nam", latitude: 10.82302, longitude: 106.62965 },
-  { name: "Đà Nẵng", admin1: "Đà Nẵng", country: "Việt Nam", latitude: 16.06778, longitude: 108.22083 },
-];
 const WEATHER_CODES = {
   0: ["Trời quang", "☀️"], 1: ["Ít mây", "🌤️"],
   2: ["Mây rải rác", "⛅"], 3: ["Nhiều mây", "☁️"],
@@ -99,31 +93,6 @@ function weatherGraphic(code, isDay = 1, sun = NaN) {
   const svg = svgElement("svg", { viewBox: "0 0 160 160", width: "160", height: "160", "aria-hidden": "true", focusable: "false" });
   svg.append(svgElement("use", { href: `#${weatherSymbol(code, isDay, sun)}` }));
   return svg;
-}
-
-function renderQuickLocations() {
-  const fragment = document.createDocumentFragment();
-  QUICK_LOCATIONS.forEach((location) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "quick-button";
-    button.setAttribute("aria-pressed", "false");
-    const icon = svgElement("svg", { class: "icon", width: "14", height: "14", "aria-hidden": "true" });
-    icon.append(svgElement("use", { href: "#i-pin" }));
-    const label = document.createElement("span");
-    label.textContent = location.name;
-    button.append(icon, label);
-    button.addEventListener("click", () => loadWeather(location));
-    fragment.append(button);
-  });
-  $("quick-locations").replaceChildren(fragment);
-}
-
-function updateQuickSelection(location) {
-  [...$("quick-locations").children].forEach((button, i) => {
-    const quick = QUICK_LOCATIONS[i];
-    button.setAttribute("aria-pressed", String(Math.abs(quick.latitude - location.latitude) < .015 && Math.abs(quick.longitude - location.longitude) < .015));
-  });
 }
 
 function validateLocation(location) {
@@ -456,7 +425,6 @@ function renderWeather(location, data) {
     ? `Cập nhật lúc ${time.slice(0, 5)} · ${day}/${month}/${year} · giờ địa phương`
     : "Theo giờ địa phương";
   $("page-date").textContent = new Date(`${date}T12:00:00Z`).toLocaleDateString("vi-VN", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", timeZone: "UTC" });
-  updateQuickSelection(location);
   renderForecast(data.daily);
   renderTemperatureChart(data.daily);
   MayAdvice.render(data, location, $("activity-select").value);
@@ -603,7 +571,6 @@ for (const id of ["activity-select", "activity-date"]) $(id).addEventListener("c
   if (state.weather && !$("advice-results").hidden) MayAdvice.render(state.weather, state.location, $("activity-select").value, { keepHour: id === "activity-select" });
 });
 $("page-date").textContent = "Đang cập nhật";
-renderQuickLocations();
 
 function updateConnectionStatus() {
   $("connection-status").hidden = navigator.onLine;

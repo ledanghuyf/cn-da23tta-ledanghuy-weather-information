@@ -34,7 +34,7 @@ const server=http.createServer((req,res)=>{const p=new URL(req.url,'http://local
     assert.equal(await page.locator('#location-drawer').evaluate(el=>el.open),false);
     await page.screenshot({path:path.join(out,`drawer-closed-${width}.png`)});
     await page.locator('#location-drawer>summary').click();
-    assert.equal(await page.locator('#location-input').isVisible(),true);assert.equal(await page.locator('#place-map').isVisible(),true);assert.equal(await page.locator('.quick-button').first().isVisible(),true);
+    assert.equal(await page.locator('#location-input').isVisible(),true);assert.equal(await page.locator('#place-map').isVisible(),true);assert.equal(await page.locator('.quick-button').count(),0);
     await page.screenshot({path:path.join(out,`drawer-open-${width}.png`)});
     await page.locator('#location-input').focus();await page.keyboard.press('Escape');assert.equal(await page.locator('#location-drawer').evaluate(el=>el.open),false);
     checks.push(`Drawer opens and closes ${width}`);

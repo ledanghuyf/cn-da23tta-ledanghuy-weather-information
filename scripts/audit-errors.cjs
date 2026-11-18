@@ -1,3 +1,4 @@
+const pick=require('../tests/places.cjs');
 // Rà soát xử lý lỗi: dữ liệu thật + cố tình gây lỗi (mất mạng, 500, 429, chậm >15 s, JSON hỏng, thiếu trường).
 // Chạy: npm run audit:errors  (dùng dữ liệu thật của Open-Meteo, mất khoảng 2 phút vì có tình huống chờ quá 15 giây)
 const { chromium } = require('playwright');
@@ -81,8 +82,7 @@ const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); c
 
   // --- Đổi địa điểm khi mất mạng ---
   fault.wx = 'offline';
-  if (!(await page.locator('.quick-button').nth(1).isVisible())) await page.click('#location-drawer>summary').catch(() => {});
-  await page.locator('.quick-button').nth(1).click(); await idle();
+  await pick(page,1); await idle();
   check('Đổi địa điểm khi mất mạng: giữ nơi đang xem', await text('#place-name') === placeBefore, await text('#place-name'));
   check('Đổi địa điểm khi mất mạng: thông báo rõ', /Không kết nối được|Internet/.test(await text('#weather-status')), await text('#weather-status'));
   fault.wx = null; await page.click('#retry-button'); await idle();
@@ -92,7 +92,7 @@ const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); c
   let slowOnce = true;
   await page.unroute(/api\.open-meteo\.com\/v1\/forecast/);
   await page.route(/api\.open-meteo\.com\/v1\/forecast/, async route => { if (slowOnce) { slowOnce = false; await new Promise(r => setTimeout(r, 4000)); } return route.continue().catch(() => {}); });
-  await page.locator('.quick-button').nth(2).click(); await page.locator('.quick-button').nth(3).click(); await idle(); await page.waitForTimeout(4500);
+  await pick(page,2); await pick(page,3); await idle(); await page.waitForTimeout(4500);
   check('Bấm đổi nơi liên tục: hiển thị đúng nơi chọn cuối', /Đà Nẵng/.test(await text('#place-name')), await text('#place-name'));
   await page.unroute(/api\.open-meteo\.com\/v1\/forecast/); await page.route(/api\.open-meteo\.com\/v1\/forecast/, apply('wx'));
 

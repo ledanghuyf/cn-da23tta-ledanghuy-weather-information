@@ -1,3 +1,4 @@
+const pick=require('./places.cjs');
 // Chạy: npm install, sau đó npm test. Dữ liệu mô phỏng chỉ nằm trong kiểm thử.
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
@@ -201,12 +202,10 @@ async function main(){
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth),true);
     await page.locator('#cards-button').click();assert.equal(await page.locator('#forecast-list').isVisible(),true);
   });
-  await test('23 Địa điểm nhanh cập nhật tên, dữ liệu và trạng thái chọn',async()=>{
-    await page.locator('.quick-button').nth(3).click();await statusHas('Đã cập nhật thời tiết Đà Nẵng');
-    assert.equal(await page.locator('#place-name').innerText(),'Đà Nẵng');
-    assert.equal(await page.locator('.quick-button').nth(3).getAttribute('aria-pressed'),'true');
-    // Điện thoại: chọn xong ngăn kéo tự đóng để thấy thời tiết; mở lại để chọn nơi khác.
-    await openDrawer();await page.locator('.quick-button').first().click();await statusHas('Đã cập nhật thời tiết Vĩnh Long');
+  await test('23 Không còn nút địa điểm mẫu, chỉ có ô tìm kiếm; đổi địa điểm cập nhật tên và dữ liệu',async()=>{
+    assert.equal(await page.locator('.quick-button, #quick-locations').count(),0);
+    await pick(page,3);await statusHas('Đã cập nhật thời tiết Đà Nẵng');assert.equal(await page.locator('#place-name').innerText(),'Đà Nẵng');
+    await pick(page,0);await statusHas('Đã cập nhật thời tiết Vĩnh Long');
   });
   await test('24 Biểu tượng và bối cảnh ngày, đêm, mưa đúng dữ liệu',async()=>{
     for(const [code,isDay,symbol,scene] of [[0,1,'clear','day'],[0,0,'moon','night'],[61,1,'rain','rain'],[95,1,'storm','storm']]){
@@ -233,7 +232,7 @@ async function main(){
     const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('may.locations.v1')));
     assert.equal(saved.favorites[0].name,'Vĩnh Long');assert.equal(saved.history.length,1);
     assert.equal(JSON.stringify(saved).includes('temperature'),false);
-    await page.locator('.quick-button').nth(1).click();await ready();
+    await pick(page,1);await ready();
     await openSaved();await page.locator('#favorite-list .personal-place').click();await ready();
     assert.equal(await page.locator('#place-name').innerText(),'Vĩnh Long');
     await openSaved();await page.locator('#favorite-list .remove-place').click();assert.equal(await page.locator('#favorite-list .personal-place').count(),0);
@@ -242,7 +241,7 @@ async function main(){
     await page.locator('#save-location').click();await openSaved();await page.locator('#clear-history').click();
     assert.equal(await page.locator('#history-list .personal-place').count(),0);
     assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
-    forecast=r=>json(r,{},500);await page.locator('.quick-button').nth(2).click();await ready();
+    forecast=r=>json(r,{},500);await pick(page,2);await ready();
     assert.equal(await page.locator('#history-list .personal-place').count(),0);
     forecast=r=>json(r,fixture);await page.locator('#retry-button').click();await ready();
     await page.locator('#refresh-button').click();await ready();
@@ -262,7 +261,7 @@ async function main(){
     await reset();await page.locator('#save-location').click();
     assert.match(await page.locator('#saved-status').innerText(),/chỉ được giữ trong lần mở trang/);
     assert.equal(await page.locator('#favorite-list .personal-place').count(),1);
-    await page.locator('.quick-button').nth(1).click();await ready();assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
+    await pick(page,1);await ready();assert.equal(await page.locator('#place-name').innerText(),'Hà Nội');
     assert.deepEqual(errors,[]);
   });
   await require('./experience-checks.cjs')({page,test,baseFixture:fixture,setForecast:handler=>{forecast=handler;},json,ready,evidence});
@@ -360,7 +359,7 @@ async function main(){
     await livePage.locator('#save-location').click();assert.equal(await livePage.locator('#save-location').getAttribute('aria-pressed'),'true');
     await livePage.screenshot({path:path.join(evidence,'toan-trang-moi.png'),fullPage:true});
     await livePage.reload();await liveReady();assert.match(await livePage.locator('#place-name').innerText(),/Hu[eế]/i);
-    await openDrawer(livePage);await livePage.locator('.quick-button').nth(1).click();await liveReady();
+    await openDrawer(livePage);await pick(livePage,1);await liveReady();
     assert.equal(await livePage.locator('#place-name').innerText(),'Hà Nội');
     await openSaved(livePage);
     assert.equal(await livePage.locator('#favorite-list .personal-place').count(),1);
