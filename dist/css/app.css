@@ -20,7 +20,7 @@ body[data-weather="sunny"]  { --sky-top: #0c63c7; --sky-bottom: #1068d2; --glow:
 body[data-weather="partly"] { --sky-top: #1d62b0; --sky-bottom: #3a76b8; --glow: rgba(255, 228, 150, .16); } /* nắng xen mây */
 body[data-weather="cloudy"] { --sky-top: #3d4b59; --sky-bottom: #5f6d7a; --glow: rgba(255, 255, 255, .10); } /* xám trung tính */
 body[data-weather="rain"]   { --sky-top: #0e3350; --sky-bottom: #245a7e; --glow: rgba(120, 190, 240, .12); } /* xanh biển sẫm */
-body[data-rain="drizzle"]:not([data-phase="night"]) { --sky-top: #3a6a91; --sky-bottom: #6b93b3; --glow: rgba(220, 235, 250, .14); } /* mưa phùn: xanh xám nhạt, dịu */
+body[data-rain="drizzle"]:not([data-phase="night"]) { --sky-top: #2d5a7e; --sky-bottom: #4a7596; --glow: rgba(220, 235, 250, .1); } /* mưa phùn: xanh xám dịu; đủ đậm để chữ trắng nhỏ đạt ~4,9:1 */
 body[data-weather="storm"]  { --sky-top: #130f27; --sky-bottom: #3b2e60; --glow: rgba(170, 150, 230, .16); } /* tím đêm giông */
 body[data-phase="night"]    { --sky-top: #08122b; --sky-bottom: #1f3463; --glow: rgba(255, 236, 180, .16); }
 body[data-phase="night"][data-weather="rain"],
@@ -99,8 +99,11 @@ body[data-weather="rain"] { --cloud-light: .66; } body[data-weather="storm"] { -
 body[data-rain="drizzle"] { --cloud-light: .92; }
 body[data-rain="drizzle"] .sheet-far { opacity: .4; }
 body[data-rain="drizzle"] .sheet-near { opacity: 0; }
-body[data-rain="drizzle"] .cloud-a { opacity: .45; } body[data-rain="drizzle"] .cloud-b { opacity: .25; } body[data-rain="drizzle"] .cloud-c { opacity: 0; }
+body[data-rain="drizzle"] .cloud-a { opacity: .3; } body[data-rain="drizzle"] .cloud-b { opacity: .14; } /* mây sau chữ mờ bớt */ body[data-rain="drizzle"] .cloud-c { opacity: 0; }
 body[data-rain="drizzle"] .sky-fog { opacity: .25; }
+/* Chữ dễ đọc khi mưa phùn: quầng tối rất nhẹ sau khối nhiệt độ + bóng chữ đậm hơn (vệt mưa, mây trôi qua không làm chìm chữ). */
+body[data-rain="drizzle"] .hero-card::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 60% 70% at 50% 45%, rgba(8, 26, 44, .32), transparent 75%); }
+body[data-rain="drizzle"] .hero-card .location-heading, body[data-rain="drizzle"] .hero-card .condition-line, body[data-rain="drizzle"] .hero-card .current-bottom, body[data-rain="drizzle"] .hero-card .temperature { text-shadow: 0 1px 2px rgba(0, 0, 0, .45), 0 0 18px rgba(0, 20, 40, .45); }
 /* Trời nắng: chỉ một đám mây xa thật mờ. Ban đêm: mây xám tối. */
 body[data-weather="sunny"] .cloud-a, body[data-weather="default"] .cloud-a { opacity: .12; }
 body[data-phase="night"] { --cloud-light: .5; }
